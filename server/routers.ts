@@ -8,6 +8,7 @@ import * as db from "./db";
 import { tracks } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { generateAlbum, improveTrack } from "./albumGenerator";
+import { generateJobId, setProgress, getProgress, clearProgress } from "./progressTracker";
 import { getPlatformAdapter, PLATFORM_ADAPTERS } from "./adapters";
 import { checkContentSafety } from "./contentSafety";
 import { exportAlbumBundle } from "./exportAlbum";
@@ -35,8 +36,8 @@ export const appRouter = router({
     // Create a new album with AI generation
     create: protectedProcedure
       .input(z.object({
-        theme: z.string(),
-        vibe: z.array(z.string()),
+        theme: z.string().min(1, "Theme is required"),
+        vibe: z.array(z.string()).default(["General"]),
         language: z.string().default("en"),
         audience: z.string().optional(),
         influences: z.array(z.string()).optional(),
@@ -53,98 +54,105 @@ export const appRouter = router({
           });
         }
         
-        // Generate the album using AI
-        const generated = await generateAlbum(input);
+        // Start background job for album generation
+        const jobId = generateJobId();
         
-        // Save to database
-        const album = await db.createAlbum({
-          userId: ctx.user.id,
-          title: generated.title,
-          theme: input.theme,
-          platform: input.platform,
-          description: generated.description,
-          coverUrl: generated.coverUrl,
-          coverPrompt: generated.coverPrompt,
-          score: generated.overallScore,
-          vibe: JSON.stringify(input.vibe),
-          language: input.language,
-          audience: input.audience,
-          influences: input.influences ? JSON.stringify(input.influences) : null,
-          trackCount: input.trackCount
-        });
-        
-        // Save tracks and assets
-        for (const trackData of generated.tracks) {
-          const track = await db.createTrack({
-            albumId: album.id,
-            index: trackData.index,
-            title: trackData.title,
-            tempoBpm: trackData.tempoBpm,
-            key: trackData.key,
-            moodTags: JSON.stringify(trackData.moodTags),
-            score: trackData.score,
-            scoreBreakdown: JSON.stringify(trackData.scoreBreakdown)
-          });
-          
-          // Save main assets
-          await db.createTrackAsset({
-            trackId: track.id,
-            type: "prompt",
-            content: trackData.prompt
-          });
-          
-          await db.createTrackAsset({
-            trackId: track.id,
-            type: "lyrics",
-            content: trackData.lyrics
-          });
-          
-          await db.createTrackAsset({
-            trackId: track.id,
-            type: "structure",
-            content: trackData.structure
-          });
-          
-          await db.createTrackAsset({
-            trackId: track.id,
-            type: "production_notes",
-            content: trackData.productionNotes
-          });
-          
-          await db.createTrackAsset({
-            trackId: track.id,
-            type: "art_prompt",
-            content: trackData.artPrompt
-          });
-          
-          if (trackData.artUrl) {
-            await db.createTrackAsset({
-              trackId: track.id,
-              type: "art_url",
-              content: trackData.artUrl
+        // Start generation in background
+        (async () => {
+          try {
+            setProgress(jobId, {
+              stage: "Initializing",
+              progress: 0,
+              message: "Starting album generation..."
+            });
+            
+            const generated = await generateAlbum(input, (update) => {
+              setProgress(jobId, update);
+            });
+            
+            setProgress(jobId, {
+              stage: "Saving",
+              progress: 90,
+              message: "Saving album to database..."
+            });
+            
+            // Save to database (existing code will be moved here)
+            const album = await db.createAlbum({
+              userId: ctx.user.id,
+              title: generated.title,
+              theme: input.theme,
+              platform: input.platform,
+              description: generated.description,
+              coverUrl: generated.coverUrl,
+              coverPrompt: generated.coverPrompt,
+              score: generated.overallScore,
+              vibe: JSON.stringify(input.vibe),
+              language: input.language,
+              audience: input.audience,
+              influences: input.influences ? JSON.stringify(input.influences) : null,
+              trackCount: input.trackCount
+            });
+            
+            // Save tracks and assets
+            for (const trackData of generated.tracks) {
+              const track = await db.createTrack({
+                albumId: album.id,
+                index: trackData.index,
+                title: trackData.title,
+                tempoBpm: trackData.tempoBpm,
+                key: trackData.key,
+                moodTags: JSON.stringify(trackData.moodTags),
+                score: trackData.score,
+                scoreBreakdown: JSON.stringify(trackData.scoreBreakdown)
+              });
+              
+              await db.createTrackAsset({ trackId: track.id, type: "prompt", content: trackData.prompt });
+              await db.createTrackAsset({ trackId: track.id, type: "lyrics", content: trackData.lyrics });
+              await db.createTrackAsset({ trackId: track.id, type: "structure", content: trackData.structure });
+              await db.createTrackAsset({ trackId: track.id, type: "production_notes", content: trackData.productionNotes });
+              
+              if (trackData.artUrl) {
+                await db.createTrackAsset({ trackId: track.id, type: "art_url", content: trackData.artUrl });
+              }
+            }
+            
+            setProgress(jobId, {
+              stage: "Complete",
+              progress: 100,
+              message: "Album created successfully!"
+            });
+            
+            // Store album ID in progress for retrieval
+            const finalProgress = getProgress(jobId);
+            if (finalProgress) {
+              (finalProgress as any).albumId = album.id;
+              setProgress(jobId, finalProgress);
+            }
+            
+            // Clear after 5 minutes
+            setTimeout(() => clearProgress(jobId), 5 * 60 * 1000);
+          } catch (error: any) {
+            setProgress(jobId, {
+              stage: "Error",
+              progress: 0,
+              message: error.message || "Failed to generate album"
             });
           }
-          
-          // Save alternates
-          for (let i = 0; i < trackData.alternates.length; i++) {
-            const alt = trackData.alternates[i];
-            await db.createTrackAsset({
-              trackId: track.id,
-              type: i === 0 ? "alternate_1" : "alternate_2",
-              content: JSON.stringify(alt),
-              variant: alt.variant
-            });
-          }
+        })();
+        
+        // Return job ID immediately
+        return { jobId };
+      }),
+    
+    // Poll for album generation progress
+    getProgress: publicProcedure
+      .input(z.object({ jobId: z.string() }))
+      .query(({ input }) => {
+        const progress = getProgress(input.jobId);
+        if (!progress) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Job not found' });
         }
-        
-        // Log the action
-        await db.createAuditLog({
-          userId: ctx.user.id,
-          action: "album_created",
-          payload: JSON.stringify({ albumId: album.id, platform: input.platform })
-        });
-        
-        return { albumId: album.id };
+        return progress;
       }),
     
     // Get user's albums

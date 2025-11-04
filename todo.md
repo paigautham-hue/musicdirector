@@ -88,3 +88,7 @@
 
 - [x] Add delete album functionality with confirmation dialog
 - [x] Re-apply copy button improvements from previous checkpoint
+
+## New Issues
+- [x] Fix validation error: "The string did not match the expected pattern"
+- [x] Add detailed progress indicator showing current stage and track number during album generation

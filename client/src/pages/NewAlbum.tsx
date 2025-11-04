@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -29,17 +29,51 @@ export default function NewAlbum() {
   const [influences, setInfluences] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string>("suno");
   const [trackCount, setTrackCount] = useState(10);
+  const [jobId, setJobId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<{
+    stage: string;
+    progress: number;
+    currentTrack?: number;
+    totalTracks?: number;
+    message: string;
+  } | null>(null);
 
   const createAlbumMutation = trpc.albums.create.useMutation({
     onSuccess: (data) => {
-      toast.success("Album created successfully!");
-      setLocation(`/album/${data.albumId}`);
+      setJobId(data.jobId);
+      // Start polling for progress
     },
     onError: (error) => {
       toast.error(error.message || "Failed to create album");
       setIsGenerating(false);
     }
   });
+  
+  // Poll for progress
+  const progressQuery = trpc.albums.getProgress.useQuery(
+    { jobId: jobId! },
+    {
+      enabled: !!jobId,
+      refetchInterval: 1000, // Poll every second
+    }
+  );
+  
+  // Handle progress updates
+  useEffect(() => {
+    if (progressQuery.data) {
+      const data = progressQuery.data as any;
+      setProgress(data);
+      if (data.stage === "Complete" && data.albumId) {
+        toast.success("Album created successfully!");
+        setLocation(`/album/${data.albumId}`);
+        setJobId(null);
+      } else if (data.stage === "Error") {
+        toast.error(data.message);
+        setIsGenerating(false);
+        setJobId(null);
+      }
+    }
+  }, [progressQuery.data]);
 
   if (!isAuthenticated) {
     return (
@@ -362,7 +396,7 @@ export default function NewAlbum() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Generating Album...
+                    {progress ? progress.message : "Generating Album..."}
                   </>
                 ) : (
                   "Create Album"
@@ -370,6 +404,27 @@ export default function NewAlbum() {
               </Button>
             )}
           </div>
+          
+          {/* Progress Indicator */}
+          {isGenerating && progress && (
+            <div className="mt-6 space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-foreground">{progress.stage}</span>
+                <span className="text-muted-foreground">
+                  {progress.currentTrack && progress.totalTracks
+                    ? `Track ${progress.currentTrack}/${progress.totalTracks}`
+                    : `${progress.progress}%`}
+                </span>
+              </div>
+              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-500 ease-out"
+                  style={{ width: `${progress.progress}%` }}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">{progress.message}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

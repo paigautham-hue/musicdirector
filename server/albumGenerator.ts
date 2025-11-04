@@ -56,7 +56,10 @@ export interface AlbumOutput {
 /**
  * Generate a complete album with all tracks, lyrics, and artwork
  */
-export async function generateAlbum(input: AlbumGenerationInput): Promise<AlbumOutput> {
+export async function generateAlbum(
+  input: AlbumGenerationInput,
+  onProgress?: (update: { stage: string; progress: number; currentTrack?: number; totalTracks?: number; message: string }) => void
+): Promise<AlbumOutput> {
   const adapter = getPlatformAdapter(input.platform);
   const constraints = adapter.constraints();
   const bestPractices = adapter.bestPractices();
@@ -80,6 +83,13 @@ export async function generateAlbum(input: AlbumGenerationInput): Promise<AlbumO
   const usedTitles = new Set<string>();
   
   for (let i = 0; i < input.trackCount; i++) {
+    onProgress?.({
+      stage: "Generating Tracks",
+      progress: 20 + Math.floor((i / input.trackCount) * 65),
+      currentTrack: i + 1,
+      totalTracks: input.trackCount,
+      message: `Creating track ${i + 1} of ${input.trackCount}...`
+    });
     const track = await generateTrack({
       albumTheme: input.theme,
       albumTitle: albumConcept.title,

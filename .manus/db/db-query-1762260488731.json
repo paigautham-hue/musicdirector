@@ -1,0 +1,136 @@
+{
+  "query": "SELECT ta.content FROM trackAssets ta JOIN tracks t ON ta.trackId = t.id WHERE t.title = \"The Shepherd's Empty Pockets\" AND ta.type = 'lyrics' LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT ta.content FROM trackAssets ta JOIN tracks t ON ta.trackId = t.id WHERE t.title = \"The Shepherd's Empty Pockets\" AND ta.type = 'lyrics' LIMIT 1",
+  "rows": [
+    {
+      "content": "[Verse 1]"
+    },
+    {
+      "content": "I saw the man on the television screen,"
+    },
+    {
+      "content": "He wore a suit of velvet, looked mighty clean."
+    },
+    {
+      "content": "He talked about the sinners and the righteous few,"
+    },
+    {
+      "content": "Said, 'If you ain't with us, well, then you must be through.'"
+    },
+    {
+      "content": "He passed the plate around, asked for a hefty tithe,"
+    },
+    {
+      "content": "Said the cost of heaven keeps the good Lord alive."
+    },
+    {
+      "content": "[Chorus]"
+    },
+    {
+      "content": "Oh, the shepherd's empty pockets are filled with our despair,"
+    },
+    {
+      "content": "They sell salvation cheap, but the price of peace is high."
+    },
+    {
+      "content": "They draw a line in the sand and tell us where to stand,"
+    },
+    {
+      "content": "While they shake hands in the back room, beneath the same blue sky."
+    },
+    {
+      "content": "We pay the high cost of division, believing every lie."
+    },
+    {
+      "content": "[Verse 2]"
+    },
+    {
+      "content": "Then came the politician, with his flag and his grin,"
+    },
+    {
+      "content": "Said the neighbor next door is where the trouble begins."
+    },
+    {
+      "content": "He promised us the glory of a kingdom restored,"
+    },
+    {
+      "content": "If we just hated louder, and followed his word."
+    },
+    {
+      "content": "He spoke of freedom's battle, but never drew a sword,"
+    },
+    {
+      "content": "Just counted up the votes that his anger had poured."
+    },
+    {
+      "content": "[Chorus]"
+    },
+    {
+      "content": "Oh, the shepherd's empty pockets are filled with our despair,"
+    },
+    {
+      "content": "They sell salvation cheap, but the price of peace is high."
+    },
+    {
+      "content": "They draw a line in the sand and tell us where to stand,"
+    },
+    {
+      "content": "While they shake hands in the back room, beneath the same blue sky."
+    },
+    {
+      "content": "We pay the high cost of division, believing every lie."
+    },
+    {
+      "content": "[Bridge]"
+    },
+    {
+      "content": "We're all just folks trying to make it through the week,"
+    },
+    {
+      "content": "Sharing the same dust on the same old country creek."
+    },
+    {
+      "content": "If we stop listening to the noise they make and start to see,"
+    },
+    {
+      "content": "That their business is the fighting, and our unity is free."
+    },
+    {
+      "content": "[Chorus]"
+    },
+    {
+      "content": "Oh, the shepherd's empty pockets are filled with our despair,"
+    },
+    {
+      "content": "They sell salvation cheap, but the price of peace is high."
+    },
+    {
+      "content": "They draw a line in the sand and tell us where to stand,"
+    },
+    {
+      "content": "While they shake hands in the back room, beneath the same blue sky."
+    },
+    {
+      "content": "We pay the high cost of division, believing every lie."
+    },
+    {
+      "content": "[Outro]"
+    },
+    {
+      "content": "Yeah, we pay the high cost of division..."
+    },
+    {
+      "content": "But the truth is cheaper still."
+    },
+    {
+      "content": "Look past the rhetoric, climb your own hill."
+    },
+    {
+      "content": "(Fade out with pedal steel)"
+    }
+  ],
+  "messages": [],
+  "stdout": "content\n[Verse 1]\nI saw the man on the television screen,\nHe wore a suit of velvet, looked mighty clean.\nHe talked about the sinners and the righteous few,\nSaid, 'If you ain't with us, well, then you must be through.'\nHe passed the plate around, asked for a hefty tithe,\nSaid the cost of heaven keeps the good Lord alive.\n\n[Chorus]\nOh, the shepherd's empty pockets are filled with our despair,\nThey sell salvation cheap, but the price of peace is high.\nThey draw a line in the sand and tell us where to stand,\nWhile they shake hands in the back room, beneath the same blue sky.\nWe pay the high cost of division, believing every lie.\n\n[Verse 2]\nThen came the politician, with his flag and his grin,\nSaid the neighbor next door is where the trouble begins.\nHe promised us the glory of a kingdom restored,\nIf we just hated louder, and followed his word.\nHe spoke of freedom's battle, but never drew a sword,\nJust counted up the votes that his anger had poured.\n\n[Chorus]\nOh, the shepherd's empty pockets are filled with our despair,\nThey sell salvation cheap, but the price of peace is high.\nThey draw a line in the sand and tell us where to stand,\nWhile they shake hands in the back room, beneath the same blue sky.\nWe pay the high cost of division, believing every lie.\n\n[Bridge]\nWe're all just folks trying to make it through the week,\nSharing the same dust on the same old country creek.\nIf we stop listening to the noise they make and start to see,\nThat their business is the fighting, and our unity is free.\n\n[Chorus]\nOh, the shepherd's empty pockets are filled with our despair,\nThey sell salvation cheap, but the price of peace is high.\nThey draw a line in the sand and tell us where to stand,\nWhile they shake hands in the back room, beneath the same blue sky.\nWe pay the high cost of division, believing every lie.\n\n[Outro]\nYeah, we pay the high cost of division...\nBut the truth is cheaper still.\nLook past the rhetoric, climb your own hill.\n(Fade out with pedal steel)\n",
+  "stderr": "",
+  "execution_time_ms": 1511
+}

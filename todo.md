@@ -85,3 +85,7 @@
 - [x] Fix duplicate track title generation in album generator
 
 - [x] Regenerate duplicate tracks in current album with unique content
+
+## New Issues to Fix
+- [x] Add copy buttons for prompt and lyrics in track view
+- [x] Fix incomplete lyrics generation (improved prompt to ensure complete songs)

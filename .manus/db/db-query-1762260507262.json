@@ -1,0 +1,70 @@
+{
+  "query": "SELECT t.id, t.title, t.`index`, COUNT(ta.id) as asset_count FROM tracks t LEFT JOIN trackAssets ta ON t.id = ta.trackId WHERE t.albumId = (SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1) GROUP BY t.id ORDER BY t.`index`",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT t.id, t.title, t.`index`, COUNT(ta.id) as asset_count FROM tracks t LEFT JOIN trackAssets ta ON t.id = ta.trackId WHERE t.albumId = (SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1) GROUP BY t.id ORDER BY t.`index`",
+  "rows": [
+    {
+      "id": "11",
+      "title": "The High Cost of Division",
+      "index": "1",
+      "asset_count": "8"
+    },
+    {
+      "id": "12",
+      "title": "The High Cost of Division",
+      "index": "2",
+      "asset_count": "8"
+    },
+    {
+      "id": "13",
+      "title": "The Price of the Pulpit",
+      "index": "3",
+      "asset_count": "8"
+    },
+    {
+      "id": "14",
+      "title": "The Price of the Pulpit (Part 2)",
+      "index": "4",
+      "asset_count": "8"
+    },
+    {
+      "id": "15",
+      "title": "The Price of the Line",
+      "index": "5",
+      "asset_count": "8"
+    },
+    {
+      "id": "16",
+      "title": "The Price of the Pulpit (Part 3)",
+      "index": "6",
+      "asset_count": "8"
+    },
+    {
+      "id": "17",
+      "title": "The Price of the Pulpit (Part 4)",
+      "index": "7",
+      "asset_count": "8"
+    },
+    {
+      "id": "18",
+      "title": "The Shepherd's Empty Pockets",
+      "index": "8",
+      "asset_count": "8"
+    },
+    {
+      "id": "19",
+      "title": "The Price of the Pulpit",
+      "index": "9",
+      "asset_count": "8"
+    },
+    {
+      "id": "20",
+      "title": "The Common Ground",
+      "index": "10",
+      "asset_count": "8"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tindex\tasset_count\n11\tThe High Cost of Division\t1\t8\n12\tThe High Cost of Division\t2\t8\n13\tThe Price of the Pulpit\t3\t8\n14\tThe Price of the Pulpit (Part 2)\t4\t8\n15\tThe Price of the Line\t5\t8\n16\tThe Price of the Pulpit (Part 3)\t6\t8\n17\tThe Price of the Pulpit (Part 4)\t7\t8\n18\tThe Shepherd's Empty Pockets\t8\t8\n19\tThe Price of the Pulpit\t9\t8\n20\tThe Common Ground\t10\t8\n",
+  "stderr": "",
+  "execution_time_ms": 1523
+}

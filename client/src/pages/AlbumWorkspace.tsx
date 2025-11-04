@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
@@ -17,6 +17,24 @@ export default function AlbumWorkspace() {
   const { user } = useAuth();
   const [activeTrackId, setActiveTrackId] = useState<number | null>(null);
   const [improvements, setImprovements] = useState<string[]>([]);
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [copiedLyrics, setCopiedLyrics] = useState(false);
+
+  const copyToClipboard = async (text: string, type: 'prompt' | 'lyrics') => {
+    try {
+      await navigator.clipboard.writeText(text);
+      if (type === 'prompt') {
+        setCopiedPrompt(true);
+        setTimeout(() => setCopiedPrompt(false), 2000);
+      } else {
+        setCopiedLyrics(true);
+        setTimeout(() => setCopiedLyrics(false), 2000);
+      }
+      toast.success('Copied to clipboard!');
+    } catch (err) {
+      toast.error('Failed to copy');
+    }
+  };
   
   const { data: album, isLoading, refetch } = trpc.albums.get.useQuery(
     { id: parseInt(id!) },
@@ -255,7 +273,21 @@ export default function AlbumWorkspace() {
                     
                     <TabsContent value="prompt" className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Platform Prompt</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-sm font-medium">Platform Prompt</label>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(promptAsset?.content || "", 'prompt')}
+                            className="h-8"
+                          >
+                            {copiedPrompt ? (
+                              <><Check className="h-3 w-3 mr-1" /> Copied</>
+                            ) : (
+                              <><Copy className="h-3 w-3 mr-1" /> Copy</>
+                            )}
+                          </Button>
+                        </div>
                         <Textarea
                           value={promptAsset?.content || ""}
                           readOnly
@@ -270,7 +302,21 @@ export default function AlbumWorkspace() {
                     
                     <TabsContent value="lyrics" className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Lyrics</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="text-sm font-medium">Lyrics</label>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(lyricsAsset?.content || "", 'lyrics')}
+                            className="h-8"
+                          >
+                            {copiedLyrics ? (
+                              <><Check className="h-3 w-3 mr-1" /> Copied</>
+                            ) : (
+                              <><Copy className="h-3 w-3 mr-1" /> Copy</>
+                            )}
+                          </Button>
+                        </div>
                         <Textarea
                           value={lyricsAsset?.content || ""}
                           readOnly

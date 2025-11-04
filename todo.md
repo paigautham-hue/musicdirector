@@ -85,3 +85,6 @@
 - [x] Fix duplicate track title generation in album generator
 
 - [x] Regenerate duplicate tracks in current album with unique content
+
+- [x] Add delete album functionality with confirmation dialog
+- [x] Re-apply copy button improvements from previous checkpoint

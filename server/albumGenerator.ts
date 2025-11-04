@@ -75,9 +75,12 @@ export async function generateAlbum(input: AlbumGenerationInput): Promise<AlbumO
     console.error("Failed to generate cover art:", error);
   }
   
-  // Step 3: Generate all tracks in parallel
-  const trackPromises = Array.from({ length: input.trackCount }, (_, i) => 
-    generateTrack({
+  // Step 3: Generate all tracks sequentially to avoid duplicates
+  const tracks: TrackOutput[] = [];
+  const usedTitles = new Set<string>();
+  
+  for (let i = 0; i < input.trackCount; i++) {
+    const track = await generateTrack({
       albumTheme: input.theme,
       albumTitle: albumConcept.title,
       trackIndex: i + 1,
@@ -87,11 +90,22 @@ export async function generateAlbum(input: AlbumGenerationInput): Promise<AlbumO
       influences: input.influences,
       platform: input.platform,
       constraints,
-      bestPractices
-    })
-  );
-  
-  const tracks = await Promise.all(trackPromises);
+      bestPractices,
+      existingTitles: Array.from(usedTitles)
+    });
+    
+    // Ensure unique title
+    let finalTitle = track.title;
+    let attempt = 1;
+    while (usedTitles.has(finalTitle.toLowerCase())) {
+      finalTitle = `${track.title} (${attempt})`;
+      attempt++;
+    }
+    
+    track.title = finalTitle;
+    usedTitles.add(finalTitle.toLowerCase());
+    tracks.push(track);
+  }
   
   // Step 4: Calculate overall album score
   const overallScore = Math.round(
@@ -182,8 +196,9 @@ async function generateTrack(params: {
   platform: PlatformName;
   constraints: any;
   bestPractices: string[];
+  existingTitles?: string[];
 }): Promise<TrackOutput> {
-  const { albumTheme, albumTitle, trackIndex, totalTracks, vibe, language, influences, platform, constraints, bestPractices } = params;
+  const { albumTheme, albumTitle, trackIndex, totalTracks, vibe, language, influences, platform, constraints, bestPractices, existingTitles = [] } = params;
   
   // Generate main track content
   const trackContent = await invokeLLM({
@@ -214,6 +229,7 @@ Album Theme: ${albumTheme}
 Vibe/Genres: ${vibe.join(", ")}
 Language: ${language}
 ${influences?.length ? `Influences: ${influences.join(", ")}` : ""}
+${existingTitles.length > 0 ? `\nExisting track titles (DO NOT reuse): ${existingTitles.join(", ")}` : ""}
 
 Generate:
 1. Title (catchy, memorable)

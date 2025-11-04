@@ -97,3 +97,17 @@
 - [x] Add navigation (back/home buttons) to all pages
 - [x] Make home page CTA dynamic based on album count ("Create Your First Album" vs "Create Another Album")
 - [x] Add visible delete button to album cards in My Library (always visible on mobile)
+
+## Music Generation Infrastructure
+- [x] Create admin settings table for feature toggles
+- [ ] Add music generation enable/disable toggle in admin dashboard
+- [x] Build job queue system for async music generation
+- [x] Create job status tracking and progress updates
+- [x] Implement audio file storage and management in S3
+- [ ] Add audio player component with playlist support
+- [ ] Build track audio management UI (upload, preview, download)
+- [x] Update platform adapters to support real API calls
+- [ ] Add API key management in admin settings
+- [ ] Implement webhook endpoints for async completion
+- [ ] Add cost tracking and usage analytics
+- [ ] Create audio waveform visualization

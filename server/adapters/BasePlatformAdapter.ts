@@ -14,6 +14,34 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
   abstract getExportInstructions(): string;
   
   /**
+   * Generate music via API - override in subclass when API is available
+   * Default implementation throws error indicating API not configured
+   */
+  async generateMusic(params: {
+    title: string;
+    lyrics: string;
+    prompt: string;
+    style: string;
+    duration?: number;
+  }): Promise<{ jobId: string; estimatedTime?: number }> {
+    throw new Error(`Music generation API not configured for ${this.displayName}. Please add API keys in admin settings.`);
+  }
+  
+  /**
+   * Check job status - override in subclass when API is available
+   */
+  async checkJobStatus(jobId: string): Promise<{
+    completed: boolean;
+    failed: boolean;
+    progress?: number;
+    message?: string;
+    error?: string;
+    audioUrl?: string;
+  }> {
+    throw new Error(`Job status checking not configured for ${this.displayName}`);
+  }
+  
+  /**
    * Default implementation uses LLM to intelligently compress content
    */
   async autoFit(content: {

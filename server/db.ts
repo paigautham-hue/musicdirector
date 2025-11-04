@@ -3,11 +3,14 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
+  systemSettings, musicJobs, audioFiles,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
+  type SystemSetting, type MusicJob, type AudioFile,
   type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
-  type InsertAuditLog, type InsertFeatureFlag
+  type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
+  type InsertAudioFile
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -336,4 +339,58 @@ export async function getAdminAnalytics() {
     totalTracks: totalTracks.count,
     platformStats
   };
+}
+
+// System settings operations
+export async function getSystemSetting(key: string) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const result = await db.select().from(systemSettings).where(eq(systemSettings.key, key)).limit(1);
+  return result[0];
+}
+
+export async function getAllSystemSettings() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(systemSettings);
+}
+
+export async function upsertSystemSetting(setting: InsertSystemSetting) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.insert(systemSettings).values(setting).onDuplicateKeyUpdate({
+    set: {
+      value: setting.value,
+      description: setting.description,
+      updatedBy: setting.updatedBy,
+      updatedAt: new Date()
+    }
+  });
+}
+
+// Music jobs operations
+export async function getMusicJobs(params: { status?: string; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  if (params.status) {
+    return db.select().from(musicJobs)
+      .where(eq(musicJobs.status, params.status as any))
+      .orderBy(desc(musicJobs.createdAt))
+      .limit(params.limit || 50);
+  }
+  
+  return db.select().from(musicJobs)
+    .orderBy(desc(musicJobs.createdAt))
+    .limit(params.limit || 50);
+}
+
+export async function getAudioFiles(trackId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(audioFiles).where(and(eq(audioFiles.trackId, trackId), eq(audioFiles.isActive, true)));
 }

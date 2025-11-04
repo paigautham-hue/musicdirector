@@ -488,6 +488,38 @@ export const appRouter = router({
           publishedAt: new Date()
         });
         return { success: true };
+      }),
+    
+    // Get system settings
+    getSettings: adminProcedure.query(async () => {
+      return db.getAllSystemSettings();
+    }),
+    
+    // Update system setting
+    updateSetting: adminProcedure
+      .input(z.object({
+        key: z.string(),
+        value: z.string(),
+        description: z.string().optional()
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.upsertSystemSetting({
+          key: input.key,
+          value: input.value,
+          description: input.description,
+          updatedBy: ctx.user.id
+        });
+        return { success: true };
+      }),
+    
+    // Get music generation jobs
+    getMusicJobs: adminProcedure
+      .input(z.object({
+        status: z.enum(["pending", "processing", "completed", "failed"]).optional(),
+        limit: z.number().default(50)
+      }))
+      .query(async ({ input }) => {
+        return db.getMusicJobs(input);
       })
   }),
 

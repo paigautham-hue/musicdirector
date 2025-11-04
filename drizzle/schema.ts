@@ -209,3 +209,68 @@ export const featureFlags = mysqlTable("featureFlags", {
 
 export type FeatureFlag = typeof featureFlags.$inferSelect;
 export type InsertFeatureFlag = typeof featureFlags.$inferInsert;
+
+/**
+ * Music generation jobs for async processing
+ */
+export const musicJobs = mysqlTable("musicJobs", {
+  id: int("id").autoincrement().primaryKey(),
+  albumId: int("albumId").notNull(),
+  trackId: int("trackId"),
+  platform: varchar("platform", { length: 64 }).notNull(),
+  status: mysqlEnum("status", ["pending", "processing", "completed", "failed"]).default("pending").notNull(),
+  progress: int("progress").default(0), // 0-100
+  statusMessage: text("statusMessage"),
+  platformJobId: varchar("platformJobId", { length: 255 }), // External API job ID
+  errorMessage: text("errorMessage"),
+  retryCount: int("retryCount").default(0),
+  startedAt: timestamp("startedAt"),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  albumIdIdx: index("albumId_idx").on(table.albumId),
+  statusIdx: index("status_idx").on(table.status),
+  platformJobIdIdx: index("platformJobId_idx").on(table.platformJobId),
+}));
+
+export type MusicJob = typeof musicJobs.$inferSelect;
+export type InsertMusicJob = typeof musicJobs.$inferInsert;
+
+/**
+ * Generated audio files
+ */
+export const audioFiles = mysqlTable("audioFiles", {
+  id: int("id").autoincrement().primaryKey(),
+  trackId: int("trackId").notNull(),
+  jobId: int("jobId"),
+  fileUrl: text("fileUrl").notNull(), // S3 URL
+  fileKey: varchar("fileKey", { length: 512 }).notNull(), // S3 key
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileSize: int("fileSize"), // bytes
+  duration: int("duration"), // seconds
+  format: varchar("format", { length: 32 }), // mp3, wav, etc.
+  waveformData: text("waveformData"), // JSON array of amplitude values
+  isActive: boolean("isActive").default(true).notNull(), // For managing multiple versions
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  trackIdIdx: index("trackId_idx").on(table.trackId),
+  jobIdIdx: index("jobId_idx").on(table.jobId),
+}));
+
+export type AudioFile = typeof audioFiles.$inferSelect;
+export type InsertAudioFile = typeof audioFiles.$inferInsert;
+
+/**
+ * System settings for admin configuration
+ */
+export const systemSettings = mysqlTable("systemSettings", {
+  id: int("id").autoincrement().primaryKey(),
+  key: varchar("key", { length: 128 }).notNull().unique(),
+  value: text("value").notNull(), // JSON or plain text
+  description: text("description"),
+  updatedBy: int("updatedBy"),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SystemSetting = typeof systemSettings.$inferSelect;
+export type InsertSystemSetting = typeof systemSettings.$inferInsert;

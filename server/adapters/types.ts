@@ -73,4 +73,30 @@ export interface PlatformAdapter {
    * Get export instructions for manual use
    */
   getExportInstructions(): string;
+  
+  /**
+   * Generate music via API (when available)
+   */
+  generateMusic(params: {
+    title: string;
+    lyrics: string;
+    prompt: string;
+    style: string;
+    duration?: number;
+  }): Promise<{
+    jobId: string;
+    estimatedTime?: number;
+  }>;
+  
+  /**
+   * Check status of music generation job
+   */
+  checkJobStatus(jobId: string): Promise<{
+    completed: boolean;
+    failed: boolean;
+    progress?: number;
+    message?: string;
+    error?: string;
+    audioUrl?: string;
+  }>;
 }

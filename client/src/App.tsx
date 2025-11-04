@@ -10,6 +10,7 @@ import AlbumWorkspace from "./pages/AlbumWorkspace";
 import MyLibrary from "./pages/MyLibrary";
 import KnowledgeHub from "./pages/KnowledgeHub";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminSettings from "./pages/AdminSettings";
 
 function Router() {
   return (
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/library" component={MyLibrary} />
       <Route path="/knowledge" component={KnowledgeHub} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -217,12 +217,9 @@ ${JSON.stringify(constraints, null, 2)}
 Best practices:
 ${bestPractices.map((p, i) => `${i + 1}. ${p}`).join("\n")}
 
-CRITICAL: Generate COMPLETE lyrics with ALL sections marked with structure tags.
-Required structure: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Chorus], [Outro]
-Each section MUST have 4-8 lines of actual lyrics.
+Structure lyrics with clear sections: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Chorus], [Outro]
 Keep line lengths consistent (8-12 syllables per line for verses, 6-10 for chorus)
-Use sensory language and avoid clichés
-DO NOT generate incomplete lyrics - every section must be fully written out`
+Use sensory language and avoid clichés`
       },
       {
         role: "user",
@@ -239,7 +236,7 @@ Generate:
 2. Hook (one-line emotional core)
 3. Description (what the song is about, 2-3 sentences)
 4. Prompt (style/mood description for ${platform}, max ${constraints.prompt.maxChars} chars)
-5. Lyrics (COMPLETE FULL SONG with ALL structure tags and content: [Verse 1] with 4-8 lines, [Chorus] with 4-6 lines, [Verse 2] with 4-8 lines, [Chorus] repeated, [Bridge] with 4-6 lines, [Chorus] repeated, [Outro] with 2-4 lines. Max ${constraints.lyrics.maxChars || 3000} chars but aim for 800-1500 chars for completeness)
+5. Lyrics (full song with structure tags, max ${constraints.lyrics.maxChars || 3000} chars)
 6. Structure (e.g., "Verse-Chorus-Verse-Chorus-Bridge-Chorus-Outro")
 7. Tempo/BPM range (e.g., "120-130 BPM")
 8. Key suggestion (e.g., "C major" or "A minor")

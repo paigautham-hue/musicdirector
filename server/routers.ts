@@ -9,6 +9,8 @@ import { tracks } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { generateAlbum, improveTrack } from "./albumGenerator";
 import { getPlatformAdapter, PLATFORM_ADAPTERS } from "./adapters";
+import { checkContentSafety } from "./contentSafety";
+import { exportAlbumBundle } from "./exportAlbum";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== 'admin') {
@@ -42,6 +44,15 @@ export const appRouter = router({
         platform: z.enum(["suno", "udio", "elevenlabs", "mubert", "stable_audio"])
       }))
       .mutation(async ({ ctx, input }) => {
+        // Check content safety
+        const safetyCheck = await checkContentSafety({ theme: input.theme });
+        if (!safetyCheck.safe) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Content safety issues: ${safetyCheck.issues.join(", ")}. ${safetyCheck.suggestions || ""}`
+          });
+        }
+        
         // Generate the album using AI
         const generated = await generateAlbum(input);
         
@@ -243,6 +254,50 @@ export const appRouter = router({
         await db.updateAlbum(input.albumId, { platform: input.targetPlatform });
         
         return { success: true };
+      }),
+    
+    // Export album bundle
+    export: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.id);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        const exportData = await exportAlbumBundle(input.id);
+        
+        await db.createAuditLog({
+          userId: ctx.user.id,
+          action: "album_exported",
+          payload: JSON.stringify({ albumId: input.id })
+        });
+        
+        return exportData;
+      }),
+    
+    // Generate share link
+    createShareLink: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album || album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        const shareToken = Math.random().toString(36).substring(2, 15);
+        
+        await db.createAuditLog({
+          userId: ctx.user.id,
+          action: "share_link_created",
+          payload: JSON.stringify({ albumId: input.albumId, shareToken })
+        });
+        
+        return { shareToken, shareUrl: `/share/${shareToken}` };
       })
   }),
 

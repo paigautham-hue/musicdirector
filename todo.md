@@ -92,3 +92,8 @@
 ## New Issues
 - [x] Fix validation error: "The string did not match the expected pattern"
 - [x] Add detailed progress indicator showing current stage and track number during album generation
+
+## UI Improvements
+- [x] Add navigation (back/home buttons) to all pages
+- [x] Make home page CTA dynamic based on album count ("Create Your First Album" vs "Create Another Album")
+- [x] Add visible delete button to album cards in My Library (always visible on mobile)

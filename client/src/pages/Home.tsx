@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, Sparkles, Zap, Star, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
@@ -7,6 +8,8 @@ import { APP_TITLE, getLoginUrl } from "@/const";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
+  const { data: albums } = trpc.albums.list.useQuery({ limit: 1 }, { enabled: isAuthenticated });
+  const hasAlbums = albums && albums.length > 0;
 
   const featuredThemes = [
     {
@@ -102,7 +105,7 @@ export default function Home() {
                 <Button asChild size="lg" className="text-lg px-8 py-6">
                   <Link href="/new">
                     <a className="flex items-center gap-2">
-                      Create Your First Album
+                      {hasAlbums ? "Create Another Album" : "Create Your First Album"}
                       <ArrowRight className="w-5 h-5" />
                     </a>
                   </Link>

@@ -1,0 +1,130 @@
+{
+  "query": "SELECT id, albumId, `index`, title FROM tracks ORDER BY albumId DESC, `index` LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, albumId, `index`, title FROM tracks ORDER BY albumId DESC, `index` LIMIT 20",
+  "rows": [
+    {
+      "id": "11",
+      "albumId": "2",
+      "index": "1",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "12",
+      "albumId": "2",
+      "index": "2",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "13",
+      "albumId": "2",
+      "index": "3",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "14",
+      "albumId": "2",
+      "index": "4",
+      "title": "The Price of the Pulpit (Part 2)"
+    },
+    {
+      "id": "15",
+      "albumId": "2",
+      "index": "5",
+      "title": "The Price of the Line"
+    },
+    {
+      "id": "16",
+      "albumId": "2",
+      "index": "6",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "17",
+      "albumId": "2",
+      "index": "7",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "18",
+      "albumId": "2",
+      "index": "8",
+      "title": "The Shepherd's Empty Pockets"
+    },
+    {
+      "id": "19",
+      "albumId": "2",
+      "index": "9",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "20",
+      "albumId": "2",
+      "index": "10",
+      "title": "The Common Ground"
+    },
+    {
+      "id": "1",
+      "albumId": "1",
+      "index": "1",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "2",
+      "albumId": "1",
+      "index": "2",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "3",
+      "albumId": "1",
+      "index": "3",
+      "title": "The Gospel of Greenbacks"
+    },
+    {
+      "id": "4",
+      "albumId": "1",
+      "index": "4",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "5",
+      "albumId": "1",
+      "index": "5",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "6",
+      "albumId": "1",
+      "index": "6",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "7",
+      "albumId": "1",
+      "index": "7",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "8",
+      "albumId": "1",
+      "index": "8",
+      "title": "The Gospel of Division"
+    },
+    {
+      "id": "9",
+      "albumId": "1",
+      "index": "9",
+      "title": "The Price of Painted Lines"
+    },
+    {
+      "id": "10",
+      "albumId": "1",
+      "index": "10",
+      "title": "The Only Bridge Worth Building"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\talbumId\tindex\ttitle\n11\t2\t1\tThe High Cost of Division\n12\t2\t2\tThe High Cost of Division\n13\t2\t3\tThe Price of the Pulpit\n14\t2\t4\tThe Price of the Pulpit (Part 2)\n15\t2\t5\tThe Price of the Line\n16\t2\t6\tThe Price of the Pulpit\n17\t2\t7\tThe Price of the Pulpit\n18\t2\t8\tThe Shepherd's Empty Pockets\n19\t2\t9\tThe Price of the Pulpit\n20\t2\t10\tThe Common Ground\n1\t1\t1\tThe High Cost of Division\n2\t1\t2\tThe High Cost of Division\n3\t1\t3\tThe Gospel of Greenbacks\n4\t1\t4\tThe Price of the Pulpit\n5\t1\t5\tThe Price of the Pulpit\n6\t1\t6\tThe Price of the Pulpit\n7\t1\t7\tThe Price of the Pulpit\n8\t1\t8\tThe Gospel of Division\n9\t1\t9\tThe Price of Painted Lines\n10\t1\t10\tThe Only Bridge Worth Building\n",
+  "stderr": "",
+  "execution_time_ms": 1615
+}

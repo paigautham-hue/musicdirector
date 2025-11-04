@@ -1,0 +1,60 @@
+{
+  "query": "SELECT id, `index`, title FROM tracks WHERE albumId = (SELECT albumId FROM tracks WHERE title = 'The Price of the Pulpit' LIMIT 1) ORDER BY `index`",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, `index`, title FROM tracks WHERE albumId = (SELECT albumId FROM tracks WHERE title = 'The Price of the Pulpit' LIMIT 1) ORDER BY `index`",
+  "rows": [
+    {
+      "id": "1",
+      "index": "1",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "2",
+      "index": "2",
+      "title": "The High Cost of Division"
+    },
+    {
+      "id": "3",
+      "index": "3",
+      "title": "The Gospel of Greenbacks"
+    },
+    {
+      "id": "4",
+      "index": "4",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "5",
+      "index": "5",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "6",
+      "index": "6",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "7",
+      "index": "7",
+      "title": "The Price of the Pulpit"
+    },
+    {
+      "id": "8",
+      "index": "8",
+      "title": "The Gospel of Division"
+    },
+    {
+      "id": "9",
+      "index": "9",
+      "title": "The Price of Painted Lines"
+    },
+    {
+      "id": "10",
+      "index": "10",
+      "title": "The Only Bridge Worth Building"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tindex\ttitle\n1\t1\tThe High Cost of Division\n2\t2\tThe High Cost of Division\n3\t3\tThe Gospel of Greenbacks\n4\t4\tThe Price of the Pulpit\n5\t5\tThe Price of the Pulpit\n6\t6\tThe Price of the Pulpit\n7\t7\tThe Price of the Pulpit\n8\t8\tThe Gospel of Division\n9\t9\tThe Price of Painted Lines\n10\t10\tThe Only Bridge Worth Building\n",
+  "stderr": "",
+  "execution_time_ms": 1525
+}

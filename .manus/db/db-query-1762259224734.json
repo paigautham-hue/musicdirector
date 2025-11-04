@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE tracks SET title = 'The Price of the Pulpit (Part 2)' WHERE `index` = 4 AND title = 'The Price of the Pulpit' AND albumId IN (SELECT albumId FROM (SELECT albumId FROM tracks WHERE title = 'The Price of the Pulpit' GROUP BY albumId HAVING COUNT(*) > 1) AS temp) LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute UPDATE tracks SET title = 'The Price of the Pulpit (Part 2)' WHERE `index` = 4 AND title = 'The Price of the Pulpit' AND albumId IN (SELECT albumId FROM (SELECT albumId FROM tracks WHERE title = 'The Price of the Pulpit' GROUP BY albumId HAVING COUNT(*) > 1) AS temp) LIMIT 1",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1566
+}

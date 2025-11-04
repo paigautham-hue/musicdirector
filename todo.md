@@ -83,3 +83,5 @@
 
 ## Bug Fixes
 - [x] Fix duplicate track title generation in album generator
+
+- [x] Regenerate duplicate tracks in current album with unique content

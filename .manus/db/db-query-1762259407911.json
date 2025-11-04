@@ -1,0 +1,21 @@
+{
+  "query": "SELECT a.id, a.title, a.theme, a.platform, a.vibe, a.language, a.influences, a.trackCount, GROUP_CONCAT(t.title ORDER BY t.`index` SEPARATOR ' | ') as track_titles FROM albums a LEFT JOIN tracks t ON a.id = t.albumId WHERE a.id = (SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1) GROUP BY a.id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT a.id, a.title, a.theme, a.platform, a.vibe, a.language, a.influences, a.trackCount, GROUP_CONCAT(t.title ORDER BY t.`index` SEPARATOR ' | ') as track_titles FROM albums a LEFT JOIN tracks t ON a.id = t.albumId WHERE a.id = (SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1) GROUP BY a.id",
+  "rows": [
+    {
+      "id": "2",
+      "title": "The High Cost of Division",
+      "theme": "Country songs with deep meaning about how  politicians and religion is a business, how they divide people by various means for self benefit instead of bring people together ",
+      "platform": "suno",
+      "vibe": "[\"Inspirational\"]",
+      "language": "en",
+      "influences": "[\"Country like the gambler from Kenny rogers\"]",
+      "trackCount": "10",
+      "track_titles": "The High Cost of Division | The High Cost of Division | The Price of the Pulpit | The Price of the Pulpit (Part 2) | The Price of the Line | The Price of the Pulpit (Part 3) | The Price of the Pulpit (Part 4) | The Shepherd's Empty Pockets | The Price of the Pulpit | The Common Ground"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\ttheme\tplatform\tvibe\tlanguage\tinfluences\ttrackCount\ttrack_titles\n2\tThe High Cost of Division\tCountry songs with deep meaning about how  politicians and religion is a business, how they divide people by various means for self benefit instead of bring people together \tsuno\t[\"Inspirational\"]\ten\t[\"Country like the gambler from Kenny rogers\"]\t10\tThe High Cost of Division | The High Cost of Division | The Price of the Pulpit | The Price of the Pulpit (Part 2) | The Price of the Line | The Price of the Pulpit (Part 3) | The Price of the Pulpit (Part 4) | The Shepherd's Empty Pockets | The Price of the Pulpit | The Common Ground\n",
+  "stderr": "",
+  "execution_time_ms": 1546
+}

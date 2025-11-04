@@ -1,0 +1,13 @@
+{
+  "query": "SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id FROM albums ORDER BY createdAt DESC LIMIT 1",
+  "rows": [
+    {
+      "id": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\n2\n",
+  "stderr": "",
+  "execution_time_ms": 1536
+}

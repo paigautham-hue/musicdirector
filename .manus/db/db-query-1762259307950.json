@@ -1,0 +1,157 @@
+{
+  "query": "SELECT t.id, t.`index`, t.title, ta.type, LEFT(ta.content, 100) as content_preview FROM tracks t JOIN trackAssets ta ON t.id = ta.trackId WHERE t.title LIKE '%Price of the Pulpit%' AND ta.type IN ('lyrics', 'prompt') ORDER BY t.`index`, ta.type LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT t.id, t.`index`, t.title, ta.type, LEFT(ta.content, 100) as content_preview FROM tracks t JOIN trackAssets ta ON t.id = ta.trackId WHERE t.title LIKE '%Price of the Pulpit%' AND ta.type IN ('lyrics', 'prompt') ORDER BY t.`index`, ta.type LIMIT 20",
+  "rows": [
+    {
+      "id": "13",
+      "index": "3",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] [Mid-tempo groove] [Storytelling vocals] Acoustic guitar focus, pedal steel accents"
+    },
+    {
+      "id": "13",
+      "index": "3",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "4",
+      "index": "4",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] [Inspirational] [Storytelling] Mid-tempo groove with acoustic guitar, pedal steel, "
+    },
+    {
+      "id": "14",
+      "index": "4",
+      "title": "The Price of the Pulpit (Part 2)",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] [Storytelling] mid-tempo groove, Kenny Rogers style, acoustic guitar lead, soaring "
+    },
+    {
+      "id": "4",
+      "index": "4",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "14",
+      "index": "4",
+      "title": "The Price of the Pulpit (Part 2)",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "5",
+      "index": "5",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] [Acoustic Storytelling] Mid-tempo groove with deep male vocals, classic pedal steel"
+    },
+    {
+      "id": "5",
+      "index": "5",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "6",
+      "index": "6",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] Mid-tempo groove, melancholic yet hopeful, storytelling vocals, acoustic guitar lea"
+    },
+    {
+      "id": "16",
+      "index": "6",
+      "title": "The Price of the Pulpit (Part 3)",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] Mid-tempo groove, Kenny Rogers style storytelling, acoustic guitar focus, smooth ma"
+    },
+    {
+      "id": "6",
+      "index": "6",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "16",
+      "index": "6",
+      "title": "The Price of the Pulpit (Part 3)",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "17",
+      "index": "7",
+      "title": "The Price of the Pulpit (Part 4)",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] Mid-tempo groove, acoustic guitar driven, warm pedal steel, subtle strings, male vo"
+    },
+    {
+      "id": "7",
+      "index": "7",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] [Storytelling] mid-tempo, acoustic guitar intro, warm male vocals, pedal steel guit"
+    },
+    {
+      "id": "7",
+      "index": "7",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "17",
+      "index": "7",
+      "title": "The Price of the Pulpit (Part 4)",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    },
+    {
+      "id": "19",
+      "index": "9",
+      "title": "The Price of the Pulpit",
+      "type": "prompt",
+      "content_preview": "[Country Ballad] Mid-tempo, reflective, and wise, featuring acoustic guitar, pedal steel, gentle pia"
+    },
+    {
+      "id": "19",
+      "index": "9",
+      "title": "The Price of the Pulpit",
+      "type": "lyrics",
+      "content_preview": "[Verse 1]"
+    }
+  ],
+  "messages": [
+    "I saw a man in a tailored suit, standing on a stage so high",
+    "He talked about the coming roo",
+    "I saw the man on the screen last night, dressed in a suit of pure white light",
+    "He spoke of ",
+    "I saw the man on the television screen,",
+    "Selling hope and fear, a well-oiled machine.",
+    "He sp",
+    "I heard the preacher on the radio this morning",
+    "His voice was velvet, smooth as river stone",
+    "I saw the man on the television screen,",
+    "Selling hope like a brand new washing machine.",
+    "He ",
+    "I saw the man in the tailored suit, standing tall on the Sunday stage",
+    "He spoke of fire and",
+    "I saw the preacher on the television screen,",
+    "His suit was tailored, his message was too cl",
+    "I've seen the billboards and the steeples rise so high,",
+    "And the politicians promising pie ",
+    "I saw the man on the television screen,",
+    "Selling hope like a brand new washing machine."
+  ],
+  "stdout": "id\tindex\ttitle\ttype\tcontent_preview\n13\t3\tThe Price of the Pulpit\tprompt\t[Country Ballad] [Mid-tempo groove] [Storytelling vocals] Acoustic guitar focus, pedal steel accents\n13\t3\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI saw a man in a tailored suit, standing on a stage so high\nHe talked about the coming roo\n4\t4\tThe Price of the Pulpit\tprompt\t[Country Ballad] [Inspirational] [Storytelling] Mid-tempo groove with acoustic guitar, pedal steel, \n14\t4\tThe Price of the Pulpit (Part 2)\tprompt\t[Country Ballad] [Storytelling] mid-tempo groove, Kenny Rogers style, acoustic guitar lead, soaring \n4\t4\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI saw the man on the screen last night, dressed in a suit of pure white light\nHe spoke of \n14\t4\tThe Price of the Pulpit (Part 2)\tlyrics\t[Verse 1]\nI saw the man on the television screen,\nSelling hope and fear, a well-oiled machine.\nHe sp\n5\t5\tThe Price of the Pulpit\tprompt\t[Country Ballad] [Acoustic Storytelling] Mid-tempo groove with deep male vocals, classic pedal steel\n5\t5\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI heard the preacher on the radio this morning\nHis voice was velvet, smooth as river stone\n6\t6\tThe Price of the Pulpit\tprompt\t[Country Ballad] Mid-tempo groove, melancholic yet hopeful, storytelling vocals, acoustic guitar lea\n16\t6\tThe Price of the Pulpit (Part 3)\tprompt\t[Country Ballad] Mid-tempo groove, Kenny Rogers style storytelling, acoustic guitar focus, smooth ma\n6\t6\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI saw the man on the television screen,\nSelling hope like a brand new washing machine.\nHe \n16\t6\tThe Price of the Pulpit (Part 3)\tlyrics\t[Verse 1]\nI saw the man in the tailored suit, standing tall on the Sunday stage\nHe spoke of fire and\n17\t7\tThe Price of the Pulpit (Part 4)\tprompt\t[Country Ballad] Mid-tempo groove, acoustic guitar driven, warm pedal steel, subtle strings, male vo\n7\t7\tThe Price of the Pulpit\tprompt\t[Country Ballad] [Storytelling] mid-tempo, acoustic guitar intro, warm male vocals, pedal steel guit\n7\t7\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI saw the preacher on the television screen,\nHis suit was tailored, his message was too cl\n17\t7\tThe Price of the Pulpit (Part 4)\tlyrics\t[Verse 1]\nI've seen the billboards and the steeples rise so high,\nAnd the politicians promising pie \n19\t9\tThe Price of the Pulpit\tprompt\t[Country Ballad] Mid-tempo, reflective, and wise, featuring acoustic guitar, pedal steel, gentle pia\n19\t9\tThe Price of the Pulpit\tlyrics\t[Verse 1]\nI saw the man on the television screen,\nSelling hope like a brand new washing machine.\n\n",
+  "stderr": "",
+  "execution_time_ms": 1572
+}

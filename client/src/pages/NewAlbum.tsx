@@ -1,0 +1,377 @@
+import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Music, ArrowLeft, ArrowRight, Loader2, X } from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { toast } from "sonner";
+import { APP_TITLE, getLoginUrl } from "@/const";
+
+export default function NewAlbum() {
+  const { user, isAuthenticated } = useAuth();
+  const [, setLocation] = useLocation();
+  const [step, setStep] = useState(1);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Form state
+  const [theme, setTheme] = useState("");
+  const [vibeInput, setVibeInput] = useState("");
+  const [vibes, setVibes] = useState<string[]>([]);
+  const [language, setLanguage] = useState("en");
+  const [audience, setAudience] = useState("");
+  const [influenceInput, setInfluenceInput] = useState("");
+  const [influences, setInfluences] = useState<string[]>([]);
+  const [platform, setPlatform] = useState<string>("suno");
+  const [trackCount, setTrackCount] = useState(10);
+
+  const createAlbumMutation = trpc.albums.create.useMutation({
+    onSuccess: (data) => {
+      toast.success("Album created successfully!");
+      setLocation(`/album/${data.albumId}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to create album");
+      setIsGenerating(false);
+    }
+  });
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle>Sign In Required</CardTitle>
+            <CardDescription>Please sign in to create albums</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <a href={getLoginUrl()}>Sign In</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const addVibe = () => {
+    if (vibeInput.trim() && !vibes.includes(vibeInput.trim())) {
+      setVibes([...vibes, vibeInput.trim()]);
+      setVibeInput("");
+    }
+  };
+
+  const removeVibe = (vibe: string) => {
+    setVibes(vibes.filter(v => v !== vibe));
+  };
+
+  const addInfluence = () => {
+    if (influenceInput.trim() && !influences.includes(influenceInput.trim())) {
+      setInfluences([...influences, influenceInput.trim()]);
+      setInfluenceInput("");
+    }
+  };
+
+  const removeInfluence = (influence: string) => {
+    setInfluences(influences.filter(i => i !== influence));
+  };
+
+  const handleSubmit = async () => {
+    if (!theme || vibes.length === 0) {
+      toast.error("Please fill in required fields");
+      return;
+    }
+
+    setIsGenerating(true);
+    createAlbumMutation.mutate({
+      theme,
+      vibe: vibes,
+      language,
+      audience: audience || undefined,
+      influences: influences.length > 0 ? influences : undefined,
+      trackCount,
+      platform: platform as any
+    });
+  };
+
+  const canProceed = () => {
+    switch (step) {
+      case 1: return theme.length > 0;
+      case 2: return vibes.length > 0;
+      case 3: return platform.length > 0;
+      case 4: return trackCount > 0;
+      default: return false;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="border-b border-border/50 backdrop-blur-xl sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/">
+              <a className="flex items-center gap-2 text-2xl font-bold">
+                <Music className="w-8 h-8 text-primary" />
+                <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  {APP_TITLE}
+                </span>
+              </a>
+            </Link>
+            <Link href="/">
+              <Button variant="ghost">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <div className="container mx-auto px-6 py-12">
+        <div className="max-w-3xl mx-auto">
+          {/* Progress */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              {[1, 2, 3, 4].map((s) => (
+                <div key={s} className="flex items-center">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
+                    s === step ? 'bg-primary text-primary-foreground' :
+                    s < step ? 'bg-primary/20 text-primary' :
+                    'bg-muted text-muted-foreground'
+                  }`}>
+                    {s}
+                  </div>
+                  {s < 4 && <div className={`w-20 h-1 mx-2 ${s < step ? 'bg-primary' : 'bg-muted'}`} />}
+                </div>
+              ))}
+            </div>
+            <div className="text-center">
+              <h2 className="text-2xl font-bold">
+                {step === 1 && "Theme & Concept"}
+                {step === 2 && "Style & Influences"}
+                {step === 3 && "Platform Selection"}
+                {step === 4 && "Track Count & Review"}
+              </h2>
+            </div>
+          </div>
+
+          {/* Step Content */}
+          <Card className="bg-card/50 backdrop-blur">
+            <CardContent className="pt-6">
+              {step === 1 && (
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="theme" className="text-lg font-semibold">
+                      What's your album about? *
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Describe the theme, concept, or message in one sentence
+                    </p>
+                    <Textarea
+                      id="theme"
+                      placeholder="e.g., Songs inspired by Osho's teachings about awareness and celebration"
+                      value={theme}
+                      onChange={(e) => setTheme(e.target.value)}
+                      rows={4}
+                      className="text-lg"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="language">Language</Label>
+                    <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="es">Spanish</SelectItem>
+                        <SelectItem value="fr">French</SelectItem>
+                        <SelectItem value="de">German</SelectItem>
+                        <SelectItem value="it">Italian</SelectItem>
+                        <SelectItem value="pt">Portuguese</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="audience">Target Audience (Optional)</Label>
+                    <Input
+                      id="audience"
+                      placeholder="e.g., Young adults seeking spiritual growth"
+                      value={audience}
+                      onChange={(e) => setAudience(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="vibe" className="text-lg font-semibold">
+                      Vibe & Genres *
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Add genres, moods, and vibes (press Enter to add)
+                    </p>
+                    <div className="flex gap-2 mb-3">
+                      <Input
+                        id="vibe"
+                        placeholder="e.g., ambient, meditative, uplifting"
+                        value={vibeInput}
+                        onChange={(e) => setVibeInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addVibe())}
+                      />
+                      <Button onClick={addVibe} type="button">Add</Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {vibes.map((vibe) => (
+                        <Badge key={vibe} variant="secondary" className="text-sm px-3 py-1">
+                          {vibe}
+                          <X className="w-3 h-3 ml-2 cursor-pointer" onClick={() => removeVibe(vibe)} />
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="influence">Influences (Optional)</Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Add artist styles or eras for inspiration (non-infringing descriptions only)
+                    </p>
+                    <div className="flex gap-2 mb-3">
+                      <Input
+                        id="influence"
+                        placeholder="e.g., 80s synthwave, acoustic folk style"
+                        value={influenceInput}
+                        onChange={(e) => setInfluenceInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addInfluence())}
+                      />
+                      <Button onClick={addInfluence} type="button">Add</Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {influences.map((influence) => (
+                        <Badge key={influence} variant="outline" className="text-sm px-3 py-1">
+                          {influence}
+                          <X className="w-3 h-3 ml-2 cursor-pointer" onClick={() => removeInfluence(influence)} />
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="space-y-6">
+                  <div>
+                    <Label className="text-lg font-semibold mb-4 block">
+                      Choose Your Platform *
+                    </Label>
+                    <div className="grid gap-4">
+                      {[
+                        { value: "suno", name: "Suno AI", desc: "Popular AI music generator with lyrics support" },
+                        { value: "udio", name: "Udio", desc: "High-quality AI music with natural vocals" },
+                        { value: "elevenlabs", name: "ElevenLabs Music", desc: "Instrumental music generation" },
+                        { value: "mubert", name: "Mubert", desc: "AI-generated background music" },
+                        { value: "stable_audio", name: "Stable Audio", desc: "Precise control over audio generation" }
+                      ].map((p) => (
+                        <Card
+                          key={p.value}
+                          className={`cursor-pointer transition-all ${
+                            platform === p.value
+                              ? 'border-primary bg-primary/10'
+                              : 'border-border/50 hover:border-primary/50'
+                          }`}
+                          onClick={() => setPlatform(p.value)}
+                        >
+                          <CardHeader>
+                            <CardTitle className="text-lg">{p.name}</CardTitle>
+                            <CardDescription>{p.desc}</CardDescription>
+                          </CardHeader>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {step === 4 && (
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="trackCount" className="text-lg font-semibold">
+                      Number of Tracks
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      How many songs should be in this album? (1-20)
+                    </p>
+                    <Input
+                      id="trackCount"
+                      type="number"
+                      min="1"
+                      max="20"
+                      value={trackCount}
+                      onChange={(e) => setTrackCount(parseInt(e.target.value) || 1)}
+                      className="text-lg"
+                    />
+                  </div>
+                  <div className="bg-muted/50 rounded-lg p-6 space-y-3">
+                    <h3 className="font-semibold text-lg">Review Your Album</h3>
+                    <div className="space-y-2 text-sm">
+                      <p><span className="text-muted-foreground">Theme:</span> {theme}</p>
+                      <p><span className="text-muted-foreground">Vibes:</span> {vibes.join(", ")}</p>
+                      <p><span className="text-muted-foreground">Platform:</span> {platform}</p>
+                      <p><span className="text-muted-foreground">Tracks:</span> {trackCount}</p>
+                      <p><span className="text-muted-foreground">Language:</span> {language}</p>
+                      {audience && <p><span className="text-muted-foreground">Audience:</span> {audience}</p>}
+                      {influences.length > 0 && <p><span className="text-muted-foreground">Influences:</span> {influences.join(", ")}</p>}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between mt-8">
+            <Button
+              variant="outline"
+              onClick={() => setStep(step - 1)}
+              disabled={step === 1 || isGenerating}
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Previous
+            </Button>
+            {step < 4 ? (
+              <Button
+                onClick={() => setStep(step + 1)}
+                disabled={!canProceed()}
+              >
+                Next
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                disabled={isGenerating || !canProceed()}
+                className="min-w-[200px]"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Generating Album...
+                  </>
+                ) : (
+                  "Create Album"
+                )}
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

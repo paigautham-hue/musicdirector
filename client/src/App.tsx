@@ -14,6 +14,7 @@ import AdminSettings from "./pages/AdminSettings";
 import AdminUserQuotas from "./pages/AdminUserQuotas";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import Gallery from "./pages/Gallery";
+import ImpactStories from "./pages/ImpactStories";
 
 function Router() {
   return (
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/admin/quotas" component={AdminUserQuotas} />
       <Route path="/admin/analytics" component={AdminAnalytics} />
       <Route path="/gallery" component={Gallery} />
+      <Route path="/impact-stories" component={ImpactStories} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

@@ -175,3 +175,13 @@
 - [x] Make delete button more visible and prominent in Library page
 - [x] Ensure delete buttons are clearly visible on all devices
 - [x] Test deletion functionality
+
+## Impact Stories Feature
+- [x] Research influential songs that had positive impact on communities/countries
+- [x] Create Impact Stories page with curated content
+- [x] Add categories: Social Change, Unity & Peace, Healing & Hope, Cultural Movements
+- [x] Design card-based layout with images and impact stories
+- [x] Add Impact Stories link to main navigation
+- [x] Add featured Impact Stories section to home page
+- [x] Add inspiring tagline about unity and positive impact to home page
+- [x] Test navigation and content display

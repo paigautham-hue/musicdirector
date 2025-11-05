@@ -87,6 +87,11 @@ export default function Home() {
                       Gallery
                     </a>
                   </Link>
+                  <Link href="/impact-stories">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                      Impact Stories
+                    </a>
+                  </Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin">
                       <a className="text-foreground/80 hover:text-foreground transition-colors">
@@ -165,6 +170,11 @@ export default function Home() {
               Turn your themes and ideas into complete music albums with AI-generated lyrics, 
               prompts, artwork, and platform-optimized content for Suno, Udio, and more.
             </p>
+            <div className="pt-4">
+              <p className="text-lg md:text-xl font-medium bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent max-w-3xl mx-auto">
+                ✨ Create music that unites people, inspires change, and brings positive impact to humanity ✨
+              </p>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               {isAuthenticated ? (
                 <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-lg shadow-primary/50">
@@ -278,6 +288,63 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Impact Stories Preview */}
+      <section className="py-20 border-t border-border/50 relative bg-gradient-to-b from-transparent via-accent/5 to-transparent">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              Music That Changed the World
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Be inspired by songs that united communities, raised awareness, and brought hope to millions
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <Card className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border-red-500/30 hover:border-red-500/50 transition-all">
+              <CardHeader>
+                <CardTitle className="text-xl">We Are the World</CardTitle>
+                <CardDescription>USA for Africa • 1985</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Raised over $63 million for African famine relief, uniting 45 artists in history's most successful charity single.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/30 hover:border-blue-500/50 transition-all">
+              <CardHeader>
+                <CardTitle className="text-xl">Imagine</CardTitle>
+                <CardDescription>John Lennon • 1971</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Global anthem for peace and unity, inspiring movements worldwide with its vision of a world without borders.
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="bg-gradient-to-br from-purple-500/10 to-indigo-500/10 border-purple-500/30 hover:border-purple-500/50 transition-all">
+              <CardHeader>
+                <CardTitle className="text-xl">We Shall Overcome</CardTitle>
+                <CardDescription>Various Artists • 1960</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  Anthem of the Civil Rights Movement, giving voice to millions fighting for equality and justice.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="text-center">
+            <Link href="/impact-stories">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
+                Explore All Impact Stories
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA with Visual Flair */}
       <section className="py-20 border-t border-border/50 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
@@ -325,6 +392,11 @@ export default function Home() {
               <Link href="/knowledge">
                 <a className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                   Knowledge Hub
+                </a>
+              </Link>
+              <Link href="/impact-stories">
+                <a className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  Impact Stories
                 </a>
               </Link>
             </div>

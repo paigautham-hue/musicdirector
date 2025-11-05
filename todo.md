@@ -170,3 +170,8 @@
 - [x] Display current user name/email in navigation
 - [x] Ensure Admin link is visible for admin users
 - [x] Test admin access with paigautham@gmail.com
+
+## Delete Functionality
+- [x] Make delete button more visible and prominent in Library page
+- [x] Ensure delete buttons are clearly visible on all devices
+- [x] Test deletion functionality

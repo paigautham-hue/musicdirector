@@ -60,7 +60,7 @@ export default function MyLibrary() {
             {albums.map((album) => (
               <div key={album.id} className="relative group">
                 <Link href={`/album/${album.id}`}>
-                  <Card className="cursor-pointer hover:border-primary/50 transition-all">
+                  <Card className="cursor-pointer hover:border-primary/50 transition-all h-full">
                     {album.coverUrl && (
                       <img src={album.coverUrl} alt={album.title} className="w-full h-48 object-cover rounded-t-lg" />
                     )}
@@ -76,35 +76,40 @@ export default function MyLibrary() {
                     </CardContent>
                   </Card>
                 </Link>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shadow-lg"
-                      onClick={(e) => handleDelete(e, album.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Album?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete "{album.title}"? This action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteMutation.mutate({ id: album.id })}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                
+                {/* Delete Button - Always visible with better styling */}
+                <div className="absolute top-3 right-3 z-10">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="shadow-lg hover:scale-110 transition-transform"
+                        onClick={(e) => handleDelete(e, album.id)}
                       >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        <span className="hidden sm:inline">Delete</span>
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Album?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete "{album.title}"? This action cannot be undone and will delete all tracks and assets.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => deleteMutation.mutate({ id: album.id })}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete Album
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
             ))}
           </div>

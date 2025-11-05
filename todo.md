@@ -243,3 +243,10 @@
 - [x] Implement webhook handlers for payment events
 - [ ] Test payment flow
 - [x] Add payment history page
+
+## Album Generation JSON Parsing Error
+- [x] Debug why LLM returns markdown instead of JSON
+- [x] Fix JSON parsing to handle markdown-wrapped responses
+- [x] Ensure response_format is properly set for structured output
+- [x] Add fallback JSON extraction from markdown code blocks
+- [ ] Test album generation end-to-end

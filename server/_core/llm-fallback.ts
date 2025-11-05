@@ -92,7 +92,7 @@ function normalizeMessage(message: Message) {
 }
 
 async function invokeForge(config: ProviderConfig, params: InvokeParams): Promise<InvokeResult> {
-  const { messages, tools, toolChoice, tool_choice } = params;
+  const { messages, tools, toolChoice, tool_choice, response_format } = params;
   
   const payload: Record<string, unknown> = {
     model: config.model,
@@ -107,6 +107,10 @@ async function invokeForge(config: ProviderConfig, params: InvokeParams): Promis
   
   if (toolChoice || tool_choice) {
     payload.tool_choice = toolChoice || tool_choice;
+  }
+  
+  if (response_format) {
+    payload.response_format = response_format;
   }
   
   const response = await fetch(config.endpoint, {
@@ -127,7 +131,7 @@ async function invokeForge(config: ProviderConfig, params: InvokeParams): Promis
 }
 
 async function invokeAnthropic(config: ProviderConfig, params: InvokeParams): Promise<InvokeResult> {
-  const { messages } = params;
+  const { messages, response_format } = params;
   
   // Separate system message from other messages
   const systemMessage = messages.find(m => m.role === "system");
@@ -141,7 +145,16 @@ async function invokeAnthropic(config: ProviderConfig, params: InvokeParams): Pr
   
   if (systemMessage) {
     const normalized = normalizeMessage(systemMessage);
-    payload.system = normalized.content;
+    let systemContent = normalized.content;
+    
+    // If response_format is set, add JSON instruction to system prompt
+    if (response_format) {
+      systemContent += "\n\nIMPORTANT: You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly.";
+    }
+    
+    payload.system = systemContent;
+  } else if (response_format) {
+    payload.system = "You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly.";
   }
   
   const response = await fetch(config.endpoint, {
@@ -183,7 +196,7 @@ async function invokeAnthropic(config: ProviderConfig, params: InvokeParams): Pr
 }
 
 async function invokeGemini(config: ProviderConfig, params: InvokeParams): Promise<InvokeResult> {
-  const { messages } = params;
+  const { messages, response_format } = params;
   
   // Separate system message
   const systemMessage = messages.find(m => m.role === "system");
@@ -197,17 +210,33 @@ async function invokeGemini(config: ProviderConfig, params: InvokeParams): Promi
     };
   });
   
+  const generationConfig: Record<string, unknown> = {
+    maxOutputTokens: 8192,
+  };
+  
+  if (response_format) {
+    generationConfig.response_mime_type = "application/json";
+  }
+  
   const payload: Record<string, unknown> = {
     contents,
-    generationConfig: {
-      maxOutputTokens: 8192,
-    },
+    generationConfig,
   };
   
   if (systemMessage) {
     const normalized = normalizeMessage(systemMessage);
+    let systemContent = normalized.content;
+    
+    if (response_format) {
+      systemContent += "\n\nIMPORTANT: You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly.";
+    }
+    
     payload.systemInstruction = {
-      parts: [{ text: normalized.content }],
+      parts: [{ text: systemContent }],
+    };
+  } else if (response_format) {
+    payload.systemInstruction = {
+      parts: [{ text: "You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly." }],
     };
   }
   
@@ -253,11 +282,29 @@ async function invokeGemini(config: ProviderConfig, params: InvokeParams): Promi
 }
 
 async function invokeGrok(config: ProviderConfig, params: InvokeParams): Promise<InvokeResult> {
-  const { messages } = params;
+  const { messages, response_format } = params;
+  
+  let processedMessages = messages.map(normalizeMessage);
+  
+  // If response_format is set, add JSON instruction to system message
+  if (response_format) {
+    const systemIndex = processedMessages.findIndex(m => m.role === "system");
+    if (systemIndex >= 0) {
+      processedMessages[systemIndex] = {
+        ...processedMessages[systemIndex],
+        content: processedMessages[systemIndex].content + "\n\nIMPORTANT: You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly."
+      };
+    } else {
+      processedMessages = [
+        { role: "system", content: "You must respond with valid JSON only. Do not wrap the JSON in markdown code blocks or add any explanation. Output raw JSON directly." },
+        ...processedMessages
+      ];
+    }
+  }
   
   const payload: Record<string, unknown> = {
     model: config.model,
-    messages: messages.map(normalizeMessage),
+    messages: processedMessages,
     max_tokens: 8192,
   };
   
@@ -300,6 +347,26 @@ async function invokeProvider(provider: LLMProvider, params: InvokeParams): Prom
   }
 }
 
+/**
+ * Extract JSON from markdown code blocks or raw text
+ */
+function extractJSON(content: string): string {
+  // Try to find JSON in markdown code blocks
+  const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (codeBlockMatch) {
+    return codeBlockMatch[1].trim();
+  }
+  
+  // Try to find JSON object/array
+  const jsonMatch = content.match(/({[\s\S]*}|\[[\s\S]*\])/);
+  if (jsonMatch) {
+    return jsonMatch[0].trim();
+  }
+  
+  // Return as-is if no pattern found
+  return content.trim();
+}
+
 export async function invokeLLMWithFallback(params: InvokeParams): Promise<InvokeResult> {
   const errors: Array<{ provider: string; error: string }> = [];
   
@@ -307,6 +374,16 @@ export async function invokeLLMWithFallback(params: InvokeParams): Promise<Invok
     try {
       const result = await invokeProvider(provider, params);
       console.log(`[LLM Fallback] ✓ ${provider} succeeded`);
+      
+      // If response_format is set, extract JSON from markdown if needed
+      if (params.response_format && result.choices[0]?.message?.content) {
+        const content = result.choices[0].message.content;
+        if (typeof content === 'string') {
+          const extracted = extractJSON(content);
+          result.choices[0].message.content = extracted;
+        }
+      }
+      
       return result;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);

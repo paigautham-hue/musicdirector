@@ -75,6 +75,32 @@ export default function AlbumWorkspace() {
     }
   });
 
+  const bookletMutation = trpc.downloads.albumBooklet.useMutation({
+    onSuccess: (data) => {
+      // Convert base64 to blob
+      const byteCharacters = atob(data.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      
+      // Download
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = data.filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      
+      toast.success("Album booklet downloaded!");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to generate booklet");
+    }
+  });
+
   const handleExport = async () => {
     try {
       const data = await exportQuery.refetch();
@@ -172,13 +198,25 @@ export default function AlbumWorkspace() {
               </Button>
             </Link>
             <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => bookletMutation.mutate({ albumId: album.id })}
+                disabled={bookletMutation.isPending}
+              >
+                {bookletMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4 mr-2" />
+                )}
+                PDF Booklet
+              </Button>
               <Button variant="outline" onClick={handleExport} disabled={exportQuery.isFetching}>
                 {exportQuery.isFetching ? (
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 ) : (
                   <Download className="w-4 h-4 mr-2" />
                 )}
-                Export
+                Export JSON
               </Button>
               <Button variant="outline" onClick={() => shareMutation.mutate({ albumId: album.id })}>
                 <Share2 className="w-4 h-4 mr-2" />

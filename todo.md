@@ -223,3 +223,13 @@
 - [ ] Update frontend to poll job status
 - [ ] Test fallback LLM switching
 - [ ] Test background job processing
+
+## Track Download & PDF Booklet
+- [x] Add track download endpoint
+- [x] Add download button to track player UI
+- [x] Create PDF booklet generator with album artwork
+- [x] Include album write-up in PDF
+- [x] Include track listings with details in PDF
+- [x] Add download album booklet button
+- [ ] Test track downloads
+- [ ] Test PDF generation

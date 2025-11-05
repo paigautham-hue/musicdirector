@@ -581,6 +581,62 @@ export const appRouter = router({
     latest: publicProcedure.query(async () => {
       return db.getLatestKnowledgeUpdate();
     })
+  }),
+
+  downloads: router({
+    // Download track audio file
+    track: protectedProcedure
+      .input(z.object({ trackId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const track = await db.getTrackById(input.trackId);
+        if (!track) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Track not found' });
+        }
+        
+        // Get album to check ownership
+        const album = await db.getAlbumById(track.albumId);
+        if (!album || (album.userId !== ctx.user.id && ctx.user.role !== 'admin')) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        // Get audio file
+        const audioFile = await db.getTrackAudioFile(input.trackId);
+        if (!audioFile) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Audio file not found' });
+        }
+        
+        return {
+          url: audioFile.fileUrl,
+          filename: audioFile.fileName,
+          format: audioFile.format
+        };
+      }),
+    
+    // Generate and download album PDF booklet
+    albumBooklet: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        // Generate PDF
+        const { generateAlbumBooklet } = await import('./pdfGenerator');
+        const pdfBuffer = await generateAlbumBooklet(input.albumId);
+        
+        // Convert to base64 for transfer
+        const pdfBase64 = pdfBuffer.toString('base64');
+        
+        return {
+          pdf: pdfBase64,
+          filename: `${album.title.replace(/[^a-z0-9]/gi, '_')}_Booklet.pdf`
+        };
+      })
   })
 });
 

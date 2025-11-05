@@ -168,6 +168,14 @@ export async function getAlbumTracks(albumId: number) {
     .orderBy(tracks.index);
 }
 
+export async function getTrackById(trackId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(tracks).where(eq(tracks.id, trackId)).limit(1);
+  return result[0];
+}
+
 export async function updateTrack(id: number, updates: Partial<InsertTrack>) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
@@ -393,6 +401,16 @@ export async function getAudioFiles(trackId: number) {
   if (!db) return [];
   
   return db.select().from(audioFiles).where(and(eq(audioFiles.trackId, trackId), eq(audioFiles.isActive, true)));
+}
+
+export async function getTrackAudioFile(trackId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const files = await db.select().from(audioFiles)
+    .where(and(eq(audioFiles.trackId, trackId), eq(audioFiles.isActive, true)))
+    .limit(1);
+  return files[0];
 }
 
 // User management operations

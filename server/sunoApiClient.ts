@@ -53,16 +53,20 @@ export class SunoApiClient {
    * Generate music using Suno AI V5 model
    */
   async generateMusic(request: SunoGenerateRequest): Promise<SunoGenerateResponse> {
+    // Prepare request body with callback URL if not provided
+    const requestBody = {
+      ...request,
+      model: request.model || "V5", // Always default to V5
+      callBackUrl: request.callBackUrl || "https://webhook.site/placeholder", // Placeholder callback
+    };
+
     const response = await fetch(`${this.baseUrl}/api/v1/generate`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${this.apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        ...request,
-        model: request.model || "V5", // Always default to V5
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -83,7 +87,7 @@ export class SunoApiClient {
    * Check the status of a music generation task
    */
   async getTaskStatus(taskId: string): Promise<SunoTaskStatus> {
-    const response = await fetch(`${this.baseUrl}/api/v1/task/${taskId}`, {
+    const response = await fetch(`${this.baseUrl}/api/v1/generate/record-info?taskId=${taskId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${this.apiKey}`,

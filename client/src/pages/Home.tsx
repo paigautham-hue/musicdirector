@@ -155,26 +155,32 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
         <div className="container mx-auto px-6 relative">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm text-primary mb-4 animate-pulse">
-              <Sparkles className="w-4 h-4" />
-              <span className="font-semibold">AI-Powered Music Album Creation</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+            {/* Main inspiring tagline - Most Prominent */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
               <span className="bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-                Create Full Albums
+                Create music that unites people,
+                <br />
+                inspires change, and brings
+                <br />
+                positive impact to humanity
               </span>
-              <br />
-              <span className="text-foreground">with AI Magic</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+            
+            {/* Secondary tagline - Supporting text */}
+            <div className="pt-6 space-y-3">
+              <p className="text-2xl md:text-3xl font-semibold text-foreground/90">
+                Create Full Albums with AI Magic
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm text-primary">
+                <Sparkles className="w-4 h-4" />
+                <span className="font-semibold">AI-Powered Music Album Creation</span>
+              </div>
+            </div>
+            
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto pt-4">
               Turn your themes and ideas into complete music albums with AI-generated lyrics, 
               prompts, artwork, and platform-optimized content for Suno, Udio, and more.
             </p>
-            <div className="pt-4">
-              <p className="text-lg md:text-xl font-medium bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent max-w-3xl mx-auto">
-                ✨ Create music that unites people, inspires change, and brings positive impact to humanity ✨
-              </p>
-            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
               {isAuthenticated ? (
                 <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-lg shadow-primary/50">

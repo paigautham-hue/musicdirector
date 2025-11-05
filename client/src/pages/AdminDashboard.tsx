@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Settings, Users } from "lucide-react";
+import { ArrowLeft, Loader2, Settings, Users, BarChart3 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 
@@ -45,6 +45,12 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-3">
+            <Link href="/admin/analytics">
+              <Button className="bg-green-500 hover:bg-green-600">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Analytics
+              </Button>
+            </Link>
             <Link href="/admin/quotas">
               <Button className="bg-blue-500 hover:bg-blue-600">
                 <Users className="w-4 h-4 mr-2" />

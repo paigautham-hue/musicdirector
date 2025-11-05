@@ -468,6 +468,32 @@ export const appRouter = router({
       return db.getAdminAnalytics();
     }),
     
+    // Get API usage statistics
+    apiUsageStats: adminProcedure
+      .input(z.object({
+        timeRange: z.enum(["hour", "day", "week", "month"]).default("day")
+      }))
+      .query(async ({ input }) => {
+        const { getApiUsageStats } = await import("./analytics");
+        return getApiUsageStats(input.timeRange);
+      }),
+    
+    // Get LLM usage statistics
+    llmUsageStats: adminProcedure
+      .input(z.object({
+        timeRange: z.enum(["hour", "day", "week", "month"]).default("day")
+      }))
+      .query(async ({ input }) => {
+        const { getLlmUsageStats } = await import("./analytics");
+        return getLlmUsageStats(input.timeRange);
+      }),
+    
+    // Get user statistics
+    userStats: adminProcedure.query(async () => {
+      const { getUserStats } = await import("./analytics");
+      return getUserStats();
+    }),
+    
     // Get all feature flags
     featureFlags: adminProcedure.query(async () => {
       return db.getAllFeatureFlags();

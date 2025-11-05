@@ -138,3 +138,17 @@
 - [x] Show album creator and play count
 - [ ] Add "Make Public" toggle in album workspace
 - [x] Implement album discovery and trending section
+
+## Admin Analytics Dashboard
+- [x] Add API usage tracking table (endpoint, status, latency, timestamp)
+- [x] Add LLM performance tracking table (model, tokens, cost, latency, success)
+- [x] Create analytics aggregation functions
+- [x] Build real-time platform health monitoring
+- [x] Create admin analytics dashboard with charts
+- [x] Add API usage breakdown by endpoint
+- [x] Add LLM performance metrics per model (OpenAI, Anthropic, Google)
+- [x] Add user statistics (total, active, new signups)
+- [x] Add album/track generation statistics
+- [x] Add cost tracking and projections
+- [x] Add error rate monitoring
+- [x] Add system health indicators

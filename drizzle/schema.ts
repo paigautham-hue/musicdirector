@@ -278,3 +278,67 @@ export const systemSettings = mysqlTable("systemSettings", {
 
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type InsertSystemSetting = typeof systemSettings.$inferInsert;
+
+/**
+ * API usage tracking for analytics
+ */
+export const apiUsageLogs = mysqlTable("apiUsageLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  endpoint: varchar("endpoint", { length: 255 }).notNull(),
+  method: varchar("method", { length: 10 }).notNull(),
+  statusCode: int("statusCode").notNull(),
+  latencyMs: int("latencyMs").notNull(),
+  userId: int("userId"),
+  errorMessage: text("errorMessage"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  endpointIdx: index("endpoint_idx").on(table.endpoint),
+  timestampIdx: index("timestamp_idx").on(table.timestamp),
+  userIdIdx: index("userId_idx").on(table.userId),
+}));
+
+export type ApiUsageLog = typeof apiUsageLogs.$inferSelect;
+export type InsertApiUsageLog = typeof apiUsageLogs.$inferInsert;
+
+/**
+ * LLM performance tracking
+ */
+export const llmUsageLogs = mysqlTable("llmUsageLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  model: varchar("model", { length: 64 }).notNull(), // openai, anthropic, google
+  operation: varchar("operation", { length: 128 }).notNull(), // album_generation, track_improvement, etc
+  promptTokens: int("promptTokens").notNull(),
+  completionTokens: int("completionTokens").notNull(),
+  totalTokens: int("totalTokens").notNull(),
+  costUsd: varchar("costUsd", { length: 20 }).notNull(), // Stored as string to preserve precision
+  latencyMs: int("latencyMs").notNull(),
+  success: boolean("success").notNull(),
+  errorMessage: text("errorMessage"),
+  userId: int("userId"),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  modelIdx: index("model_idx").on(table.model),
+  timestampIdx: index("timestamp_idx").on(table.timestamp),
+  operationIdx: index("operation_idx").on(table.operation),
+}));
+
+export type LlmUsageLog = typeof llmUsageLogs.$inferSelect;
+export type InsertLlmUsageLog = typeof llmUsageLogs.$inferInsert;
+
+/**
+ * Platform health metrics
+ */
+export const healthMetrics = mysqlTable("healthMetrics", {
+  id: int("id").autoincrement().primaryKey(),
+  metricName: varchar("metricName", { length: 128 }).notNull(),
+  metricValue: varchar("metricValue", { length: 255 }).notNull(),
+  metricType: varchar("metricType", { length: 64 }).notNull(), // counter, gauge, histogram
+  tags: text("tags"), // JSON object for additional metadata
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+}, (table) => ({
+  metricNameIdx: index("metricName_idx").on(table.metricName),
+  timestampIdx: index("timestamp_idx").on(table.timestamp),
+}));
+
+export type HealthMetric = typeof healthMetrics.$inferSelect;
+export type InsertHealthMetric = typeof healthMetrics.$inferInsert;

@@ -29,6 +29,13 @@
       "when": 1762325955890,
       "tag": "0003_famous_maverick",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1762326686767,
+      "tag": "0004_boring_mauler",
+      "breakpoints": true
     }
   ]
 }

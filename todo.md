@@ -250,3 +250,12 @@
 - [x] Ensure response_format is properly set for structured output
 - [x] Add fallback JSON extraction from markdown code blocks
 - [ ] Test album generation end-to-end
+
+## Prompt Library Feature
+- [x] Add promptTemplates table to database schema
+- [x] Add backend endpoints for saving/loading/editing prompts
+- [x] Add "Save Prompt" button in album creation flow
+- [x] Add "Load Prompt" dropdown in album creation flow
+- [x] Add "My Prompts" page to manage saved prompts
+- [x] Add edit and delete functionality for saved prompts
+- [x] Test prompt save/load/edit workflow

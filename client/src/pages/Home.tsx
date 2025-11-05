@@ -97,6 +97,11 @@ export default function Home() {
                       Pricing
                     </a>
                   </Link>
+                  <Link href="/prompts">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                      My Prompts
+                    </a>
+                  </Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin">
                       <a className="text-foreground/80 hover:text-foreground transition-colors">

@@ -392,3 +392,27 @@ export const creditTransactions = mysqlTable("creditTransactions", {
 
 export type CreditTransaction = typeof creditTransactions.$inferSelect;
 export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;
+
+/**
+ * Saved prompt templates for album generation
+ */
+export const promptTemplates = mysqlTable("promptTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(), // User-given name for the template
+  theme: text("theme").notNull(),
+  vibe: text("vibe").notNull(), // JSON array
+  platform: varchar("platform", { length: 64 }).notNull(),
+  language: varchar("language", { length: 64 }).default("en").notNull(),
+  audience: text("audience"),
+  influences: text("influences"), // JSON array
+  trackCount: int("trackCount").default(10).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  createdAtIdx: index("createdAt_idx").on(table.createdAt),
+}));
+
+export type PromptTemplate = typeof promptTemplates.$inferSelect;
+export type InsertPromptTemplate = typeof promptTemplates.$inferInsert;

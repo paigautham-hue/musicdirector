@@ -3,14 +3,15 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
-  systemSettings, musicJobs, audioFiles, payments, creditTransactions,
+  systemSettings, musicJobs, audioFiles, payments, creditTransactions, promptTemplates,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
   type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
+  type PromptTemplate,
   type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
   type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
-  type InsertAudioFile, type InsertPayment, type InsertCreditTransaction
+  type InsertAudioFile, type InsertPayment, type InsertCreditTransaction, type InsertPromptTemplate
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -569,4 +570,46 @@ export async function getUserById(userId: number) {
   
   const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
   return result[0];
+}
+
+// Prompt template operations
+export async function createPromptTemplate(template: InsertPromptTemplate): Promise<PromptTemplate> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(promptTemplates).values(template);
+  const insertedId = Number(result[0].insertId);
+  const created = await db.select().from(promptTemplates).where(eq(promptTemplates.id, insertedId)).limit(1);
+  return created[0];
+}
+
+export async function getUserPromptTemplates(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(promptTemplates)
+    .where(eq(promptTemplates.userId, userId))
+    .orderBy(desc(promptTemplates.updatedAt));
+}
+
+export async function getPromptTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(promptTemplates).where(eq(promptTemplates.id, id)).limit(1);
+  return result[0];
+}
+
+export async function updatePromptTemplate(id: number, updates: Partial<InsertPromptTemplate>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(promptTemplates).set(updates).where(eq(promptTemplates.id, id));
+}
+
+export async function deletePromptTemplate(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(promptTemplates).where(eq(promptTemplates.id, id));
 }

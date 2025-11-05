@@ -7,7 +7,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Music, ArrowLeft, ArrowRight, Loader2, X } from "lucide-react";
+import { Music, ArrowLeft, ArrowRight, Loader2, X, Save, FolderOpen } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -37,6 +45,21 @@ export default function NewAlbum() {
     totalTracks?: number;
     message: string;
   } | null>(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showLoadDialog, setShowLoadDialog] = useState(false);
+  const [promptName, setPromptName] = useState("");
+
+  const { data: savedPrompts } = trpc.promptTemplates.list.useQuery();
+  const savePromptMutation = trpc.promptTemplates.create.useMutation({
+    onSuccess: () => {
+      toast.success("Prompt saved successfully!");
+      setShowSaveDialog(false);
+      setPromptName("");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to save prompt");
+    },
+  });
 
   const createAlbumMutation = trpc.albums.create.useMutation({
     onSuccess: (data) => {
@@ -113,6 +136,35 @@ export default function NewAlbum() {
 
   const removeInfluence = (influence: string) => {
     setInfluences(influences.filter(i => i !== influence));
+  };
+
+  const handleSavePrompt = () => {
+    if (!promptName.trim()) {
+      toast.error("Please enter a name for this prompt");
+      return;
+    }
+    savePromptMutation.mutate({
+      name: promptName,
+      theme,
+      vibe: vibes,
+      platform: platform as any,
+      language,
+      audience,
+      influences,
+      trackCount,
+    });
+  };
+
+  const handleLoadPrompt = (template: any) => {
+    setTheme(template.theme);
+    setVibes(JSON.parse(template.vibe || "[]"));
+    setPlatform(template.platform);
+    setLanguage(template.language);
+    setAudience(template.audience || "");
+    setInfluences(JSON.parse(template.influences || "[]"));
+    setTrackCount(template.trackCount);
+    setShowLoadDialog(false);
+    toast.success("Prompt loaded successfully!");
   };
 
   const handleSubmit = async () => {
@@ -369,6 +421,26 @@ export default function NewAlbum() {
             </CardContent>
           </Card>
 
+          {/* Save/Load Prompt Buttons */}
+          {step === 4 && !isGenerating && (
+            <div className="flex justify-center gap-4 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowLoadDialog(true)}
+              >
+                <FolderOpen className="w-4 h-4 mr-2" />
+                Load Prompt
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setShowSaveDialog(true)}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save Prompt
+              </Button>
+            </div>
+          )}
+
           {/* Navigation Buttons */}
           <div className="flex justify-between mt-8">
             <Button
@@ -427,6 +499,87 @@ export default function NewAlbum() {
           )}
         </div>
       </div>
+
+      {/* Save Prompt Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="bg-card border-border">
+          <DialogHeader>
+            <DialogTitle>Save Prompt Template</DialogTitle>
+            <DialogDescription>
+              Save your current album settings to reuse later
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="promptName">Template Name</Label>
+              <Input
+                id="promptName"
+                value={promptName}
+                onChange={(e) => setPromptName(e.target.value)}
+                placeholder="e.g., My Favorite Theme"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSavePrompt} disabled={savePromptMutation.isPending}>
+              {savePromptMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Prompt"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Load Prompt Dialog */}
+      <Dialog open={showLoadDialog} onOpenChange={setShowLoadDialog}>
+        <DialogContent className="bg-card border-border max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Load Prompt Template</DialogTitle>
+            <DialogDescription>
+              Choose a saved prompt to load its settings
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[400px] overflow-y-auto">
+            {!savedPrompts || savedPrompts.length === 0 ? (
+              <p className="text-center text-muted-foreground py-8">
+                No saved prompts yet. Create one by clicking "Save Prompt".
+              </p>
+            ) : (
+              savedPrompts.map((template) => (
+                <Card
+                  key={template.id}
+                  className="cursor-pointer hover:border-primary transition-colors"
+                  onClick={() => handleLoadPrompt(template)}
+                >
+                  <CardHeader>
+                    <CardTitle className="text-lg">{template.name}</CardTitle>
+                    <CardDescription className="line-clamp-2">
+                      {template.theme}
+                    </CardDescription>
+                    <div className="flex gap-2 mt-2">
+                      <Badge variant="secondary">{template.platform}</Badge>
+                      <Badge variant="secondary">{template.trackCount} tracks</Badge>
+                    </div>
+                  </CardHeader>
+                </Card>
+              ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLoadDialog(false)}>
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

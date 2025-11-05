@@ -668,6 +668,93 @@ export const appRouter = router({
       .query(async ({ ctx }) => {
         return db.getUserCreditTransactions(ctx.user.id);
       }),
+  }),
+
+  // Prompt template operations
+  promptTemplates: router({
+    // Get user's prompt templates
+    list: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getUserPromptTemplates(ctx.user.id);
+      }),
+    
+    // Create new prompt template
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1, "Name is required"),
+        theme: z.string().min(1, "Theme is required"),
+        vibe: z.array(z.string()),
+        platform: z.enum(["suno", "udio", "elevenlabs", "mubert", "stable_audio"]),
+        language: z.string().default("en"),
+        audience: z.string().optional(),
+        influences: z.array(z.string()).optional(),
+        trackCount: z.number().min(1).max(20).default(10),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        return db.createPromptTemplate({
+          userId: ctx.user.id,
+          name: input.name,
+          theme: input.theme,
+          vibe: JSON.stringify(input.vibe),
+          platform: input.platform,
+          language: input.language,
+          audience: input.audience || null,
+          influences: input.influences ? JSON.stringify(input.influences) : null,
+          trackCount: input.trackCount,
+        });
+      }),
+    
+    // Update prompt template
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).optional(),
+        theme: z.string().min(1).optional(),
+        vibe: z.array(z.string()).optional(),
+        platform: z.enum(["suno", "udio", "elevenlabs", "mubert", "stable_audio"]).optional(),
+        language: z.string().optional(),
+        audience: z.string().optional(),
+        influences: z.array(z.string()).optional(),
+        trackCount: z.number().min(1).max(20).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const template = await db.getPromptTemplateById(input.id);
+        if (!template) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Template not found' });
+        }
+        if (template.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        const updates: any = {};
+        if (input.name) updates.name = input.name;
+        if (input.theme) updates.theme = input.theme;
+        if (input.vibe) updates.vibe = JSON.stringify(input.vibe);
+        if (input.platform) updates.platform = input.platform;
+        if (input.language) updates.language = input.language;
+        if (input.audience !== undefined) updates.audience = input.audience || null;
+        if (input.influences !== undefined) updates.influences = input.influences ? JSON.stringify(input.influences) : null;
+        if (input.trackCount) updates.trackCount = input.trackCount;
+        
+        await db.updatePromptTemplate(input.id, updates);
+        return { success: true };
+      }),
+    
+    // Delete prompt template
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const template = await db.getPromptTemplateById(input.id);
+        if (!template) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Template not found' });
+        }
+        if (template.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        await db.deletePromptTemplate(input.id);
+        return { success: true };
+      }),
   })
 });
 

@@ -22,10 +22,7 @@ export default function MyLibrary() {
     }
   });
   
-  const handleDelete = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -85,7 +82,6 @@ export default function MyLibrary() {
                         variant="destructive"
                         size="sm"
                         className="shadow-lg hover:scale-110 transition-transform"
-                        onClick={handleDelete}
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
                         <span className="hidden sm:inline">Delete</span>

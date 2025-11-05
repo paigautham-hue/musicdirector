@@ -198,3 +198,9 @@
 - [x] Verify API responses and error handling
 - [x] Fix callback URL requirement
 - [x] Fix task status endpoint URL
+
+## Delete Button Not Working on Published Site
+- [x] Debug why AlertDialog doesn't open when delete button is clicked
+- [x] Check if event handlers are properly attached
+- [x] Test delete functionality in browser
+- [ ] Verify fix works on published site

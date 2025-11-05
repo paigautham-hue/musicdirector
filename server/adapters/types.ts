@@ -30,9 +30,11 @@ export interface GenerationInput {
 
 export interface GenerationResult {
   success: boolean;
+  jobId?: string; // Job ID for async music generation
   previewUrl?: string;
   platformPayload?: any;
   error?: string;
+  message?: string; // Status message
 }
 
 export interface PlatformAdapter {
@@ -75,7 +77,7 @@ export interface PlatformAdapter {
   getExportInstructions(): string;
   
   /**
-   * Generate music via API (when available)
+   * Generate music via platform API
    */
   generateMusic(params: {
     title: string;
@@ -83,10 +85,7 @@ export interface PlatformAdapter {
     prompt: string;
     style: string;
     duration?: number;
-  }): Promise<{
-    jobId: string;
-    estimatedTime?: number;
-  }>;
+  }): Promise<GenerationResult>;
   
   /**
    * Check status of music generation job

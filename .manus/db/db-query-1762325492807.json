@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO systemSettings (`key`, `value`, description, updatedAt) VALUES ('suno_api_key', 'c684407c6103dbef90ed44c0b97e2de3', 'Suno AI API key for music generation', NOW()) ON DUPLICATE KEY UPDATE `value` = 'c684407c6103dbef90ed44c0b97e2de3', updatedAt = NOW();",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute INSERT INTO systemSettings (`key`, `value`, description, updatedAt) VALUES ('suno_api_key', 'c684407c6103dbef90ed44c0b97e2de3', 'Suno AI API key for music generation', NOW()) ON DUPLICATE KEY UPDATE `value` = 'c684407c6103dbef90ed44c0b97e2de3', updatedAt = NOW();",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2464
+}

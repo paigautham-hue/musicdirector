@@ -23,7 +23,7 @@ export abstract class BasePlatformAdapter implements PlatformAdapter {
     prompt: string;
     style: string;
     duration?: number;
-  }): Promise<{ jobId: string; estimatedTime?: number }> {
+  }): Promise<GenerationResult> {
     throw new Error(`Music generation API not configured for ${this.displayName}. Please add API keys in admin settings.`);
   }
   

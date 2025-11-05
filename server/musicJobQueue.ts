@@ -84,6 +84,11 @@ export async function processMusicJob(jobId: number) {
       duration: 180, // 3 minutes default
     });
 
+    // Check if generation was successful
+    if (!result.success || !result.jobId) {
+      throw new Error(result.error || "No job ID returned from platform");
+    }
+
     // Update progress
     await db.update(musicJobs)
       .set({ progress: 50, statusMessage: "Music generation in progress...", platformJobId: result.jobId })

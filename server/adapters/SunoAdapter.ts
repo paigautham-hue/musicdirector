@@ -1,5 +1,6 @@
 import { BasePlatformAdapter } from "./BasePlatformAdapter";
-import type { PlatformConstraints } from "./types";
+import type { PlatformConstraints, GenerationResult } from "./types";
+import { getSunoClient } from "../sunoApiClient";
 
 /**
  * Suno AI platform adapter
@@ -19,13 +20,13 @@ export class SunoAdapter extends BasePlatformAdapter {
       },
       prompt: {
         name: "prompt",
-        maxChars: 200,
+        maxChars: 1000, // V5 supports up to 1000 chars for style
         required: true,
         description: "Style and mood description"
       },
       lyrics: {
         name: "lyrics",
-        maxChars: 3000,
+        maxChars: 5000, // V5 supports up to 5000 chars for lyrics
         required: false,
         description: "Song lyrics with [Verse], [Chorus], [Bridge] tags"
       }
@@ -56,5 +57,87 @@ export class SunoAdapter extends BasePlatformAdapter {
 6. Click "Create" to generate your song
 
 Suno will generate 2 variations. You can extend, remix, or regenerate as needed.`;
+  }
+
+  /**
+   * Generate music using Suno AI V5 API
+   */
+  async generateMusic(params: {
+    title: string;
+    prompt: string;
+    lyrics?: string;
+    instrumental?: boolean;
+  }): Promise<GenerationResult> {
+    const client = await getSunoClient();
+    
+    if (!client) {
+      throw new Error("Suno API key not configured. Please add it in Admin Settings.");
+    }
+
+    try {
+      // Generate music using V5 model
+      const response = await client.generateMusic({
+        title: params.title,
+        style: params.prompt,
+        prompt: params.lyrics || params.prompt,
+        customMode: true, // Always use custom mode for precise control
+        instrumental: params.instrumental || false,
+        model: "V5", // Always use latest V5 model
+      });
+
+      return {
+        success: true,
+        jobId: response.data.taskId,
+        message: "Music generation started. This may take 1-2 minutes."
+      };
+    } catch (error: any) {
+      console.error("[Suno] Generation failed:", error);
+      return {
+        success: false,
+        error: error.message || "Failed to generate music"
+      };
+    }
+  }
+
+  /**
+   * Check the status of a music generation job
+   */
+  async checkJobStatus(jobId: string): Promise<{
+    completed: boolean;
+    failed: boolean;
+    progress?: number;
+    message?: string;
+    error?: string;
+    audioUrl?: string;
+  }> {
+    const client = await getSunoClient();
+    
+    if (!client) {
+      return {
+        completed: false,
+        failed: true,
+        error: "Suno API key not configured"
+      };
+    }
+
+    try {
+      const taskStatus = await client.getTaskStatus(jobId);
+      
+      return {
+        completed: taskStatus.data.status === "completed",
+        failed: taskStatus.data.status === "failed",
+        progress: taskStatus.data.progress,
+        audioUrl: taskStatus.data.audioUrl,
+        error: taskStatus.data.error,
+        message: taskStatus.data.status === "completed" ? "Music generation completed" : undefined
+      };
+    } catch (error: any) {
+      console.error("[Suno] Status check failed:", error);
+      return {
+        completed: false,
+        failed: true,
+        error: error.message
+      };
+    }
   }
 }

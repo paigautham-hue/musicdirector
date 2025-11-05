@@ -111,3 +111,13 @@
 - [ ] Implement webhook endpoints for async completion
 - [ ] Add cost tracking and usage analytics
 - [ ] Create audio waveform visualization
+
+## Suno API Integration
+- [x] Implement Suno API client with V5 model support
+- [x] Add task status polling endpoint to check generation progress
+- [x] Update SunoAdapter to use real API calls instead of mocks
+- [ ] Add webhook endpoint for Suno callbacks
+- [x] Update music job queue to handle real Suno API responses
+- [x] Add error handling for API failures and rate limits
+- [x] Store Suno API key in system settings
+- [x] Enable music generation feature flag

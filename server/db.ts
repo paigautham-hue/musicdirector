@@ -1,4 +1,4 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, or, like, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
@@ -393,4 +393,83 @@ export async function getAudioFiles(trackId: number) {
   if (!db) return [];
   
   return db.select().from(audioFiles).where(and(eq(audioFiles.trackId, trackId), eq(audioFiles.isActive, true)));
+}
+
+// User management operations
+export async function getAllUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(users).orderBy(desc(users.createdAt));
+}
+
+export async function updateUserQuota(userId: number, quota: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(users)
+    .set({ musicGenerationQuota: quota })
+    .where(eq(users.id, userId));
+}
+
+export async function checkUserQuota(userId: number): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user) return false;
+  
+  // Admin has unlimited quota
+  if (user.role === "admin") return true;
+  
+  // Check if user has quota remaining
+  return (user.musicGenerationsUsed || 0) < (user.musicGenerationQuota || 1);
+}
+
+export async function incrementMusicGenerations(userId: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(users)
+    .set({ musicGenerationsUsed: sql`${users.musicGenerationsUsed} + 1` })
+    .where(eq(users.id, userId));
+}
+
+export async function getPublicAlbums(params: { search?: string; sortBy?: "recent" | "popular"; limit?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Build where conditions
+  const conditions = [eq(albums.visibility, "public")];
+  
+  if (params.search) {
+    conditions.push(
+      or(
+        like(albums.title, `%${params.search}%`),
+        like(albums.theme, `%${params.search}%`),
+        like(albums.description, `%${params.search}%`)
+      ) as any
+    );
+  }
+  
+  // Build and execute query
+  const orderByClause = params.sortBy === "popular" ? desc(albums.score) : desc(albums.createdAt);
+  
+  return db.select({
+    id: albums.id,
+    title: albums.title,
+    description: albums.description,
+    theme: albums.theme,
+    coverUrl: albums.coverUrl,
+    platform: albums.platform,
+    trackCount: albums.trackCount,
+    score: albums.score,
+    createdAt: albums.createdAt,
+    creatorName: users.name
+  })
+  .from(albums)
+  .leftJoin(users, eq(albums.userId, users.id))
+  .where(and(...conditions))
+  .orderBy(orderByClause)
+  .limit(params.limit || 50);
 }

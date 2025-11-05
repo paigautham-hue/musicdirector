@@ -20,10 +20,19 @@ export interface MusicGenerationJob {
 
 /**
  * Create a music generation job for a track
+ * Checks user quota before creating the job
  */
-export async function createMusicJob(albumId: number, trackId: number, platform: string) {
+export async function createMusicJob(albumId: number, trackId: number, platform: string, userId: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
+
+  // Check user quota
+  const { checkUserQuota } = await import("./db");
+  const hasQuota = await checkUserQuota(userId);
+  
+  if (!hasQuota) {
+    throw new Error("Music generation quota exceeded. Contact admin to increase your quota.");
+  }
 
   const [job] = await db.insert(musicJobs).values({
     albumId,
@@ -248,9 +257,13 @@ export async function generateAlbumMusic(albumId: number) {
   // Create jobs for all tracks
   const jobIds = [];
   for (const track of albumTracks) {
-    const jobId = await createMusicJob(albumId, track.id, album.platform);
+    const jobId = await createMusicJob(albumId, track.id, album.platform, album.userId);
     jobIds.push(jobId);
   }
+  
+  // Increment user's music generation count after creating jobs
+  const { incrementMusicGenerations } = await import("./db");
+  await incrementMusicGenerations(album.userId);
 
   // Process jobs sequentially (could be parallelized with worker pool)
   const results = [];

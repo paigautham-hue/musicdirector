@@ -121,3 +121,20 @@
 - [x] Add error handling for API failures and rate limits
 - [x] Store Suno API key in system settings
 - [x] Enable music generation feature flag
+
+## Credit Management & Quota System
+- [x] Add music generation quota fields to users table (musicGenerationQuota, musicGenerationsUsed)
+- [x] Create admin UI for setting user quotas
+- [x] Implement quota enforcement before music generation
+- [ ] Add quota display in user UI
+- [x] Set admin (paigautham@gmail.com) to unlimited quota
+- [x] Set default users to 1 music generation quota
+- [x] Track music generation usage per user
+
+## Public Album Gallery
+- [x] Add visibility field to albums table (public/private)
+- [x] Create public gallery page showing all public albums
+- [x] Add filters and search to gallery
+- [x] Show album creator and play count
+- [ ] Add "Make Public" toggle in album workspace
+- [x] Implement album discovery and trending section

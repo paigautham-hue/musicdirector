@@ -306,6 +306,17 @@ export const appRouter = router({
         });
         
         return { shareToken, shareUrl: `/share/${shareToken}` };
+      }),
+    
+    // Get public albums for gallery
+    getPublicAlbums: publicProcedure
+      .input(z.object({
+        search: z.string().optional(),
+        sortBy: z.enum(["recent", "popular"]).default("recent"),
+        limit: z.number().default(50)
+      }))
+      .query(async ({ input }) => {
+        return db.getPublicAlbums(input);
       })
   }),
 
@@ -520,6 +531,22 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return db.getMusicJobs(input);
+      }),
+    
+    // Get all users
+    getAllUsers: adminProcedure.query(async () => {
+      return db.getAllUsers();
+    }),
+    
+    // Update user quota
+    updateUserQuota: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        quota: z.number()
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateUserQuota(input.userId, input.quota);
+        return { success: true };
       })
   }),
 

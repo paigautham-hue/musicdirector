@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Settings } from "lucide-react";
+import { ArrowLeft, Loader2, Settings, Users } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 
@@ -44,12 +44,20 @@ export default function AdminDashboard() {
       <div className="container mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-          <Link href="/admin/settings">
-            <Button className="bg-amber-500 hover:bg-amber-600">
-              <Settings className="w-4 h-4 mr-2" />
-              System Settings
-            </Button>
-          </Link>
+          <div className="flex gap-3">
+            <Link href="/admin/quotas">
+              <Button className="bg-blue-500 hover:bg-blue-600">
+                <Users className="w-4 h-4 mr-2" />
+                User Quotas
+              </Button>
+            </Link>
+            <Link href="/admin/settings">
+              <Button className="bg-amber-500 hover:bg-amber-600">
+                <Settings className="w-4 h-4 mr-2" />
+                System Settings
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {isLoading ? (

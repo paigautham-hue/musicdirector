@@ -59,6 +59,11 @@ export default function Home() {
                       Knowledge Hub
                     </a>
                   </Link>
+                  <Link href="/gallery">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                      Gallery
+                    </a>
+                  </Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin">
                       <a className="text-foreground/80 hover:text-foreground transition-colors">

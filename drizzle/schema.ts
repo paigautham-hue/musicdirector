@@ -11,6 +11,8 @@ export const users = mysqlTable("users", {
   loginMethod: varchar("loginMethod", { length: 64 }),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   plan: varchar("plan", { length: 64 }).default("free").notNull(),
+  musicGenerationQuota: int("musicGenerationQuota").default(1).notNull(), // How many albums with music they can generate
+  musicGenerationsUsed: int("musicGenerationsUsed").default(0).notNull(), // How many they've used
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -37,6 +39,8 @@ export const albums = mysqlTable("albums", {
   audience: text("audience"),
   influences: text("influences"), // JSON array of artist/era descriptions
   trackCount: int("trackCount").default(10).notNull(),
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  playCount: int("playCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({

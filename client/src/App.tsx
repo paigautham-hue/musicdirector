@@ -11,6 +11,8 @@ import MyLibrary from "./pages/MyLibrary";
 import KnowledgeHub from "./pages/KnowledgeHub";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
+import AdminUserQuotas from "./pages/AdminUserQuotas";
+import Gallery from "./pages/Gallery";
 
 function Router() {
   return (
@@ -22,6 +24,8 @@ function Router() {
       <Route path="/knowledge" component={KnowledgeHub} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/admin/settings" component={AdminSettings} />
+      <Route path="/admin/quotas" component={AdminUserQuotas} />
+      <Route path="/gallery" component={Gallery} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

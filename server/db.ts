@@ -3,14 +3,14 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
-  systemSettings, musicJobs, audioFiles,
+  systemSettings, musicJobs, audioFiles, payments, creditTransactions,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
-  type SystemSetting, type MusicJob, type AudioFile,
+  type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
   type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
   type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
-  type InsertAudioFile
+  type InsertAudioFile, type InsertPayment, type InsertCreditTransaction
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -490,4 +490,83 @@ export async function getPublicAlbums(params: { search?: string; sortBy?: "recen
   .where(and(...conditions))
   .orderBy(orderByClause)
   .limit(params.limit || 50);
+}
+
+
+// Payment operations
+export async function createPayment(payment: InsertPayment): Promise<Payment> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(payments).values(payment);
+  const insertedId = Number(result[0].insertId);
+  const created = await db.select().from(payments).where(eq(payments.id, insertedId)).limit(1);
+  return created[0];
+}
+
+export async function getPaymentBySessionId(sessionId: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(payments).where(eq(payments.stripeSessionId, sessionId)).limit(1);
+  return result[0];
+}
+
+export async function getPaymentByPaymentIntentId(paymentIntentId: string) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(payments).where(eq(payments.stripePaymentIntentId, paymentIntentId)).limit(1);
+  return result[0];
+}
+
+export async function updatePaymentBySessionId(sessionId: string, updates: Partial<InsertPayment>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(payments).set(updates).where(eq(payments.stripeSessionId, sessionId));
+}
+
+export async function updatePayment(id: number, updates: Partial<InsertPayment>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(payments).set(updates).where(eq(payments.id, id));
+}
+
+export async function getUserPayments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(payments)
+    .where(eq(payments.userId, userId))
+    .orderBy(desc(payments.createdAt));
+}
+
+// Credit transaction operations
+export async function createCreditTransaction(transaction: InsertCreditTransaction): Promise<CreditTransaction> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(creditTransactions).values(transaction);
+  const insertedId = Number(result[0].insertId);
+  const created = await db.select().from(creditTransactions).where(eq(creditTransactions.id, insertedId)).limit(1);
+  return created[0];
+}
+
+export async function getUserCreditTransactions(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(creditTransactions)
+    .where(eq(creditTransactions.userId, userId))
+    .orderBy(desc(creditTransactions.createdAt));
+}
+
+export async function getUserById(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  return result[0];
 }

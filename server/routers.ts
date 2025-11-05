@@ -637,6 +637,37 @@ export const appRouter = router({
           filename: `${album.title.replace(/[^a-z0-9]/gi, '_')}_Booklet.pdf`
         };
       })
+  }),
+
+  // Payment operations
+  payment: router({
+    // Create checkout session
+    createCheckout: protectedProcedure
+      .input(z.object({ productId: z.string() }))
+      .mutation(async ({ ctx, input }) => {
+        const { createCheckoutSession } = await import('./stripe');
+        const origin = ctx.req.headers.origin || 'http://localhost:3000';
+        
+        return createCheckoutSession({
+          userId: ctx.user.id,
+          userEmail: ctx.user.email || '',
+          userName: ctx.user.name || 'User',
+          productId: input.productId,
+          origin
+        });
+      }),
+    
+    // Get user's payment history
+    history: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getUserPayments(ctx.user.id);
+      }),
+    
+    // Get user's credit transactions
+    transactions: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getUserCreditTransactions(ctx.user.id);
+      }),
   })
 });
 

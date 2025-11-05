@@ -342,3 +342,53 @@ export const healthMetrics = mysqlTable("healthMetrics", {
 
 export type HealthMetric = typeof healthMetrics.$inferSelect;
 export type InsertHealthMetric = typeof healthMetrics.$inferInsert;
+
+/**
+ * Payment transactions
+ */
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  stripeSessionId: varchar("stripeSessionId", { length: 255 }).notNull().unique(),
+  stripePaymentIntentId: varchar("stripePaymentIntentId", { length: 255 }),
+  amount: int("amount").notNull(), // Amount in cents
+  currency: varchar("currency", { length: 3 }).default("usd").notNull(),
+  status: mysqlEnum("status", ["pending", "completed", "failed", "refunded"]).default("pending").notNull(),
+  productId: varchar("productId", { length: 64 }).notNull(), // Reference to product in products.ts
+  creditsGranted: int("creditsGranted").notNull(), // Number of credits granted
+  customerEmail: varchar("customerEmail", { length: 320 }),
+  customerName: text("customerName"),
+  metadata: text("metadata"), // JSON for additional data
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  statusIdx: index("status_idx").on(table.status),
+  createdAtIdx: index("createdAt_idx").on(table.createdAt),
+}));
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;
+
+/**
+ * Credit transaction history
+ */
+export const creditTransactions = mysqlTable("creditTransactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  amount: int("amount").notNull(), // Positive for credit, negative for debit
+  type: mysqlEnum("type", ["purchase", "usage", "refund", "admin_adjustment"]).notNull(),
+  description: text("description").notNull(),
+  paymentId: int("paymentId"), // Reference to payments table
+  albumId: int("albumId"), // Reference to album if used for generation
+  balanceBefore: int("balanceBefore").notNull(),
+  balanceAfter: int("balanceAfter").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  typeIdx: index("type_idx").on(table.type),
+  createdAtIdx: index("createdAt_idx").on(table.createdAt),
+}));
+
+export type CreditTransaction = typeof creditTransactions.$inferSelect;
+export type InsertCreditTransaction = typeof creditTransactions.$inferInsert;

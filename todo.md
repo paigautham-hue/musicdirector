@@ -233,3 +233,13 @@
 - [x] Add download album booklet button
 - [ ] Test track downloads
 - [ ] Test PDF generation
+
+## Stripe Payment Integration
+- [x] Add Stripe feature to project
+- [x] Configure Stripe API keys
+- [x] Create pricing plans (credits and subscriptions)
+- [x] Add payment checkout UI
+- [x] Add pricing page
+- [x] Implement webhook handlers for payment events
+- [ ] Test payment flow
+- [x] Add payment history page

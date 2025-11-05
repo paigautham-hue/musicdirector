@@ -2,14 +2,27 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2 } from "lucide-react";
+import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, User, LogOut, ChevronDown } from "lucide-react";
 import { Link } from "wouter";
 import { APP_TITLE, getLoginUrl } from "@/const";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: albums } = trpc.albums.list.useQuery({ limit: 1 }, { enabled: isAuthenticated });
   const hasAlbums = albums && albums.length > 0;
+  const logoutMutation = trpc.auth.logout.useMutation({
+    onSuccess: () => {
+      window.location.href = "/";
+    },
+  });
 
   const featuredThemes = [
     {
@@ -86,6 +99,33 @@ export default function Home() {
                       Create Album
                     </Button>
                   </Link>
+                  
+                  {/* User Profile Menu */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        <span className="hidden md:inline">{user?.name || user?.email}</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user?.name}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                          {user?.role === 'admin' && (
+                            <p className="text-xs leading-none text-primary font-semibold mt-1">Admin</p>
+                          )}
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 <Button asChild className="bg-gradient-to-r from-primary to-accent">

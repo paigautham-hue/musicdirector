@@ -59,6 +59,13 @@ async function startServer() {
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    
+    // Start background job processor
+    import("../backgroundJobs").then(({ startJobProcessor }) => {
+      startJobProcessor();
+    }).catch(err => {
+      console.error("Failed to start background job processor:", err);
+    });
   });
 }
 

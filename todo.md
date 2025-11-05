@@ -211,3 +211,15 @@
 - [x] Adjust typography hierarchy and sizing
 - [x] Update color emphasis to highlight the inspiring message
 - [x] Test visual hierarchy on mobile and desktop
+
+## LLM Fallback & Background Jobs
+- [x] Fix 502 Bad Gateway error from LLM
+- [x] Add fallback LLM providers (Anthropic, Gemini, Grok, Perplexity)
+- [x] Implement retry logic with exponential backoff
+- [x] Create background job system for album generation
+- [x] Store generation jobs in database with status tracking
+- [x] Process jobs asynchronously even when user leaves
+- [x] Add job status polling endpoint
+- [ ] Update frontend to poll job status
+- [ ] Test fallback LLM switching
+- [ ] Test background job processing

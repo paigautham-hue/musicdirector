@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE musicJobs SET status = 'pending', errorMessage = NULL, progress = 0 WHERE id = 60013 LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute UPDATE musicJobs SET status = 'pending', errorMessage = NULL, progress = 0 WHERE id = 60013 LIMIT 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1558
+}

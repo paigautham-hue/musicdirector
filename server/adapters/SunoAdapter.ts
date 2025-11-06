@@ -122,14 +122,25 @@ Suno will generate 2 variations. You can extend, remix, or regenerate as needed.
 
     try {
       const taskStatus = await client.getTaskStatus(jobId);
+      const statusValue = taskStatus.data.status;
+      
+      // Calculate progress based on status
+      let progress = 0;
+      if (statusValue === "TEXT_SUCCESS") progress = 50;
+      else if (statusValue === "FIRST_SUCCESS") progress = 90;
+      else if (statusValue === "SUCCESS") progress = 100;
+      
+      // Extract audio URL from response (handles both 'sunoData' and 'data' formats)
+      const audioData = taskStatus.data.response?.sunoData?.[0] || taskStatus.data.response?.data?.[0];
+      const audioUrl = audioData?.audioUrl || audioData?.audio_url;
       
       return {
-        completed: taskStatus.data.status === "completed",
-        failed: taskStatus.data.status === "failed",
-        progress: taskStatus.data.progress,
-        audioUrl: taskStatus.data.audioUrl,
-        error: taskStatus.data.error,
-        message: taskStatus.data.status === "completed" ? "Music generation completed" : undefined
+        completed: statusValue === "SUCCESS",
+        failed: statusValue === "CREATE_TASK_FAILED" || statusValue === "GENERATE_AUDIO_FAILED" || statusValue === "CALLBACK_EXCEPTION" || statusValue === "SENSITIVE_WORD_ERROR",
+        progress,
+        audioUrl,
+        error: taskStatus.data.errorMessage,
+        message: statusValue === "SUCCESS" ? "Music generation completed" : undefined
       };
     } catch (error: any) {
       console.error("[Suno] Status check failed:", error);

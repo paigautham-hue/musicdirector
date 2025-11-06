@@ -28,16 +28,38 @@ export interface SunoGenerateResponse {
   };
 }
 
+export interface SunoAudioData {
+  id: string; // Audio unique identifier (audioId)
+  audioUrl?: string; // Audio file URL (camelCase)
+  audio_url?: string; // Audio file URL (snake_case - alternative format)
+  streamAudioUrl?: string; // Streaming audio URL
+  stream_audio_url?: string; // Streaming audio URL (snake_case)
+  imageUrl?: string; // Cover image URL
+  image_url?: string; // Cover image URL (snake_case)
+  prompt: string; // Generation prompt/lyrics
+  modelName?: string; // Model name used (camelCase)
+  model_name?: string; // Model name used (snake_case)
+  title: string; // Music title
+  tags: string; // Music tags
+  createTime?: string; // Creation time (camelCase)
+  create_time?: string; // Creation time (snake_case)
+  duration: number; // Audio duration (seconds)
+}
+
 export interface SunoTaskStatus {
   code: number;
   msg: string;
   data: {
     taskId: string;
-    status: "pending" | "processing" | "completed" | "failed";
-    progress?: number; // 0-100
-    audioUrl?: string; // URL to download the generated audio
-    duration?: number; // Duration in seconds
-    error?: string; // Error message if failed
+    status: "PENDING" | "TEXT_SUCCESS" | "FIRST_SUCCESS" | "SUCCESS" | "CREATE_TASK_FAILED" | "GENERATE_AUDIO_FAILED" | "CALLBACK_EXCEPTION" | "SENSITIVE_WORD_ERROR";
+    response?: {
+      taskId?: string;
+      // API docs show both 'sunoData' and 'data' in different places
+      sunoData?: Array<SunoAudioData>;
+      data?: Array<SunoAudioData>;
+    };
+    errorCode?: number; // Error code when task fails
+    errorMessage?: string; // Error message when task fails
   };
 }
 

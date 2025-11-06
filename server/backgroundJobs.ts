@@ -261,28 +261,45 @@ async function pollMusicGenerationStatus(
       const status = await sunoClient.getTaskStatus(platformJobId);
       
       // Suno API returns uppercase status values: PENDING, TEXT_SUCCESS, FIRST_SUCCESS, SUCCESS
-      const statusValue = status.data.status?.toUpperCase();
+      const statusValue = status.data.status;
       
-      if (statusValue === "SUCCESS" || statusValue === "FIRST_SUCCESS") {
-        // Music generation completed
-        if (status.data.audioUrl) {
+      // Update progress based on status
+      if (statusValue === "TEXT_SUCCESS") {
+        await db.update(musicJobs)
+          .set({ progress: 50 })
+          .where(eq(musicJobs.id, job.id));
+      } else if (statusValue === "FIRST_SUCCESS") {
+        await db.update(musicJobs)
+          .set({ progress: 90 })
+          .where(eq(musicJobs.id, job.id));
+      }
+      
+      if (statusValue === "SUCCESS") {
+        // Music generation completed - extract audio URL from response
+        // API docs show both 'sunoData' and 'data' formats
+        const audioData = status.data.response?.sunoData?.[0] || status.data.response?.data?.[0];
+        const audioUrl = audioData?.audioUrl || audioData?.audio_url;
+        
+        if (audioData && audioUrl) {
           // Save audio file to database
           await db.insert(audioFiles).values({
             trackId,
             jobId: job.id,
-            fileUrl: status.data.audioUrl,
+            fileUrl: audioUrl,
             fileKey: `suno/${platformJobId}`,
             fileName: `track-${trackId}.mp3`,
-            duration: Math.floor(status.data.duration || 0),
+            duration: Math.floor(audioData.duration || 0),
             format: "mp3",
             isActive: true,
           });
           
           console.log(`[Background Jobs] Music generated for track ${trackId}`);
           return;
+        } else {
+          throw new Error('Audio URL not found in response');
         }
-      } else if (statusValue === "FAILED" || statusValue === "ERROR") {
-        throw new Error(`Music generation failed: ${status.data.error || 'Unknown error'}`);
+      } else if (statusValue === "CREATE_TASK_FAILED" || statusValue === "GENERATE_AUDIO_FAILED" || statusValue === "CALLBACK_EXCEPTION" || statusValue === "SENSITIVE_WORD_ERROR") {
+        throw new Error(`Music generation failed: ${status.data.errorMessage || statusValue}`);
       }
       
       // Still processing, continue polling

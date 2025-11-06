@@ -312,3 +312,8 @@
 - [x] Add album cover image to PDF first page
 - [x] Add full lyrics under each song title
 - [x] Test PDF generation with cover and lyrics
+
+## Sequential Music Generation
+- [x] Change background processor to process one job at a time (instead of 5)
+- [x] Add better logging to show which song is currently generating
+- [x] Test sequential generation to verify it reduces timeouts

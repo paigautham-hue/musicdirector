@@ -66,14 +66,14 @@ async function processJobs() {
       return;
     }
     
-    // Get pending jobs with error handling
+    // Get ONE pending job at a time to avoid API rate limits
     let pendingJobs;
     try {
       pendingJobs = await db
         .select()
         .from(musicJobs)
         .where(eq(musicJobs.status, "pending"))
-        .limit(5);
+        .limit(1); // Process one song at a time
     } catch (dbError) {
       // Database connection error - skip this cycle
       console.warn("[Background Jobs] Database connection error, will retry next cycle");
@@ -84,7 +84,9 @@ async function processJobs() {
       return;
     }
     
-    console.log(`[Background Jobs] Found ${pendingJobs.length} pending jobs`);
+    if (pendingJobs.length > 0) {
+      console.log(`[Background Jobs] Processing job ${pendingJobs[0].id} for track ${pendingJobs[0].trackId}`);
+    }
     
     // Process each job
     for (const job of pendingJobs) {

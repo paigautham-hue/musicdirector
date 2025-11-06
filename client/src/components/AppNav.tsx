@@ -150,10 +150,10 @@ export function AppNav() {
 
         {/* Mobile Menu Slide-in */}
         <div
-          className={`fixed top-0 right-0 h-full w-[280px] bg-background border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
+          className={`fixed top-0 right-0 h-full w-[280px] border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-          style={{ zIndex: 60 }}
+          style={{ zIndex: 60, backgroundColor: '#0a0a0f' }}
         >
           <div className="flex flex-col h-full">
             {/* Mobile Menu Header */}

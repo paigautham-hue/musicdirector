@@ -597,3 +597,6 @@
 - [x] Changed home page header to "The Collective Soul"
 - [x] Verified gradient styling maintained
 - [x] Test on mobile and desktop views
+
+## Mobile Menu Readability Fix
+- [x] Change mobile menu background from semi-transparent to fully opaque to prevent text overlap with hero section

@@ -570,3 +570,22 @@
 - [x] Position section after "Music That Changed the World"
 - [x] Ensure responsive design on mobile/tablet/desktop
 - [x] Test visual harmony with existing design
+
+
+## Bug Fixes - User Reported
+
+### Friend's Photo in PROMISED Section
+- [x] Convert friend's DNG photo to web-optimized JPG (85KB)
+- [x] Upload photo to public folder (/promised-friend.jpg)
+- [x] Replace illustrated version with actual photo in PROMISED section
+- [x] Add elegant border, shadow, and gradient overlay
+- [x] Add floating musical note and heart decorations
+- [x] Add hover scale effect for interactivity
+- [x] Maintain responsive design
+
+### Album Sync Issue (Explained)
+- [x] Investigated album database architecture
+- [x] Confirmed dev and published sites have separate databases
+- [x] Explained that published site data persists independently
+- [x] Second album exists on published site's database (not visible in dev)
+- [x] User can access published data via Management UI → Database panel

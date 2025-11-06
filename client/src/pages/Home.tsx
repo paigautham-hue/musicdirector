@@ -528,45 +528,29 @@ export default function Home() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.1),transparent_50%)]" />
             <CardContent className="relative p-8 md:p-12">
               <div className="grid md:grid-cols-2 gap-8 items-center">
-                {/* Illustrated Side */}
+                {/* Photo Side */}
                 <div className="relative">
                   <div className="relative w-full aspect-square max-w-sm mx-auto">
                     {/* Glowing background effect */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-blue-500/20 rounded-3xl blur-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/30 to-blue-500/30 rounded-3xl blur-3xl animate-pulse" />
                     
-                    {/* Main illustration container */}
-                    <div className="relative bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-3xl p-8 backdrop-blur-sm border border-primary/20">
-                      <div className="space-y-6">
-                        {/* Musical notes decoration */}
-                        <div className="flex justify-around">
-                          <Music className="w-8 h-8 text-primary/40 animate-pulse" style={{ animationDelay: '0s' }} />
-                          <Music className="w-6 h-6 text-accent/40 animate-pulse" style={{ animationDelay: '0.5s' }} />
-                          <Music className="w-8 h-8 text-blue-500/40 animate-pulse" style={{ animationDelay: '1s' }} />
-                        </div>
-                        
-                        {/* Central PROMISED badge */}
-                        <div className="relative">
-                          <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent blur-xl opacity-50" />
-                          <div className="relative bg-gradient-to-r from-primary via-accent to-blue-500 rounded-2xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
-                            <div className="text-4xl md:text-5xl font-bold text-white tracking-wider">
-                              PROMISED
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Peace symbols */}
-                        <div className="flex justify-center gap-4">
-                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                            <Heart className="w-6 h-6 text-primary" />
-                          </div>
-                          <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 text-accent" />
-                          </div>
-                          <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
-                            <Music className="w-6 h-6 text-blue-500" />
-                          </div>
-                        </div>
-                      </div>
+                    {/* Photo container with elegant border */}
+                    <div className="relative rounded-3xl overflow-hidden border-4 border-primary/30 shadow-2xl transform hover:scale-105 transition-transform duration-500">
+                      <img 
+                        src="/promised-friend.jpg" 
+                        alt="A Promise for Peace" 
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Gradient overlay for depth */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    </div>
+                    
+                    {/* Floating musical notes decoration */}
+                    <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-primary/20 backdrop-blur-sm flex items-center justify-center animate-bounce">
+                      <Music className="w-8 h-8 text-primary" />
+                    </div>
+                    <div className="absolute -bottom-4 -left-4 w-12 h-12 rounded-full bg-accent/20 backdrop-blur-sm flex items-center justify-center animate-pulse">
+                      <Heart className="w-6 h-6 text-accent" />
                     </div>
                   </div>
                 </div>

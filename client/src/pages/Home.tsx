@@ -169,7 +169,7 @@ export default function Home() {
           }`}
           style={{ zIndex: 60 }}
         >
-          <div className="flex flex-col h-full">
+          <div className="relative h-full">
             {/* Mobile Menu Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">
               <span className="font-semibold">Menu</span>
@@ -182,8 +182,8 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4" style={{ minHeight: 0, maxHeight: 'calc(100vh - 200px)' }}>
+            {/* Mobile Menu Items - with fixed padding for footer */}
+            <div className="overflow-y-auto py-4" style={{ height: 'calc(100% - 60px - 140px)', paddingBottom: '1rem' }}>
               {isAuthenticated ? (
                 <div className="space-y-1 px-2">
                   <Link href="/library">
@@ -272,9 +272,9 @@ export default function Home() {
               )}
             </div>
 
-            {/* Mobile Menu Footer */}
+            {/* Mobile Menu Footer - Absolute positioned at bottom */}
             {isAuthenticated && (
-              <div className="border-t border-border p-4 flex-shrink-0">
+              <div className="absolute bottom-0 left-0 right-0 border-t border-border p-4 bg-background">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                     <User className="w-5 h-5 text-primary" />

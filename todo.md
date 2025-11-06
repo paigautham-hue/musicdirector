@@ -597,3 +597,12 @@
 - [x] Changed home page header to "The Collective Soul"
 - [x] Verified gradient styling maintained
 - [x] Test on mobile and desktop views
+
+
+## Mobile Menu Fix - Home Page
+
+### Navigation Items Not Visible on Mobile
+- [x] Fix Home page mobile menu flexbox layout
+- [x] Add explicit maxHeight to ensure menu items section is visible
+- [x] Keep user profile footer fixed at bottom with flex-shrink-0
+- [ ] Test on published site after deployment

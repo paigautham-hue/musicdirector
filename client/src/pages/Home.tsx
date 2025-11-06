@@ -183,7 +183,7 @@ export default function Home() {
             </div>
 
             {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4 min-h-0">
+            <div className="flex-1 overflow-y-auto py-4" style={{ minHeight: 0, maxHeight: 'calc(100vh - 200px)' }}>
               {isAuthenticated ? (
                 <div className="space-y-1 px-2">
                   <Link href="/library">

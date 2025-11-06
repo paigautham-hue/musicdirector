@@ -317,3 +317,9 @@
 - [x] Change background processor to process one job at a time (instead of 5)
 - [x] Add better logging to show which song is currently generating
 - [x] Test sequential generation to verify it reduces timeouts
+
+## Prompt Navigation Fixes
+- [x] Fix "Use This Prompt" button 404 error
+- [x] Add route for album creation with prompt parameter
+- [x] Add prompt selector/browser to album creation page
+- [x] Test navigation from My Prompts to Create Album

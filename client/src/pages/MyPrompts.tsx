@@ -92,7 +92,7 @@ export default function MyPrompts() {
       influences: template.influences || "[]",
       trackCount: template.trackCount.toString(),
     });
-    setLocation(`/create?${params.toString()}`);
+    setLocation(`/new?${params.toString()}`);
   };
 
   if (isLoading) {

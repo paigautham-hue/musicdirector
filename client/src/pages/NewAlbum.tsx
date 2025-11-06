@@ -37,6 +37,48 @@ export default function NewAlbum() {
   const [influences, setInfluences] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string>("suno");
   const [trackCount, setTrackCount] = useState(10);
+  
+  // Parse URL parameters to pre-fill form from saved prompts
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const themeParam = params.get('theme');
+    const vibeParam = params.get('vibe');
+    const platformParam = params.get('platform');
+    const languageParam = params.get('language');
+    const audienceParam = params.get('audience');
+    const influencesParam = params.get('influences');
+    const trackCountParam = params.get('trackCount');
+    
+    if (themeParam) setTheme(themeParam);
+    if (vibeParam) {
+      try {
+        const parsedVibes = JSON.parse(vibeParam);
+        if (Array.isArray(parsedVibes)) {
+          setVibes(parsedVibes);
+        }
+      } catch {
+        // If not JSON, treat as single vibe
+        setVibes([vibeParam]);
+      }
+    }
+    if (platformParam) setPlatform(platformParam);
+    if (languageParam) setLanguage(languageParam);
+    if (audienceParam) setAudience(audienceParam);
+    if (influencesParam) {
+      try {
+        const parsedInfluences = JSON.parse(influencesParam);
+        if (Array.isArray(parsedInfluences)) {
+          setInfluences(parsedInfluences);
+        }
+      } catch {
+        // Ignore invalid JSON
+      }
+    }
+    if (trackCountParam) {
+      const count = parseInt(trackCountParam, 10);
+      if (!isNaN(count)) setTrackCount(count);
+    }
+  }, []);
   const [jobId, setJobId] = useState<string | null>(null);
   const [progress, setProgress] = useState<{
     stage: string;

@@ -163,9 +163,10 @@ export default function Home() {
 
         {/* Mobile Menu Slide-in */}
         <div
-          className={`fixed top-0 right-0 h-full w-[280px] bg-background border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+          className={`fixed top-0 right-0 h-full w-[280px] bg-background border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
+          style={{ zIndex: 60 }}
         >
           <div className="flex flex-col h-full">
             {/* Mobile Menu Header */}
@@ -181,7 +182,7 @@ export default function Home() {
             </div>
 
             {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4">
+            <div className="flex-1 overflow-y-auto py-4 min-h-0">
               {isAuthenticated ? (
                 <div className="space-y-1 px-2">
                   <Link href="/library">
@@ -272,7 +273,7 @@ export default function Home() {
 
             {/* Mobile Menu Footer */}
             {isAuthenticated && (
-              <div className="border-t border-border p-4">
+              <div className="border-t border-border p-4 flex-shrink-0">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                     <User className="w-5 h-5 text-primary" />

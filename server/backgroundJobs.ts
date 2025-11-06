@@ -218,6 +218,7 @@ async function generateMusicForTrack(
     customMode: !!lyrics, // Custom mode if we have lyrics
     instrumental: !lyrics, // Instrumental if no lyrics
     model: "V5",
+    callBackUrl: "https://webhook.site/suno-callback", // Required by Suno API
   });
   
   // Update job with platform job ID
@@ -250,7 +251,7 @@ async function pollMusicGenerationStatus(
     throw new Error("Suno API client not configured");
   }
   
-  const maxAttempts = 60; // 5 minutes max (5 second intervals)
+  const maxAttempts = 120; // 10 minutes max (5 second intervals)
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Wait 5 seconds between polls
@@ -259,7 +260,10 @@ async function pollMusicGenerationStatus(
     try {
       const status = await sunoClient.getTaskStatus(platformJobId);
       
-      if (status.data.status === "completed") {
+      // Suno API returns uppercase status values: PENDING, TEXT_SUCCESS, FIRST_SUCCESS, SUCCESS
+      const statusValue = status.data.status?.toUpperCase();
+      
+      if (statusValue === "SUCCESS" || statusValue === "FIRST_SUCCESS") {
         // Music generation completed
         if (status.data.audioUrl) {
           // Save audio file to database
@@ -277,12 +281,25 @@ async function pollMusicGenerationStatus(
           console.log(`[Background Jobs] Music generated for track ${trackId}`);
           return;
         }
-      } else if (status.data.status === "failed") {
+      } else if (statusValue === "FAILED" || statusValue === "ERROR") {
         throw new Error(`Music generation failed: ${status.data.error || 'Unknown error'}`);
       }
       
       // Still processing, continue polling
-      console.log(`[Background Jobs] Track ${trackId} status: ${status.data.status}`);
+      console.log(`[Background Jobs] Track ${trackId} status: ${statusValue || status.data.status}`);
+      
+      // Update job progress based on status
+      if (statusValue === "TEXT_SUCCESS") {
+        await db
+          .update(musicJobs)
+          .set({ progress: 50, statusMessage: "Generating audio..." })
+          .where(eq(musicJobs.id, job.id));
+      } else if (statusValue === "FIRST_SUCCESS") {
+        await db
+          .update(musicJobs)
+          .set({ progress: 90, statusMessage: "Finalizing..." })
+          .where(eq(musicJobs.id, job.id));
+      }
     } catch (error) {
       console.error(`[Background Jobs] Error polling status:`, error);
       throw error;

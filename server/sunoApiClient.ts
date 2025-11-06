@@ -53,11 +53,14 @@ export class SunoApiClient {
    * Generate music using Suno AI V5 model
    */
   async generateMusic(request: SunoGenerateRequest): Promise<SunoGenerateResponse> {
-    // Prepare request body with callback URL if not provided
+    // Prepare request body - callBackUrl is required by Suno API
+    if (!request.callBackUrl) {
+      throw new Error("callBackUrl is required by Suno API");
+    }
+    
     const requestBody = {
       ...request,
       model: request.model || "V5", // Always default to V5
-      callBackUrl: request.callBackUrl || "https://webhook.site/placeholder", // Placeholder callback
     };
 
     const response = await fetch(`${this.baseUrl}/api/v1/generate`, {

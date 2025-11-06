@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, trackId, status, progress, errorMessage, platformJobId FROM musicJobs ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, status, progress, errorMessage, platformJobId FROM musicJobs ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "30002",
+      "trackId": "60007",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "84811a6342419c6652d386c5ebbea9bb"
+    },
+    {
+      "id": "30001",
+      "trackId": "60006",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "7af5827a9f35e0987346cf945e9c2ef2"
+    },
+    {
+      "id": "5",
+      "trackId": "60008",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "ad9c50364941f01b6ff96ff064210501"
+    },
+    {
+      "id": "9",
+      "trackId": "60011",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "97116820dd89a4816f4884f1d1af0d9d"
+    },
+    {
+      "id": "4",
+      "trackId": "60006",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "69ff3b965f22be878a5a3e1d9f334e18"
+    },
+    {
+      "id": "10",
+      "trackId": "60014",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "2a6b33f86086988d2ac0fa03229f5a4c"
+    },
+    {
+      "id": "2",
+      "trackId": "60009",
+      "status": "processing",
+      "progress": "50",
+      "errorMessage": "NULL",
+      "platformJobId": "6eb1b0a39de62f5f30b4e6597ad2f132"
+    },
+    {
+      "id": "6",
+      "trackId": "60013",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "752edc38e835d4a4befb4345f85cbc38"
+    },
+    {
+      "id": "8",
+      "trackId": "60007",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "4768aac50d92583e1302695f42b3bc79"
+    },
+    {
+      "id": "7",
+      "trackId": "60012",
+      "status": "failed",
+      "progress": "50",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "ef749f51473f869abf6756f762456685"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tstatus\tprogress\terrorMessage\tplatformJobId\n30002\t60007\tfailed\t50\tMusic generation timed out\t84811a6342419c6652d386c5ebbea9bb\n30001\t60006\tfailed\t50\tMusic generation timed out\t7af5827a9f35e0987346cf945e9c2ef2\n5\t60008\tfailed\t50\tMusic generation timed out\tad9c50364941f01b6ff96ff064210501\n9\t60011\tfailed\t50\tMusic generation timed out\t97116820dd89a4816f4884f1d1af0d9d\n4\t60006\tfailed\t50\tMusic generation timed out\t69ff3b965f22be878a5a3e1d9f334e18\n10\t60014\tfailed\t50\tMusic generation timed out\t2a6b33f86086988d2ac0fa03229f5a4c\n2\t60009\tprocessing\t50\tNULL\t6eb1b0a39de62f5f30b4e6597ad2f132\n6\t60013\tfailed\t50\tMusic generation timed out\t752edc38e835d4a4befb4345f85cbc38\n8\t60007\tfailed\t50\tMusic generation timed out\t4768aac50d92583e1302695f42b3bc79\n7\t60012\tfailed\t50\tMusic generation timed out\tef749f51473f869abf6756f762456685\n",
+  "stderr": "",
+  "execution_time_ms": 1535
+}

@@ -291,3 +291,11 @@
 - [x] Add better error handling and retry logic
 - [x] Display detailed error messages to users
 - [x] Test music generation with fixed error handling
+
+## Music Generation Timeout Issues
+- [x] Test Suno API directly with sample request
+- [x] Check if API is responding correctly
+- [x] Verify polling logic and timeout settings
+- [x] Check if task status endpoint is working
+- [x] Increase timeout or fix polling logic
+- [x] Test with real music generation

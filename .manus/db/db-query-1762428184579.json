@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE musicJobs SET status = 'pending', progress = 0, errorMessage = NULL, statusMessage = NULL, startedAt = NULL, completedAt = NULL WHERE id = (SELECT id FROM (SELECT id FROM musicJobs WHERE status = 'failed' LIMIT 1) AS temp) LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute UPDATE musicJobs SET status = 'pending', progress = 0, errorMessage = NULL, statusMessage = NULL, startedAt = NULL, completedAt = NULL WHERE id = (SELECT id FROM (SELECT id FROM musicJobs WHERE status = 'failed' LIMIT 1) AS temp) LIMIT 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1608
+}

@@ -169,21 +169,20 @@ export default function Home() {
           }`}
           style={{ zIndex: 60 }}
         >
-          <div className="flex flex-col h-full">
-            {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <span className="font-semibold">Menu</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
+          {/* Mobile Menu Header */}
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <span className="font-semibold">Menu</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <X className="w-5 h-5" />
+            </Button>
+          </div>
 
-            {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4 min-h-0">
+          {/* Single Scrollable Container for All Content */}
+          <div className="overflow-y-auto" style={{ height: 'calc(100vh - 65px)', paddingBottom: '2rem' }}>
               {isAuthenticated ? (
                 <div className="space-y-1 px-2">
                   <Link href="/library">
@@ -270,11 +269,10 @@ export default function Home() {
                   </Button>
                 </div>
               )}
-            </div>
 
-            {/* Mobile Menu Footer */}
+            {/* Mobile Menu Footer - Inside Scrollable Container */}
             {isAuthenticated && (
-              <div className="border-t border-border p-4 flex-shrink-0">
+              <div className="border-t border-border p-4 mt-4 mx-2">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                     <User className="w-5 h-5 text-primary" />

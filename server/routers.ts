@@ -342,6 +342,21 @@ export const appRouter = router({
         return { success: true, jobCount: albumTracks.length };
       }),
     
+    // Get music generation status for album
+    getMusicStatus: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album || album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        const jobs = await db.getMusicJobsByAlbumId(input.albumId);
+        const audioFiles = await db.getAudioFilesByAlbumId(input.albumId);
+        
+        return { jobs, audioFiles };
+      }),
+    
     // Get public albums for gallery
     getPublicAlbums: publicProcedure
       .input(z.object({

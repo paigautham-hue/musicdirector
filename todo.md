@@ -264,5 +264,13 @@
 - [x] Add "Generate Music" button to Album Workspace
 - [x] Create bulk audio generation endpoint that processes all tracks
 - [x] Add progress tracking for music generation
-- [x] Show audio player once tracks are generated
+- [ ] Show audio player once tracks are generated
 - [ ] Test music generation with Suno API
+
+## Audio Player UI
+- [x] Add backend endpoint to fetch music jobs and audio files for album
+- [x] Create audio player component with play/pause controls
+- [x] Display track generation status (pending/processing/completed/failed)
+- [x] Add auto-refresh to update status when generation completes
+- [x] Show audio player for completed tracks
+- [ ] Test audio playback

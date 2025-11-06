@@ -1,4 +1,4 @@
-import { eq, desc, and, or, like, sql } from "drizzle-orm";
+import { eq, desc, and, or, like, sql, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
@@ -636,4 +636,22 @@ export async function getTracksByAlbumId(albumId: number) {
   if (!db) return [];
   
   return db.select().from(tracks).where(eq(tracks.albumId, albumId));
+}
+
+export async function getMusicJobsByAlbumId(albumId: number): Promise<MusicJob[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(musicJobs).where(eq(musicJobs.albumId, albumId));
+}
+
+export async function getAudioFilesByAlbumId(albumId: number): Promise<AudioFile[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const albumTracks = await getTracksByAlbumId(albumId);
+  if (albumTracks.length === 0) return [];
+  
+  const trackIds = albumTracks.map(t => t.id);
+  return db.select().from(audioFiles).where(inArray(audioFiles.trackId, trackIds));
 }

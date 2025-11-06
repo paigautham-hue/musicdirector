@@ -7,10 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check, Volume2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
+import { AudioPlayer } from "@/components/AudioPlayer";
 
 export default function AlbumWorkspace() {
   const { id } = useParams();
@@ -39,6 +40,18 @@ export default function AlbumWorkspace() {
   const { data: album, isLoading, refetch } = trpc.albums.get.useQuery(
     { id: parseInt(id!) },
     { enabled: !!id }
+  );
+  
+  const { data: musicStatus, refetch: refetchMusicStatus } = trpc.albums.getMusicStatus.useQuery(
+    { albumId: parseInt(id!) },
+    { 
+      enabled: !!id,
+      refetchInterval: (data) => {
+        // Auto-refresh every 5 seconds if there are pending/processing jobs
+        const hasPendingJobs = data?.jobs?.some(j => j.status === "pending" || j.status === "processing");
+        return hasPendingJobs ? 5000 : false;
+      }
+    }
   );
 
   const optimizeMutation = trpc.albums.optimizeForPlatform.useMutation({
@@ -79,6 +92,7 @@ export default function AlbumWorkspace() {
     onSuccess: () => {
       toast.success("Music generation started! This will take a few minutes.");
       refetch();
+      refetchMusicStatus();
     },
     onError: (error) => {
       toast.error(error.message || "Failed to start music generation");
@@ -288,6 +302,35 @@ export default function AlbumWorkspace() {
             </div>
           </div>
         </div>
+
+        {/* Music Player Section */}
+        {musicStatus && musicStatus.jobs && musicStatus.jobs.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Volume2 className="w-5 h-5 text-primary" />
+              <h2 className="text-2xl font-bold">Generated Music</h2>
+            </div>
+            <div className="space-y-3">
+              {album.tracks.map((track: any) => {
+                const job = musicStatus.jobs.find((j: any) => j.trackId === track.id);
+                const audioFile = musicStatus.audioFiles.find((a: any) => a.trackId === track.id && a.isActive);
+                
+                return (
+                  <AudioPlayer
+                    key={track.id}
+                    trackId={track.id}
+                    trackTitle={track.title}
+                    trackIndex={track.index}
+                    audioUrl={audioFile?.fileUrl}
+                    status={job?.status || "pending"}
+                    progress={job?.progress || 0}
+                    statusMessage={job?.statusMessage || undefined}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Workspace */}
         <div className="grid md:grid-cols-[300px_1fr] gap-6">

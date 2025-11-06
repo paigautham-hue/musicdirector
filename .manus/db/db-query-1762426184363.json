@@ -1,0 +1,45 @@
+{
+  "query": "SELECT id, trackId, errorMessage, platformJobId, createdAt FROM musicJobs WHERE status = 'failed' ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, errorMessage, platformJobId, createdAt FROM musicJobs WHERE status = 'failed' ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "2",
+      "trackId": "60009",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "492c8ab9279b358f971612e1aa2117ab",
+      "createdAt": "2025-11-06 10:21:09"
+    },
+    {
+      "id": "4",
+      "trackId": "60006",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "6eac520f5618a51d10d8e054f32e2026",
+      "createdAt": "2025-11-06 10:21:09"
+    },
+    {
+      "id": "5",
+      "trackId": "60008",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "ad9c50364941f01b6ff96ff064210501",
+      "createdAt": "2025-11-06 10:21:09"
+    },
+    {
+      "id": "6",
+      "trackId": "60013",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "752edc38e835d4a4befb4345f85cbc38",
+      "createdAt": "2025-11-06 10:21:09"
+    },
+    {
+      "id": "1",
+      "trackId": "60005",
+      "errorMessage": "Music generation timed out",
+      "platformJobId": "7184b4ed06a9e03d4f11425a4f76bc23",
+      "createdAt": "2025-11-06 10:21:09"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\terrorMessage\tplatformJobId\tcreatedAt\n2\t60009\tMusic generation timed out\t492c8ab9279b358f971612e1aa2117ab\t2025-11-06 10:21:09\n4\t60006\tMusic generation timed out\t6eac520f5618a51d10d8e054f32e2026\t2025-11-06 10:21:09\n5\t60008\tMusic generation timed out\tad9c50364941f01b6ff96ff064210501\t2025-11-06 10:21:09\n6\t60013\tMusic generation timed out\t752edc38e835d4a4befb4345f85cbc38\t2025-11-06 10:21:09\n1\t60005\tMusic generation timed out\t7184b4ed06a9e03d4f11425a4f76bc23\t2025-11-06 10:21:09\n",
+  "stderr": "",
+  "execution_time_ms": 1510
+}

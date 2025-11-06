@@ -91,13 +91,21 @@ async function processJobs() {
       try {
         await processJob(job);
       } catch (error) {
-        console.error(`[Background Jobs] Job ${job.id} failed:`, error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        
+        console.error(`[Background Jobs] Job ${job.id} failed:`, {
+          error: errorMessage,
+          stack: errorStack,
+          trackId: job.trackId,
+          albumId: job.albumId
+        });
         
         await db
           .update(musicJobs)
           .set({
             status: "failed",
-            errorMessage: error instanceof Error ? error.message : String(error),
+            errorMessage,
             completedAt: new Date(),
           })
           .where(eq(musicJobs.id, job.id));

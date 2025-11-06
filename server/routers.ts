@@ -5,8 +5,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
-import { tracks } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { tracks, musicJobs } from "../drizzle/schema";
+import { eq, and } from "drizzle-orm";
 import { generateAlbum, improveTrack } from "./albumGenerator";
 import { generateJobId, setProgress, getProgress, clearProgress } from "./progressTracker";
 import { getPlatformAdapter, PLATFORM_ADAPTERS } from "./adapters";
@@ -479,6 +479,56 @@ export const appRouter = router({
       .input(z.object({ trackId: z.number() }))
       .query(async ({ input }) => {
         return db.getTrackRatings(input.trackId);
+      }),
+    
+    // Retry failed music generation for a track
+    retryGeneration: protectedProcedure
+      .input(z.object({ trackId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        }
+        
+        // Get track to verify ownership
+        const [track] = await dbInstance.select().from(tracks).where(eq(tracks.id, input.trackId)).limit(1);
+        if (!track) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Track not found' });
+        }
+        
+        // Get album to check ownership
+        const album = await db.getAlbumById(track.albumId);
+        if (!album || album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        
+        // Find existing failed job and reset it to pending
+        const [existingJob] = await dbInstance
+          .select()
+          .from(musicJobs)
+          .where(and(eq(musicJobs.trackId, input.trackId), eq(musicJobs.status, "failed")))
+          .limit(1);
+        
+        if (existingJob) {
+          // Reset existing job to pending
+          await dbInstance
+            .update(musicJobs)
+            .set({
+              status: "pending",
+              progress: 0,
+              errorMessage: null,
+              statusMessage: null,
+              startedAt: null,
+              completedAt: null,
+            })
+            .where(eq(musicJobs.id, existingJob.id));
+        } else {
+          // Create new job if none exists
+          const { createTrackGenerationJob } = await import("./backgroundJobs");
+          await createTrackGenerationJob(album.id, input.trackId, album.platform);
+        }
+        
+        return { success: true };
       })
   }),
 

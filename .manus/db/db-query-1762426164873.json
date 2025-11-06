@@ -1,0 +1,18 @@
+{
+  "query": "SELECT * FROM systemSettings WHERE `key` = 'suno_api_key';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT * FROM systemSettings WHERE `key` = 'suno_api_key';",
+  "rows": [
+    {
+      "id": "1",
+      "key": "suno_api_key",
+      "value": "c684407c6103dbef90ed44c0b97e2de3",
+      "description": "API key for suno",
+      "updatedBy": "60001",
+      "updatedAt": "2025-11-05 10:39:45"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tkey\tvalue\tdescription\tupdatedBy\tupdatedAt\n1\tsuno_api_key\tc684407c6103dbef90ed44c0b97e2de3\tAPI key for suno\t60001\t2025-11-05 10:39:45\n",
+  "stderr": "",
+  "execution_time_ms": 1544
+}

@@ -283,3 +283,11 @@
 - [x] Integrate star rating into AudioPlayer component
 - [x] Display average rating and user's rating
 - [x] Test rating functionality
+
+## Music Generation Failures
+- [x] Check background job processor logs for error messages
+- [x] Investigate Suno API response errors
+- [x] Check if error messages are being stored in database
+- [x] Add better error handling and retry logic
+- [x] Display detailed error messages to users
+- [x] Test music generation with fixed error handling

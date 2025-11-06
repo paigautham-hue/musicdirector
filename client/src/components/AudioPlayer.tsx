@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Pause, Download, Loader2, Music2, AlertCircle, Star } from "lucide-react";
+import { Play, Pause, Download, Loader2, Music2, AlertCircle, Star, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { trpc } from "@/lib/trpc";
@@ -16,6 +16,7 @@ interface AudioPlayerProps {
   progress?: number;
   statusMessage?: string;
   onRatingChange?: () => void;
+  onRetry?: () => void;
 }
 
 export function AudioPlayer({
@@ -26,7 +27,8 @@ export function AudioPlayer({
   status = "pending",
   progress = 0,
   statusMessage,
-  onRatingChange
+  onRatingChange,
+  onRetry
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -202,8 +204,28 @@ export function AudioPlayer({
               <audio ref={audioRef} src={audioUrl} />
             </div>
           ) : status === "failed" ? (
-            <div className="text-xs text-destructive">
-              {statusMessage || "Generation failed"}
+            <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-1 flex-1">
+                <div className="text-xs text-destructive font-medium">
+                  Generation failed
+                </div>
+                {statusMessage && (
+                  <div className="text-xs text-muted-foreground line-clamp-2">
+                    {statusMessage}
+                  </div>
+                )}
+              </div>
+              {onRetry && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={onRetry}
+                  className="gap-1"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  Retry
+                </Button>
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-2 text-muted-foreground">

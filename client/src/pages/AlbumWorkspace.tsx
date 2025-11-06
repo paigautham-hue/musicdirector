@@ -98,6 +98,16 @@ export default function AlbumWorkspace() {
       toast.error(error.message || "Failed to start music generation");
     }
   });
+  
+  const retryGenerationMutation = trpc.tracks.retryGeneration.useMutation({
+    onSuccess: () => {
+      toast.success("Retrying music generation...");
+      refetchMusicStatus();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to retry generation");
+    }
+  });
 
   const bookletMutation = trpc.downloads.albumBooklet.useMutation({
     onSuccess: (data) => {
@@ -324,7 +334,8 @@ export default function AlbumWorkspace() {
                     audioUrl={audioFile?.fileUrl}
                     status={job?.status || "pending"}
                     progress={job?.progress || 0}
-                    statusMessage={job?.statusMessage || undefined}
+                    statusMessage={job?.status === "failed" ? (job?.errorMessage || "Unknown error") : (job?.statusMessage || undefined)}
+                    onRetry={() => retryGenerationMutation.mutate({ trackId: track.id })}
                   />
                 );
               })}

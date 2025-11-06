@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Music, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import {
@@ -16,6 +16,7 @@ import {
 
 export function AppNav() {
   const { user, isAuthenticated } = useAuth();
+  const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
@@ -44,28 +45,48 @@ export function AppNav() {
               {isAuthenticated ? (
                 <>
                   <Link href="/library">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/library' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
                       Library
                     </a>
                   </Link>
                   <Link href="/explore">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/explore' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
                       Explore
                     </a>
                   </Link>
                   <Link href="/community-prompts">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/community-prompts' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
                       Prompts
                     </a>
                   </Link>
                   <Link href="/pricing">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/pricing' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
                       Pricing
                     </a>
                   </Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin">
-                      <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                      <a className={`text-sm font-medium transition-colors ${
+                        location.startsWith('/admin') 
+                          ? 'text-foreground border-b-2 border-primary pb-1' 
+                          : 'text-foreground/80 hover:text-foreground'
+                      }`}>
                         Admin
                       </a>
                     </Link>

@@ -299,3 +299,10 @@
 - [x] Check if task status endpoint is working
 - [x] Increase timeout or fix polling logic
 - [x] Test with real music generation
+
+## Song Length & Timeout Improvements
+- [x] Increase music generation timeout from 10 to 15 minutes
+- [x] Optimize lyrics generation to create longer songs (4+ minutes)
+- [x] Add more song structure (verses, choruses, bridges)
+- [x] Switch to V5 model exclusively (8-minute support, faster generation)
+- [x] Test song duration improvements

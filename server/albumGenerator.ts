@@ -227,12 +227,21 @@ ${JSON.stringify(constraints, null, 2)}
 Best practices:
 ${bestPractices.map((p, i) => `${i + 1}. ${p}`).join("\n")}
 
-CRITICAL: Generate COMPLETE lyrics with ALL sections marked with structure tags.
-Required structure: [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Chorus], [Outro]
-Each section MUST have 4-8 lines of actual lyrics.
+CRITICAL: Generate COMPLETE lyrics with ALL sections marked with structure tags for a 4+ MINUTE SONG.
+Required structure for longer songs: [Intro], [Verse 1], [Pre-Chorus], [Chorus], [Verse 2], [Pre-Chorus], [Chorus], [Bridge], [Chorus], [Outro]
+Each section MUST have these line counts:
+- [Intro]: 2-4 lines (optional instrumental description or opening lyrics)
+- [Verse 1]: 6-10 lines of storytelling
+- [Pre-Chorus]: 3-4 lines building tension
+- [Chorus]: 6-8 lines (the hook, repeated multiple times)
+- [Verse 2]: 6-10 lines continuing the story
+- [Bridge]: 6-8 lines with new perspective or emotional shift
+- [Outro]: 4-6 lines for resolution
+
 Keep line lengths consistent (8-12 syllables per line for verses, 6-10 for chorus)
 Use sensory language and avoid clichés
-DO NOT generate incomplete lyrics - every section must be fully written out`
+DO NOT generate incomplete lyrics - every section must be fully written out
+Aim for 1200-2000 characters total to ensure 4+ minute duration`
       },
       {
         role: "user",
@@ -249,8 +258,8 @@ Generate:
 2. Hook (one-line emotional core)
 3. Description (what the song is about, 2-3 sentences)
 4. Prompt (style/mood description for ${platform}, max ${constraints.prompt.maxChars} chars)
-5. Lyrics (COMPLETE FULL SONG with ALL structure tags and content: [Verse 1] with 4-8 lines, [Chorus] with 4-6 lines, [Verse 2] with 4-8 lines, [Chorus] repeated, [Bridge] with 4-6 lines, [Chorus] repeated, [Outro] with 2-4 lines. Max ${constraints.lyrics.maxChars || 3000} chars but aim for 800-1500 chars for completeness)
-6. Structure (e.g., "Verse-Chorus-Verse-Chorus-Bridge-Chorus-Outro")
+5. Lyrics (COMPLETE FULL SONG for 4+ MINUTES with ALL structure tags: [Intro] 2-4 lines, [Verse 1] 6-10 lines, [Pre-Chorus] 3-4 lines, [Chorus] 6-8 lines, [Verse 2] 6-10 lines, [Pre-Chorus] 3-4 lines, [Chorus] repeated, [Bridge] 6-8 lines, [Chorus] repeated, [Outro] 4-6 lines. Aim for 1200-2000 chars total. Max ${constraints.lyrics.maxChars || 3000} chars)
+6. Structure (e.g., "Intro-Verse-PreChorus-Chorus-Verse-PreChorus-Chorus-Bridge-Chorus-Outro")
 7. Tempo/BPM range (e.g., "120-130 BPM")
 8. Key suggestion (e.g., "C major" or "A minor")
 9. Mood tags (array of 3-5 descriptors)

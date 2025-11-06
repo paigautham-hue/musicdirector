@@ -251,7 +251,7 @@ async function pollMusicGenerationStatus(
     throw new Error("Suno API client not configured");
   }
   
-  const maxAttempts = 120; // 10 minutes max (5 second intervals)
+  const maxAttempts = 180; // 15 minutes max (5 second intervals)
   
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Wait 5 seconds between polls

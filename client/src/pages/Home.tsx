@@ -3,7 +3,8 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, User, LogOut, ChevronDown, Menu, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, User, LogOut, ChevronDown, Menu, X, Heart } from "lucide-react";
 import { Link } from "wouter";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import {
@@ -516,6 +517,98 @@ export default function Home() {
               </Button>
             </Link>
           </div>
+        </div>
+      </div>
+
+      {/* Inspiration: A Promise for Peace */}
+      <div className="relative py-20">
+        <div className="container mx-auto px-6">
+          <Card className="border-2 border-primary/30 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-blue-500/5 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(147,51,234,0.1),transparent_50%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(236,72,153,0.1),transparent_50%)]" />
+            <CardContent className="relative p-8 md:p-12">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                {/* Illustrated Side */}
+                <div className="relative">
+                  <div className="relative w-full aspect-square max-w-sm mx-auto">
+                    {/* Glowing background effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-accent/20 to-blue-500/20 rounded-3xl blur-2xl" />
+                    
+                    {/* Main illustration container */}
+                    <div className="relative bg-gradient-to-br from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-3xl p-8 backdrop-blur-sm border border-primary/20">
+                      <div className="space-y-6">
+                        {/* Musical notes decoration */}
+                        <div className="flex justify-around">
+                          <Music className="w-8 h-8 text-primary/40 animate-pulse" style={{ animationDelay: '0s' }} />
+                          <Music className="w-6 h-6 text-accent/40 animate-pulse" style={{ animationDelay: '0.5s' }} />
+                          <Music className="w-8 h-8 text-blue-500/40 animate-pulse" style={{ animationDelay: '1s' }} />
+                        </div>
+                        
+                        {/* Central PROMISED badge */}
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent blur-xl opacity-50" />
+                          <div className="relative bg-gradient-to-r from-primary via-accent to-blue-500 rounded-2xl p-6 text-center transform hover:scale-105 transition-transform duration-300">
+                            <div className="text-4xl md:text-5xl font-bold text-white tracking-wider">
+                              PROMISED
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Peace symbols */}
+                        <div className="flex justify-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                            <Heart className="w-6 h-6 text-primary" />
+                          </div>
+                          <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">
+                            <Sparkles className="w-6 h-6 text-accent" />
+                          </div>
+                          <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center">
+                            <Music className="w-6 h-6 text-blue-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content Side */}
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
+                      A Promise for Peace
+                    </h3>
+                    <p className="text-lg text-muted-foreground italic">
+                      "Music is the universal language that transcends borders and unites hearts"
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-4 text-foreground/90">
+                    <p className="leading-relaxed">
+                      Inspired by visionaries who believe in the transformative power of music, this platform is dedicated to creating songs that heal, unite, and bring positive change to humanity.
+                    </p>
+                    <p className="leading-relaxed">
+                      Every album created here carries a promise—to spread love, foster understanding, and contribute to a more peaceful world through the universal language of music.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 pt-4">
+                    <Badge variant="secondary" className="px-4 py-2 text-sm">
+                      <Heart className="w-4 h-4 mr-2" />
+                      Peace Through Music
+                    </Badge>
+                    <Badge variant="secondary" className="px-4 py-2 text-sm">
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Unity & Love
+                    </Badge>
+                    <Badge variant="secondary" className="px-4 py-2 text-sm">
+                      <Music className="w-4 h-4 mr-2" />
+                      Positive Impact
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 

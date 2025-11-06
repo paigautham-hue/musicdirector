@@ -589,3 +589,11 @@
 - [x] Explained that published site data persists independently
 - [x] Second album exists on published site's database (not visible in dev)
 - [x] User can access published data via Management UI → Database panel
+
+
+## Rebranding to "The Collective Soul"
+
+### Update Application Title
+- [x] Changed home page header to "The Collective Soul"
+- [x] Verified gradient styling maintained
+- [x] Test on mobile and desktop views

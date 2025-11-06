@@ -69,7 +69,7 @@ export default function Home() {
               <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                 <Music className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 <span className="bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-                  {APP_TITLE}
+                  The Collective Soul
                 </span>
               </a>
             </Link>

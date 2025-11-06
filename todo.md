@@ -436,3 +436,25 @@
 - [x] Add visibility controls to MyPrompts
 - [x] Add optimistic updates for likes and follows
 - [x] Add toast notifications for all social actions
+
+## Social Sharing & Admin Enhancements
+
+### Social Media Sharing
+- [x] Add share dialog to AlbumDetail page
+- [x] Implement Twitter sharing with custom text
+- [x] Implement Facebook sharing
+- [x] Implement LinkedIn sharing
+- [x] Implement WhatsApp sharing
+- [x] Add copy link functionality with visual feedback
+- [x] Add share button to album detail page
+
+### Admin Bulk Quota Management
+- [x] Add checkbox selection for users in Admin User Quotas
+- [x] Add "Select All" functionality
+- [x] Create "Grant Credits" bulk action button
+- [x] Implement grant credits dialog with preview
+- [x] Show current and new quota values in dialog
+- [x] Disable selection for admin users (keep unlimited)
+- [x] Add bulk credit granting functionality
+- [x] Update UI to show selected user count
+- [x] Add success/error notifications for bulk operations

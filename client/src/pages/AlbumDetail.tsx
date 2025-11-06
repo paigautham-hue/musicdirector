@@ -19,7 +19,19 @@ import {
   Eye,
   User,
   Calendar,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Link as LinkIcon,
+  Check,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -28,6 +40,8 @@ export default function AlbumDetail() {
   const albumId = parseInt(params.id || "0");
   const { user } = useAuth();
   const [comment, setComment] = useState("");
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -193,7 +207,7 @@ export default function AlbumDetail() {
                         />
                         {album.userLiked ? "Liked" : "Like"}
                       </Button>
-                      <Button variant="outline" className="flex-1">
+                      <Button variant="outline" className="flex-1" onClick={() => setShareDialogOpen(true)}>
                         <Share2 className="mr-2 h-4 w-4" />
                         Share
                       </Button>
@@ -202,6 +216,96 @@ export default function AlbumDetail() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Share Dialog */}
+            <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Share Album</DialogTitle>
+                  <DialogDescription>
+                    Share this album on social media or copy the link
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {/* Copy Link */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={window.location.href}
+                      className="flex-1 px-3 py-2 border rounded-md bg-muted text-sm"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(window.location.href);
+                        setLinkCopied(true);
+                        setTimeout(() => setLinkCopied(false), 2000);
+                        toast.success("Link copied to clipboard!");
+                      }}
+                    >
+                      {linkCopied ? (
+                        <Check className="h-4 w-4" />
+                      ) : (
+                        <LinkIcon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Social Media Buttons */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const url = encodeURIComponent(window.location.href);
+                        const text = encodeURIComponent(`Check out "${album.album.title}" - ${album.album.description}`);
+                        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+                      }}
+                    >
+                      <Twitter className="mr-2 h-4 w-4" />
+                      Twitter
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const url = encodeURIComponent(window.location.href);
+                        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+                      }}
+                    >
+                      <Facebook className="mr-2 h-4 w-4" />
+                      Facebook
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const url = encodeURIComponent(window.location.href);
+                        const title = encodeURIComponent(album.album.title);
+                        const summary = encodeURIComponent(album.album.description || '');
+                        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+                      }}
+                    >
+                      <Linkedin className="mr-2 h-4 w-4" />
+                      LinkedIn
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => {
+                        const url = encodeURIComponent(window.location.href);
+                        const text = encodeURIComponent(`Check out "${album.album.title}"`);
+                        window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+                      }}
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      WhatsApp
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {/* Comments Section */}
             <Card>

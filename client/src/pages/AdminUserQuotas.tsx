@@ -5,7 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Users, Music } from "lucide-react";
+import { ArrowLeft, Save, Users, Music, Plus, Gift } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function AdminUserQuotas() {
   const [, setLocation] = useLocation();
@@ -21,9 +30,54 @@ export default function AdminUserQuotas() {
   });
 
   const [quotas, setQuotas] = useState<Record<number, number>>({});
+  const [selectedUsers, setSelectedUsers] = useState<Set<number>>(new Set());
+  const [grantDialogOpen, setGrantDialogOpen] = useState(false);
+  const [creditsToGrant, setCreditsToGrant] = useState(1);
 
   const handleUpdateQuota = async (userId: number, quota: number) => {
     await updateQuota.mutateAsync({ userId, quota });
+  };
+
+  const toggleUserSelection = (userId: number) => {
+    const newSelected = new Set(selectedUsers);
+    if (newSelected.has(userId)) {
+      newSelected.delete(userId);
+    } else {
+      newSelected.add(userId);
+    }
+    setSelectedUsers(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedUsers.size === users?.length) {
+      setSelectedUsers(new Set());
+    } else {
+      setSelectedUsers(new Set(users?.map(u => u.id) || []));
+    }
+  };
+
+  const handleGrantCredits = async () => {
+    if (selectedUsers.size === 0) {
+      toast.error("Please select at least one user");
+      return;
+    }
+
+    try {
+      const userIds = Array.from(selectedUsers);
+      for (const userId of userIds) {
+        const user = users?.find(u => u.id === userId);
+        if (user) {
+          const newQuota = (user.musicGenerationQuota || 1) + creditsToGrant;
+          await updateQuota.mutateAsync({ userId, quota: newQuota });
+        }
+      }
+      toast.success(`Granted ${creditsToGrant} credits to ${selectedUsers.size} user(s)`);
+      setSelectedUsers(new Set());
+      setGrantDialogOpen(false);
+      setCreditsToGrant(1);
+    } catch (error) {
+      toast.error("Failed to grant credits");
+    }
   };
 
   return (
@@ -31,23 +85,34 @@ export default function AdminUserQuotas() {
       {/* Header */}
       <header className="border-b border-amber-500/20 bg-black/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation("/admin")}
-              className="text-amber-500 hover:text-amber-400"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Admin
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-amber-500 flex items-center gap-2">
-                <Users className="w-6 h-6" />
-                User Quota Management
-              </h1>
-              <p className="text-sm text-gray-400">Manage music generation quotas for users</p>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setLocation("/admin")}
+                className="text-amber-500 hover:text-amber-400"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Admin
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-amber-500 flex items-center gap-2">
+                  <Users className="w-6 h-6" />
+                  User Quota Management
+                </h1>
+                <p className="text-sm text-gray-400">Manage music generation quotas for users</p>
+              </div>
             </div>
+            {selectedUsers.size > 0 && (
+              <Button
+                onClick={() => setGrantDialogOpen(true)}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                <Gift className="w-4 h-4 mr-2" />
+                Grant Credits ({selectedUsers.size} selected)
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -65,8 +130,21 @@ export default function AdminUserQuotas() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
+              {/* Bulk Actions */}
+              <div className="flex items-center gap-4 mb-4">
+                <Checkbox
+                  id="select-all"
+                  checked={selectedUsers.size === users?.length && users?.length > 0}
+                  onCheckedChange={toggleSelectAll}
+                />
+                <label htmlFor="select-all" className="text-sm text-gray-400 cursor-pointer">
+                  Select All ({selectedUsers.size} selected)
+                </label>
+              </div>
+
               {/* Table Header */}
-              <div className="grid grid-cols-5 gap-4 pb-2 border-b border-amber-500/20 text-sm font-semibold text-amber-500">
+              <div className="grid grid-cols-6 gap-4 pb-2 border-b border-amber-500/20 text-sm font-semibold text-amber-500">
+                <div>Select</div>
                 <div>User</div>
                 <div>Email</div>
                 <div>Role</div>
@@ -76,7 +154,14 @@ export default function AdminUserQuotas() {
 
               {/* User Rows */}
               {users?.map((user: any) => (
-                <div key={user.id} className="grid grid-cols-5 gap-4 items-center py-3 border-b border-zinc-800">
+                <div key={user.id} className="grid grid-cols-6 gap-4 items-center py-3 border-b border-zinc-800">
+                  <div>
+                    <Checkbox
+                      checked={selectedUsers.has(user.id)}
+                      onCheckedChange={() => toggleUserSelection(user.id)}
+                      disabled={user.role === 'admin'}
+                    />
+                  </div>
                   <div className="text-white">{user.name || "Unknown"}</div>
                   <div className="text-gray-400 text-sm">{user.email || "No email"}</div>
                   <div>
@@ -131,6 +216,61 @@ export default function AdminUserQuotas() {
           </CardContent>
         </Card>
       </main>
+
+      {/* Grant Credits Dialog */}
+      <Dialog open={grantDialogOpen} onOpenChange={setGrantDialogOpen}>
+        <DialogContent className="bg-zinc-900 border-amber-500/20">
+          <DialogHeader>
+            <DialogTitle className="text-amber-500">Grant Music Generation Credits</DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Add free music generation credits to {selectedUsers.size} selected user(s)
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-gray-400 mb-2 block">
+                Number of credits to grant
+              </label>
+              <Input
+                type="number"
+                min="1"
+                value={creditsToGrant}
+                onChange={(e) => setCreditsToGrant(parseInt(e.target.value) || 1)}
+                className="bg-zinc-800 border-zinc-700 text-white"
+              />
+            </div>
+            <div className="p-3 bg-zinc-800 rounded text-sm text-gray-400">
+              <p className="mb-2">Selected users:</p>
+              <ul className="list-disc list-inside space-y-1">
+                {Array.from(selectedUsers).map((userId) => {
+                  const user = users?.find(u => u.id === userId);
+                  return (
+                    <li key={userId}>
+                      {user?.name || "Unknown"} - Current: {user?.musicGenerationQuota || 1} → New: {(user?.musicGenerationQuota || 1) + creditsToGrant}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setGrantDialogOpen(false)}
+              className="border-zinc-700 text-gray-400"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleGrantCredits}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              <Gift className="w-4 h-4 mr-2" />
+              Grant {creditsToGrant} Credit{creditsToGrant !== 1 ? 's' : ''}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, User, LogOut, ChevronDown } from "lucide-react";
+import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, User, LogOut, ChevronDown, Menu, X } from "lucide-react";
 import { Link } from "wouter";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import {
@@ -18,6 +19,7 @@ export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: albums } = trpc.albums.list.useQuery({ limit: 1 }, { enabled: isAuthenticated });
   const hasAlbums = albums && albums.length > 0;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const logoutMutation = trpc.auth.logout.useMutation({
     onSuccess: () => {
       window.location.href = "/";
@@ -59,74 +61,59 @@ export default function Home() {
 
       {/* Navigation */}
       <nav className="border-b border-border/50 backdrop-blur-xl sticky top-0 z-50 bg-background/80">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
+            {/* Logo */}
             <Link href="/">
-              <a className="flex items-center gap-2 text-2xl font-bold">
-                <Music className="w-8 h-8 text-primary" />
+              <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
+                <Music className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 <span className="bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
                   {APP_TITLE}
                 </span>
               </a>
             </Link>
-            <div className="flex items-center gap-4">
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6">
               {isAuthenticated ? (
                 <>
                   <Link href="/library">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      My Library
-                    </a>
-                  </Link>
-                  <Link href="/knowledge">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      Knowledge Hub
+                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                      Library
                     </a>
                   </Link>
                   <Link href="/explore">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
                       Explore
                     </a>
                   </Link>
                   <Link href="/community-prompts">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      Community Prompts
-                    </a>
-                  </Link>
-                  <Link href="/impact-stories">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      Impact Stories
+                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
+                      Prompts
                     </a>
                   </Link>
                   <Link href="/pricing">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
                       Pricing
-                    </a>
-                  </Link>
-                  <Link href="/prompts">
-                    <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      My Prompts
                     </a>
                   </Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin">
-                      <a className="text-foreground/80 hover:text-foreground transition-colors">
+                      <a className="text-foreground/80 hover:text-foreground transition-colors text-sm font-medium">
                         Admin
                       </a>
                     </Link>
                   )}
                   <Link href="/new">
-                    <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity">
-                      Create Album
+                    <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90">
+                      Create
                     </Button>
                   </Link>
-                  
-                  {/* User Profile Menu */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm" className="flex items-center gap-2">
                         <User className="w-4 h-4" />
-                        <span className="hidden md:inline">{user?.name || user?.email}</span>
-                        <ChevronDown className="w-4 h-4" />
+                        <ChevronDown className="w-3 h-3" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -148,277 +135,434 @@ export default function Home() {
                   </DropdownMenu>
                 </>
               ) : (
-                <Button asChild className="bg-gradient-to-r from-primary to-accent">
+                <Button size="sm" asChild className="bg-gradient-to-r from-primary to-accent">
                   <a href={getLoginUrl()}>Sign In</a>
                 </Button>
               )}
             </div>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="lg:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+        )}
+
+        {/* Mobile Menu Slide-in */}
+        <div
+          className={`fixed top-0 right-0 h-full w-[280px] bg-background border-l border-border z-50 transform transition-transform duration-300 ease-in-out lg:hidden ${
+            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          <div className="flex flex-col h-full">
+            {/* Mobile Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <span className="font-semibold">Menu</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            {/* Mobile Menu Items */}
+            <div className="flex-1 overflow-y-auto py-4">
+              {isAuthenticated ? (
+                <div className="space-y-1 px-2">
+                  <Link href="/library">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Library
+                    </a>
+                  </Link>
+                  <Link href="/explore">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Explore
+                    </a>
+                  </Link>
+                  <Link href="/community-prompts">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Community Prompts
+                    </a>
+                  </Link>
+                  <Link href="/prompts">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Prompts
+                    </a>
+                  </Link>
+                  <Link href="/knowledge">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Knowledge Hub
+                    </a>
+                  </Link>
+                  <Link href="/impact-stories">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Impact Stories
+                    </a>
+                  </Link>
+                  <Link href="/pricing">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Pricing
+                    </a>
+                  </Link>
+                  {user?.role === 'admin' && (
+                    <Link href="/admin">
+                      <a
+                        className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Admin
+                      </a>
+                    </Link>
+                  )}
+                  <div className="pt-4 px-2 space-y-2">
+                    <Link href="/new">
+                      <Button
+                        className="w-full bg-gradient-to-r from-primary to-accent"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Create Album
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-4">
+                  <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>
+                    <a href={getLoginUrl()}>Sign In</a>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Menu Footer */}
+            {isAuthenticated && (
+              <div className="border-t border-border p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <User className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{user?.name || 'User'}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  onClick={() => {
+                    logoutMutation.mutate();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Hero Section with Visual Elements */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
-        {/* Decorative music illustrations */}
-        <div className="absolute top-10 right-10 w-48 h-48 opacity-30 animate-bounce" style={{ animationDuration: '3s' }}>
-          <img src="/images/music-instruments.jpg" alt="" className="w-full h-full object-contain rounded-full" />
-        </div>
-        <div className="absolute bottom-10 left-10 w-56 h-56 opacity-20 animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-          <img src="/images/music-doodle.jpg" alt="" className="w-full h-full object-contain rounded-lg rotate-12" />
-        </div>
-        
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="container mx-auto px-6 relative">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            {/* Main inspiring tagline - Most Prominent */}
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
-              <span className="bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-                Create music that unites people,
-                <br />
-                inspires change, and brings
-                <br />
-                positive impact to humanity
-              </span>
-            </h1>
-            
-            {/* Secondary tagline - Supporting text */}
-            <div className="pt-6 space-y-3">
-              <p className="text-2xl md:text-3xl font-semibold text-foreground/90">
-                Create Full Albums with AI Magic
+      <div className="relative">
+        <div className="container mx-auto px-6 py-20 lg:py-32">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+                <span className="block text-foreground">Create music that unites people,</span>
+                <span className="block bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
+                  inspires change, and brings
+                </span>
+                <span className="block text-muted-foreground">positive impact to</span>
+                <span className="block bg-gradient-to-r from-blue-500 via-purple-500 to-primary bg-clip-text text-transparent">
+                  humanity
+                </span>
+              </h1>
+              
+              <div className="space-y-4">
+                <h2 className="text-2xl font-semibold text-foreground">
+                  Create Full Albums with AI Magic
+                </h2>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  <span className="text-sm font-medium text-primary">AI-Powered Music Album Creation</span>
+                </div>
+              </div>
+
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Turn your themes and ideas into complete music albums with AI-generated lyrics, prompts, artwork, and platform-optimized content for Suno, Udio, and more.
               </p>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/30 text-sm text-primary">
-                <Sparkles className="w-4 h-4" />
-                <span className="font-semibold">AI-Powered Music Album Creation</span>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href={hasAlbums ? "/new" : "/new"}>
+                  <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity group">
+                    {hasAlbums ? "Create Another Album" : "Create Your First Album"}
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+                <Link href="/pricing">
+                  <Button size="lg" variant="outline">
+                    Explore Platforms
+                  </Button>
+                </Link>
               </div>
             </div>
-            
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto pt-4">
-              Turn your themes and ideas into complete music albums with AI-generated lyrics, 
-              prompts, artwork, and platform-optimized content for Suno, Udio, and more.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
-              {isAuthenticated ? (
-                <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-lg shadow-primary/50">
-                  <Link href="/new">
-                    <a className="flex items-center gap-2">
-                      {hasAlbums ? "Create Another Album" : "Create Your First Album"}
-                      <ArrowRight className="w-5 h-5" />
-                    </a>
-                  </Link>
-                </Button>
-              ) : (
-                <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-lg shadow-primary/50">
-                  <a href={getLoginUrl()} className="flex items-center gap-2">
-                    Get Started Free
-                    <ArrowRight className="w-5 h-5" />
-                  </a>
-                </Button>
-              )}
-              <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6 border-primary/50 hover:bg-primary/10">
-                <Link href="/knowledge">
-                  <a>Explore Platforms</a>
-                </Link>
-              </Button>
+
+            <div className="relative">
+              <div className="relative w-full aspect-square max-w-md mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-accent/30 to-blue-500/30 rounded-full blur-3xl animate-pulse" />
+                <img 
+                  src="/images/music-doodle.jpg" 
+                  alt="Music Creation" 
+                  className="relative rounded-2xl shadow-2xl object-cover w-full h-full"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Features with Enhanced Visuals */}
-      <section className="py-20 border-t border-border/50 relative">
+      {/* Everything You Need Section */}
+      <div className="relative py-20 bg-muted/30">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Everything You Need
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               Professional album creation powered by cutting-edge AI
             </p>
           </div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="bg-gradient-to-br from-primary/5 to-transparent backdrop-blur border-border/50 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/20 transition-all group">
+            <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                  <Music className="w-8 h-8 text-primary" />
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <Music className="w-6 h-6 text-primary" />
                 </div>
-                <CardTitle className="text-2xl">Multi-Platform Support</CardTitle>
-                <CardDescription className="text-muted-foreground text-base">
+                <CardTitle>Multi-Platform Support</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
                   Generate optimized content for Suno, Udio, ElevenLabs, Mubert, and Stable Audio
-                </CardDescription>
-              </CardHeader>
+                </p>
+              </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-accent/5 to-transparent backdrop-blur border-border/50 hover:border-accent/50 hover:shadow-xl hover:shadow-accent/20 transition-all group">
+
+            <Card className="border-2 hover:border-accent/50 transition-all duration-300 hover:shadow-xl">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent/20 to-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                  <Wand2 className="w-8 h-8 text-accent" />
+                <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-accent" />
                 </div>
-                <CardTitle className="text-2xl">AI Quality Scoring</CardTitle>
-                <CardDescription className="text-muted-foreground text-base">
-                  Get hit-potential scores with detailed breakdowns for every song
-                </CardDescription>
+                <CardTitle>AI Quality Scoring</CardTitle>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Get AI-powered scores with detailed breakdowns for every song
+                </p>
+              </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-blue-500/5 to-transparent backdrop-blur border-border/50 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/20 transition-all group">
+
+            <Card className="border-2 hover:border-blue-500/50 transition-all duration-300 hover:shadow-xl">
               <CardHeader>
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg">
-                  <Palette className="w-8 h-8 text-blue-500" />
+                <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
+                  <Palette className="w-6 h-6 text-blue-500" />
                 </div>
-                <CardTitle className="text-2xl">Instant Artwork</CardTitle>
-                <CardDescription className="text-muted-foreground text-base">
+                <CardTitle>Instant Artwork</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
                   Beautiful album covers and track art generated automatically
-                </CardDescription>
-              </CardHeader>
+                </p>
+              </CardContent>
             </Card>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Featured Themes with Images */}
-      <section className="py-20 border-t border-border/50 relative">
-        {/* Background decoration */}
-        <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-        
+      {/* Featured Themes */}
+      <div className="relative py-20">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-accent to-blue-500 bg-clip-text text-transparent">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Featured Themes
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               Get inspired by these curated album concepts
             </p>
           </div>
+
           <div className="grid md:grid-cols-3 gap-8">
-            {featuredThemes.map((theme, i) => (
-              <Card key={i} className={`relative overflow-hidden bg-gradient-to-br ${theme.gradient} backdrop-blur border-border/50 hover:border-primary/50 hover:shadow-2xl transition-all group cursor-pointer`}>
-                {/* Background image overlay */}
-                <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <img src={theme.image} alt="" className="w-full h-full object-cover" />
-                </div>
-                <CardHeader className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-background/70 backdrop-blur flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-lg">
-                    <theme.icon className="w-7 h-7 text-primary" />
+            {featuredThemes.map((theme, index) => (
+              <Card key={index} className="overflow-hidden border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl group">
+                <div className="relative h-48 overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${theme.gradient}`} />
+                  <img 
+                    src={theme.image} 
+                    alt={theme.title}
+                    className="w-full h-full object-cover opacity-50 group-hover:scale-110 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <theme.icon className="w-16 h-16 text-primary" />
                   </div>
-                  <CardTitle className="text-2xl">{theme.title}</CardTitle>
-                  <CardDescription className="text-foreground/80 text-base">
-                    {theme.description}
-                  </CardDescription>
+                </div>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    {theme.title}
+                  </CardTitle>
                 </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{theme.description}</p>
+                </CardContent>
               </Card>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Impact Stories Preview */}
-      <section className="py-20 border-t border-border/50 relative bg-gradient-to-b from-transparent via-accent/5 to-transparent">
+      {/* Music That Changed the World */}
+      <div className="relative py-20 bg-muted/30">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Music That Changed the World
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground">
               Be inspired by songs that united communities, raised awareness, and brought hope to millions
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-red-500/10 to-pink-500/10 border-red-500/30 hover:border-red-500/50 transition-all">
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="border-2 hover:border-primary/50 transition-all duration-300">
               <CardHeader>
-                <CardTitle className="text-xl">We Are the World</CardTitle>
+                <CardTitle>We Are the World</CardTitle>
                 <CardDescription>USA for Africa • 1985</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Raised over $63 million for African famine relief, uniting 45 artists in history's most successful charity single.
+                <p className="text-muted-foreground">
+                  Raised over $63 million for African famine relief, uniting 45 artists in history's most successful charity single
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-blue-500/30 hover:border-blue-500/50 transition-all">
+
+            <Card className="border-2 hover:border-accent/50 transition-all duration-300">
               <CardHeader>
-                <CardTitle className="text-xl">Imagine</CardTitle>
+                <CardTitle>Imagine</CardTitle>
                 <CardDescription>John Lennon • 1971</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Global anthem for peace and unity, inspiring movements worldwide with its vision of a world without borders.
+                <p className="text-muted-foreground">
+                  Global anthem for peace and unity, inspiring movements worldwide with its vision of a world without borders
                 </p>
               </CardContent>
             </Card>
-            <Card className="bg-gradient-to-br from-purple-500/10 to-indigo-500/10 border-purple-500/30 hover:border-purple-500/50 transition-all">
+
+            <Card className="border-2 hover:border-blue-500/50 transition-all duration-300">
               <CardHeader>
-                <CardTitle className="text-xl">We Shall Overcome</CardTitle>
+                <CardTitle>We Shall Overcome</CardTitle>
                 <CardDescription>Various Artists • 1960</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  Anthem of the Civil Rights Movement, giving voice to millions fighting for equality and justice.
+                <p className="text-muted-foreground">
+                  Anthem of the Civil Rights Movement, giving voice to millions fighting for equality and justice
                 </p>
               </CardContent>
             </Card>
           </div>
-          <div className="text-center">
+
+          <div className="text-center mt-12">
             <Link href="/impact-stories">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
+              <Button variant="outline" size="lg">
                 Explore All Impact Stories
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* CTA with Visual Flair */}
-      <section className="py-20 border-t border-border/50 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-        <div className="container mx-auto px-6 relative">
-          <div className="max-w-3xl mx-auto text-center space-y-6 p-12 rounded-3xl bg-gradient-to-br from-primary/10 via-accent/10 to-blue-500/10 border border-primary/20 backdrop-blur">
-            <Zap className="w-16 h-16 mx-auto text-primary animate-pulse" />
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-              Ready to Create?
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Start building your first AI-powered music album in minutes
-            </p>
-            {isAuthenticated ? (
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-xl shadow-primary/30">
+      {/* CTA Section */}
+      <div className="relative py-20">
+        <div className="container mx-auto px-6">
+          <Card className="border-2 border-primary/50 bg-gradient-to-br from-primary/5 via-accent/5 to-blue-500/5 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
+            <CardContent className="relative p-12 text-center">
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center">
+                  <Wand2 className="w-8 h-8 text-primary" />
+                </div>
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Ready to Create?
+                </h2>
+                <p className="text-lg text-muted-foreground">
+                  Start building your first AI-powered music album in minutes
+                </p>
                 <Link href="/new">
-                  <a className="flex items-center gap-2">
+                  <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90">
                     Create Album Now
-                    <ArrowRight className="w-5 h-5" />
-                  </a>
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
                 </Link>
-              </Button>
-            ) : (
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity shadow-xl shadow-primary/30">
-                <a href={getLoginUrl()} className="flex items-center gap-2">
-                  Sign Up Free
-                  <ArrowRight className="w-5 h-5" />
-                </a>
-              </Button>
-            )}
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </section>
+      </div>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 py-8 bg-background/50 backdrop-blur">
+      <footer className="border-t border-border/50 py-8">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Music className="w-6 h-6 text-primary" />
-              <span className="text-sm text-muted-foreground">
-                © 2025 {APP_TITLE}. All rights reserved.
-              </span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Music className="w-4 h-4" />
+              <span>© 2025 AI Album Creator. All rights reserved.</span>
             </div>
-            <div className="flex gap-6">
+            <div className="flex items-center gap-6 text-sm">
               <Link href="/knowledge">
-                <a className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Knowledge Hub
-                </a>
+                <a className="text-muted-foreground hover:text-foreground transition-colors">Knowledge Hub</a>
               </Link>
               <Link href="/impact-stories">
-                <a className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  Impact Stories
-                </a>
+                <a className="text-muted-foreground hover:text-foreground transition-colors">Impact Stories</a>
+              </Link>
+              <Link href="/pricing">
+                <a className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
               </Link>
             </div>
           </div>

@@ -75,6 +75,16 @@ export default function AlbumWorkspace() {
     }
   });
 
+  const generateMusicMutation = trpc.albums.generateMusic.useMutation({
+    onSuccess: () => {
+      toast.success("Music generation started! This will take a few minutes.");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to start music generation");
+    }
+  });
+
   const bookletMutation = trpc.downloads.albumBooklet.useMutation({
     onSuccess: (data) => {
       // Convert base64 to blob
@@ -198,6 +208,18 @@ export default function AlbumWorkspace() {
               </Button>
             </Link>
             <div className="flex gap-2">
+              <Button 
+                onClick={() => generateMusicMutation.mutate({ albumId: album.id })}
+                disabled={generateMusicMutation.isPending}
+                className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              >
+                {generateMusicMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Music2 className="w-4 h-4 mr-2" />
+                )}
+                Generate Music
+              </Button>
               <Button 
                 variant="outline" 
                 onClick={() => bookletMutation.mutate({ albumId: album.id })}

@@ -308,6 +308,40 @@ export const appRouter = router({
         return { shareToken, shareUrl: `/share/${shareToken}` };
       }),
     
+    // Generate music for all tracks in album
+    generateMusic: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album || album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        const albumTracks = await db.getTracksByAlbumId(input.albumId);
+        if (albumTracks.length === 0) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No tracks found in album' });
+        }
+        
+        // Create music generation jobs for all tracks
+        const jobPromises = albumTracks.map(track => 
+          db.createMusicJob({
+            albumId: input.albumId,
+            trackId: track.id,
+            platform: album.platform,
+          })
+        );
+        
+        await Promise.all(jobPromises);
+        
+        await db.createAuditLog({
+          userId: ctx.user.id,
+          action: "music_generation_started",
+          payload: JSON.stringify({ albumId: input.albumId, trackCount: albumTracks.length })
+        });
+        
+        return { success: true, jobCount: albumTracks.length };
+      }),
+    
     // Get public albums for gallery
     getPublicAlbums: publicProcedure
       .input(z.object({

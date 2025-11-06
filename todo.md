@@ -259,3 +259,10 @@
 - [x] Add "My Prompts" page to manage saved prompts
 - [x] Add edit and delete functionality for saved prompts
 - [x] Test prompt save/load/edit workflow
+
+## Generate Music Button
+- [x] Add "Generate Music" button to Album Workspace
+- [x] Create bulk audio generation endpoint that processes all tracks
+- [x] Add progress tracking for music generation
+- [x] Show audio player once tracks are generated
+- [ ] Test music generation with Suno API

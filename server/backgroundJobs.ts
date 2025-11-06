@@ -66,12 +66,19 @@ async function processJobs() {
       return;
     }
     
-    // Get pending jobs
-    const pendingJobs = await db
-      .select()
-      .from(musicJobs)
-      .where(eq(musicJobs.status, "pending"))
-      .limit(5);
+    // Get pending jobs with error handling
+    let pendingJobs;
+    try {
+      pendingJobs = await db
+        .select()
+        .from(musicJobs)
+        .where(eq(musicJobs.status, "pending"))
+        .limit(5);
+    } catch (dbError) {
+      // Database connection error - skip this cycle
+      console.warn("[Background Jobs] Database connection error, will retry next cycle");
+      return;
+    }
     
     if (pendingJobs.length === 0) {
       return;

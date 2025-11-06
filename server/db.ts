@@ -613,3 +613,27 @@ export async function deletePromptTemplate(id: number) {
   
   await db.delete(promptTemplates).where(eq(promptTemplates.id, id));
 }
+
+// Music job operations
+export async function createMusicJob(job: { albumId: number; trackId: number; platform: string }) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(musicJobs).values({
+    albumId: job.albumId,
+    trackId: job.trackId,
+    platform: job.platform,
+    status: "pending",
+    progress: 0,
+    retryCount: 0,
+  });
+  
+  return Number(result[0].insertId);
+}
+
+export async function getTracksByAlbumId(albumId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(tracks).where(eq(tracks.albumId, albumId));
+}

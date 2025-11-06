@@ -306,3 +306,9 @@
 - [x] Add more song structure (verses, choruses, bridges)
 - [x] Switch to V5 model exclusively (8-minute support, faster generation)
 - [x] Test song duration improvements
+
+## PDF Booklet Enhancements
+- [x] Review current PDF generation code
+- [x] Add album cover image to PDF first page
+- [x] Add full lyrics under each song title
+- [x] Test PDF generation with cover and lyrics

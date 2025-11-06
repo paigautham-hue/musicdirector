@@ -39,14 +39,15 @@ export async function generateAlbumBooklet(albumId: number): Promise<Buffer> {
     .where(eq(tracks.albumId, albumId))
     .orderBy(tracks.index);
 
-  // Fetch track assets
-  const trackIds = albumTracks.map(t => t.id);
-  const assets = trackIds.length > 0
-    ? await db
-        .select()
-        .from(trackAssets)
-        .where(eq(trackAssets.trackId, trackIds[0])) // Simplified - in production, fetch for all tracks
-    : [];
+  // Fetch track assets for all tracks
+  const assets: Array<typeof trackAssets.$inferSelect> = [];
+  for (const track of albumTracks) {
+    const trackAssetsList = await db
+      .select()
+      .from(trackAssets)
+      .where(eq(trackAssets.trackId, track.id));
+    assets.push(...trackAssetsList);
+  }
 
   // Create PDF
   return createPDFBooklet({
@@ -71,9 +72,10 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    try {
-      // Cover Page
-      addCoverPage(doc, data);
+    (async () => {
+      try {
+        // Cover Page
+        await addCoverPage(doc, data);
 
       // Album Info Page
       doc.addPage();
@@ -87,17 +89,18 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
       doc.addPage();
       addCreditsPage(doc, data);
 
-      doc.end();
-    } catch (error) {
-      reject(error);
-    }
+        doc.end();
+      } catch (error) {
+        reject(error);
+      }
+    })();
   });
 }
 
 /**
  * Add cover page with album artwork
  */
-function addCoverPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
+async function addCoverPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
   const { album } = data;
 
   // Background gradient effect
@@ -114,15 +117,33 @@ function addCoverPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        align: 'center',
      });
 
-  // Album artwork placeholder (if coverUrl exists, you'd fetch and embed it)
+  // Album artwork (fetch and embed actual image)
   if (album.coverUrl) {
-    doc.fontSize(12)
-       .fillColor('#888')
-       .text('[Album Artwork]', 50, 200, {
-         width: doc.page.width - 100,
-         align: 'center',
-       });
-    // In production: fetch image and use doc.image(imageBuffer, x, y, options)
+    try {
+      const imageResponse = await fetch(album.coverUrl);
+      if (imageResponse.ok) {
+        const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+        const imageWidth = 300;
+        const imageHeight = 300;
+        const x = (doc.page.width - imageWidth) / 2;
+        const y = 200;
+        
+        doc.image(imageBuffer, x, y, {
+          width: imageWidth,
+          height: imageHeight,
+          align: 'center',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch album cover:', error);
+      // Fallback to placeholder
+      doc.fontSize(12)
+         .fillColor('#888')
+         .text('[Album Artwork]', 50, 200, {
+           width: doc.page.width - 100,
+           align: 'center',
+         });
+    }
   }
 
   // Platform badge
@@ -253,7 +274,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
  * Add track listings page
  */
 function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
-  const { tracks: albumTracks } = data;
+  const { tracks: albumTracks, trackAssets } = data;
 
   // Page title
   doc.fontSize(24)
@@ -304,6 +325,34 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
            .text(`Mood: ${moods.join(', ')}`, 70, y);
         y += 20;
       }
+    }
+
+    // Add lyrics if available
+    const lyricsAsset = trackAssets.find(a => a.trackId === track.id && a.type === 'lyrics');
+    if (lyricsAsset && lyricsAsset.content) {
+      y += 10;
+      
+      // Check if we need a new page for lyrics
+      const lyricsHeight = doc.heightOfString(lyricsAsset.content, { 
+        width: doc.page.width - 140,
+        lineGap: 3
+      });
+      
+      if (y + lyricsHeight > doc.page.height - 100) {
+        doc.addPage();
+        y = 50;
+      }
+      
+      doc.fontSize(9)
+         .fillColor('#555')
+         .font('Helvetica')
+         .text(lyricsAsset.content, 70, y, {
+           width: doc.page.width - 140,
+           align: 'left',
+           lineGap: 3,
+         });
+      
+      y += lyricsHeight + 20;
     }
 
     y += 15; // Space between tracks

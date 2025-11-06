@@ -601,3 +601,4 @@
 ## Mobile Menu Readability Fix
 - [x] Change mobile menu background from semi-transparent to fully opaque to prevent text overlap with hero section
 - [x] Use hardcoded solid black background instead of CSS variable that may be transparent
+- [x] Replace Home page custom navigation with AppNav component (which has working mobile menu)

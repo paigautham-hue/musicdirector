@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { AppNav } from "@/components/AppNav";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -233,17 +234,13 @@ export default function AlbumWorkspace() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="border-b border-border/50 backdrop-blur-xl sticky top-0 z-50">
+      <AppNav />
+      
+      {/* Action Bar */}
+      <div className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-[73px] z-40">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/library">
-              <Button variant="ghost">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Library
-              </Button>
-            </Link>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <Button 
                 onClick={() => generateMusicMutation.mutate({ albumId: album.id })}
                 disabled={generateMusicMutation.isPending}
@@ -283,7 +280,7 @@ export default function AlbumWorkspace() {
             </div>
           </div>
         </div>
-      </nav>
+      </div>
 
       <div className="container mx-auto px-6 py-8">
         {/* Album Header */}

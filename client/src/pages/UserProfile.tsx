@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams, Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { AppNav } from "@/components/AppNav";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -52,6 +54,7 @@ export default function UserProfile() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
+        <AppNav />
         <div className="container mx-auto px-4 py-8">
           <Skeleton className="h-64 w-full rounded-lg mb-8" />
           <Skeleton className="h-96 w-full rounded-lg" />
@@ -63,6 +66,7 @@ export default function UserProfile() {
   if (!profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
+        <AppNav />
         <div className="container mx-auto px-4 py-8">
           <Card className="p-12 text-center">
             <Users className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
@@ -80,17 +84,7 @@ export default function UserProfile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
-      {/* Header */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/explore">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Explore
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <AppNav />
 
       <div className="container mx-auto px-4 py-8">
         {/* Profile Header */}

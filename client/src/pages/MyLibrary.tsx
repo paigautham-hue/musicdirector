@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, Plus, Loader2, Trash2 } from "lucide-react";
+import { AppNav } from "@/components/AppNav";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -26,24 +28,7 @@ export default function MyLibrary() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="border-b border-border/50">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/">
-              <a className="flex items-center gap-2 text-2xl font-bold">
-                <Music className="w-8 h-8 text-primary" />
-                <span>{APP_TITLE}</span>
-              </a>
-            </Link>
-            <Link href="/new">
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                New Album
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <AppNav />
 
       <div className="container mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-8">My Albums</h1>

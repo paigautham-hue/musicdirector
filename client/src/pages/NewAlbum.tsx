@@ -294,6 +294,17 @@ export default function NewAlbum() {
             <CardContent className="pt-6">
               {step === 1 && (
                 <div className="space-y-6">
+                  {/* Load Saved Prompt Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowLoadDialog(true)}
+                      className="gap-2"
+                    >
+                      <FolderOpen className="w-4 h-4" />
+                      Load Saved Prompt
+                    </Button>
+                  </div>
                   <div>
                     <Label htmlFor="theme" className="text-lg font-semibold">
                       What's your album about? *
@@ -519,24 +530,49 @@ export default function NewAlbum() {
             )}
           </div>
           
-          {/* Progress Indicator */}
+          {/* Progress Indicator - Music Themed */}
           {isGenerating && progress && (
-            <div className="mt-6 space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-medium text-foreground">{progress.stage}</span>
-                <span className="text-muted-foreground">
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold text-lg text-foreground">{progress.stage}</span>
+                <span className="text-sm text-muted-foreground">
                   {progress.currentTrack && progress.totalTracks
                     ? `Track ${progress.currentTrack}/${progress.totalTracks}`
                     : `${progress.progress}%`}
                 </span>
               </div>
-              <div className="w-full bg-secondary rounded-full h-2 overflow-hidden">
-                <div
-                  className="bg-primary h-full transition-all duration-500 ease-out"
-                  style={{ width: `${progress.progress}%` }}
-                />
+              
+              {/* Animated Vinyl Record Progress */}
+              <div className="relative flex items-center justify-center py-6">
+                <div className="relative w-32 h-32">
+                  {/* Spinning vinyl record */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-zinc-800 via-zinc-900 to-black border-4 border-primary/30 animate-spin" style={{ animationDuration: '3s' }}>
+                    {/* Vinyl grooves */}
+                    <div className="absolute inset-4 rounded-full border-2 border-zinc-700/50" />
+                    <div className="absolute inset-8 rounded-full border-2 border-zinc-700/30" />
+                    <div className="absolute inset-12 rounded-full border-2 border-zinc-700/20" />
+                    {/* Center label */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                        <Music className="w-6 h-6 text-primary-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">{progress.message}</p>
+              
+              {/* Progress bar */}
+              <div className="w-full bg-secondary rounded-full h-3 overflow-hidden relative">
+                <div
+                  className="bg-gradient-to-r from-primary via-accent to-primary h-full transition-all duration-500 ease-out relative"
+                  style={{ width: `${progress.progress}%` }}
+                >
+                  {/* Animated shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
+                </div>
+              </div>
+              
+              <p className="text-center text-sm text-muted-foreground">{progress.message}</p>
             </div>
           )}
         </div>

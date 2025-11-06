@@ -12,7 +12,7 @@ interface AudioPlayerProps {
   trackTitle: string;
   trackIndex: number;
   audioUrl?: string;
-  status?: "pending" | "processing" | "completed" | "failed";
+  status?: "pending" | "queued" | "processing" | "completed" | "failed";
   progress?: number;
   statusMessage?: string;
   onRatingChange?: () => void;
@@ -123,6 +123,8 @@ export function AudioPlayer({
     switch (status) {
       case "pending":
         return <Badge variant="secondary" className="gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Pending</Badge>;
+      case "queued":
+        return <Badge variant="outline" className="gap-1 text-muted-foreground"><Music2 className="w-3 h-3" /> In Queue</Badge>;
       case "processing":
         return <Badge variant="secondary" className="gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Generating {progress}%</Badge>;
       case "completed":

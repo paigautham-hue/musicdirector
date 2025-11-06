@@ -323,3 +323,10 @@
 - [x] Add route for album creation with prompt parameter
 - [x] Add prompt selector/browser to album creation page
 - [x] Test navigation from My Prompts to Create Album
+
+## UX Improvements
+- [x] Add "Load Saved Prompt" button to NewAlbum page (step 1)
+- [x] Create dialog to browse and select saved prompts
+- [x] Replace generic progress bar with music-themed graphics
+- [x] Update AudioPlayer status to show "In Queue" vs "Generating"
+- [x] Only show "Generating" for the currently active track

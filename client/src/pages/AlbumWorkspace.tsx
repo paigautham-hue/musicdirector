@@ -321,9 +321,25 @@ export default function AlbumWorkspace() {
               <h2 className="text-2xl font-bold">Generated Music</h2>
             </div>
             <div className="space-y-3">
-              {album.tracks.map((track: any) => {
+              {album.tracks.map((track: any, idx: number) => {
                 const job = musicStatus.jobs.find((j: any) => j.trackId === track.id);
                 const audioFile = musicStatus.audioFiles.find((a: any) => a.trackId === track.id && a.isActive);
+                
+                // Determine if this track is queued or processing
+                // Since we process one at a time, only the first pending/processing job is actually "processing"
+                const pendingJobs = musicStatus.jobs.filter((j: any) => j.status === "pending" || j.status === "processing");
+                const firstPendingJob = pendingJobs.length > 0 ? pendingJobs[0] : null;
+                
+                let displayStatus = job?.status || "pending";
+                if (job && (job.status === "pending" || job.status === "processing")) {
+                  // If this is the first pending/processing job, show as "processing"
+                  // Otherwise show as "queued"
+                  if (firstPendingJob && firstPendingJob.id === job.id) {
+                    displayStatus = "processing";
+                  } else {
+                    displayStatus = "queued";
+                  }
+                }
                 
                 return (
                   <AudioPlayer
@@ -332,7 +348,7 @@ export default function AlbumWorkspace() {
                     trackTitle={track.title}
                     trackIndex={track.index}
                     audioUrl={audioFile?.fileUrl}
-                    status={job?.status || "pending"}
+                    status={displayStatus as any}
                     progress={job?.progress || 0}
                     statusMessage={job?.status === "failed" ? (job?.errorMessage || "Unknown error") : (job?.statusMessage || undefined)}
                     onRetry={() => retryGenerationMutation.mutate({ trackId: track.id })}

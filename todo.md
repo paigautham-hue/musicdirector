@@ -330,3 +330,10 @@
 - [x] Replace generic progress bar with music-themed graphics
 - [x] Update AudioPlayer status to show "In Queue" vs "Generating"
 - [x] Only show "Generating" for the currently active track
+
+## PDF Formatting Fixes
+- [x] Review current PDF layout and spacing
+- [x] Reduce margins and padding throughout PDF
+- [x] Tighten line spacing for lyrics
+- [x] Optimize cover page layout
+- [x] Test PDF generation with compact layout

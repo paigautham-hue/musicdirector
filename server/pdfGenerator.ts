@@ -64,7 +64,7 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',
-      margins: { top: 50, bottom: 50, left: 50, right: 50 },
+      margins: { top: 30, bottom: 30, left: 40, right: 40 },
     });
 
     const chunks: Buffer[] = [];
@@ -186,9 +186,9 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        .text(album.description, 50, y, {
          width: doc.page.width - 100,
          align: 'justify',
-         lineGap: 5,
+          lineGap: 2,
        });
-    y += doc.heightOfString(album.description, { width: doc.page.width - 100 }) + 30;
+     y += doc.heightOfString(album.description, { width: doc.page.width - 100 }) + 15;
   }
 
   // Theme
@@ -208,7 +208,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        lineGap: 3,
      });
 
-  y += doc.heightOfString(album.theme, { width: doc.page.width - 100 }) + 25;
+   y += doc.heightOfString(album.theme, { width: doc.page.width - 100 }) + 15;
 
   // Vibe/Genre
   if (album.vibe) {
@@ -217,7 +217,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        .font('Helvetica-Bold')
        .text('Vibe & Genre', 50, y);
     
-    y += 25;
+    y += 15;
     
     const vibes = Array.isArray(album.vibe) ? album.vibe : JSON.parse(album.vibe || '[]');
     doc.fontSize(11)
@@ -227,7 +227,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
          width: doc.page.width - 100,
        });
     
-    y += 40;
+    y += 20;
   }
 
   // Target Audience
@@ -237,7 +237,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        .font('Helvetica-Bold')
        .text('Target Audience', 50, y);
     
-    y += 25;
+    y += 15;
     
     doc.fontSize(11)
        .fillColor('#333')
@@ -246,7 +246,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
          width: doc.page.width - 100,
        });
     
-    y += 40;
+    y += 20;
   }
 
   // Musical Influences
@@ -256,7 +256,7 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        .font('Helvetica-Bold')
        .text('Musical Influences', 50, y);
     
-    y += 25;
+    y += 15;
     
     const influences = Array.isArray(album.influences) 
       ? album.influences 
@@ -297,7 +297,7 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        .font('Helvetica-Bold')
        .text(`${index + 1}. ${track.title}`, 50, y);
 
-    y += 25;
+    y += 15;
 
     // Track details
     const details: string[] = [];
@@ -310,7 +310,7 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
          .fillColor('#666')
          .font('Helvetica')
          .text(details.join(' • '), 70, y);
-      y += 20;
+      y += 10;
     }
 
     // Mood tags
@@ -323,7 +323,7 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
            .fillColor('#888')
            .font('Helvetica-Oblique')
            .text(`Mood: ${moods.join(', ')}`, 70, y);
-        y += 20;
+        y += 10;
       }
     }
 
@@ -349,10 +349,10 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
          .text(lyricsAsset.content, 70, y, {
            width: doc.page.width - 140,
            align: 'left',
-           lineGap: 3,
+           lineGap: 2,
          });
       
-      y += lyricsHeight + 20;
+       y += lyricsHeight + 10;
     }
 
     y += 15; // Space between tracks
@@ -412,7 +412,7 @@ function addCreditsPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        day: 'numeric',
      }), 50, y);
   
-  y += 60;
+   y += 30;
 
   // Powered by section
   doc.fontSize(12)

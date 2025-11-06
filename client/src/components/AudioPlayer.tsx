@@ -2,8 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Pause, Download, Loader2, Music2, AlertCircle } from "lucide-react";
+import { Play, Pause, Download, Loader2, Music2, AlertCircle, Star } from "lucide-react";
 import { toast } from "sonner";
+import { StarRating } from "@/components/StarRating";
+import { trpc } from "@/lib/trpc";
 
 interface AudioPlayerProps {
   trackId: number;
@@ -13,6 +15,7 @@ interface AudioPlayerProps {
   status?: "pending" | "processing" | "completed" | "failed";
   progress?: number;
   statusMessage?: string;
+  onRatingChange?: () => void;
 }
 
 export function AudioPlayer({
@@ -22,12 +25,47 @@ export function AudioPlayer({
   audioUrl,
   status = "pending",
   progress = 0,
-  statusMessage
+  statusMessage,
+  onRatingChange
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // Fetch user's rating and all ratings for this track
+  const { data: userRating, refetch: refetchUserRating } = trpc.tracks.getRating.useQuery(
+    { trackId },
+    { enabled: status === "completed" }
+  );
+  
+  const { data: allRatings } = trpc.tracks.getAllRatings.useQuery(
+    { trackId },
+    { enabled: status === "completed" }
+  );
+  
+  const rateMutation = trpc.tracks.rate.useMutation({
+    onSuccess: () => {
+      toast.success("Rating saved!");
+      refetchUserRating();
+      if (onRatingChange) {
+        onRatingChange();
+      }
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to save rating");
+    }
+  });
+  
+  const handleRate = (rating: number) => {
+    rateMutation.mutate({ trackId, rating });
+  };
+  
+  const averageRating = allRatings && allRatings.length > 0
+    ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
+    : 0;
+  
+  const ratingCount = allRatings?.length || 0;
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -112,6 +150,31 @@ export function AudioPlayer({
                 <span className="text-xs text-muted-foreground truncate">{statusMessage}</span>
               )}
             </div>
+            {/* Rating Section */}
+            {status === "completed" && (
+              <div className="flex items-center gap-3 mt-2">
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-muted-foreground">Your rating:</span>
+                  <StarRating
+                    rating={userRating?.rating || 0}
+                    onRate={handleRate}
+                    size="sm"
+                  />
+                </div>
+                {ratingCount > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs text-muted-foreground">Average:</span>
+                    <StarRating
+                      rating={averageRating}
+                      readonly
+                      size="sm"
+                      showCount
+                      count={ratingCount}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Player Controls */}

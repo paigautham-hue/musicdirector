@@ -274,3 +274,12 @@
 - [x] Add auto-refresh to update status when generation completes
 - [x] Show audio player for completed tracks
 - [ ] Test audio playback
+
+## Star Rating Feature
+- [x] Check if ratings table exists in database schema
+- [x] Add backend endpoint to save track ratings
+- [x] Add backend endpoint to get track ratings
+- [x] Create star rating component with hover effects
+- [x] Integrate star rating into AudioPlayer component
+- [x] Display average rating and user's rating
+- [x] Test rating functionality

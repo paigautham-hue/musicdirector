@@ -231,6 +231,49 @@ export async function getAlbumRatings(albumId: number) {
   return db.select().from(ratings).where(eq(ratings.albumId, albumId));
 }
 
+export async function getTrackRating(trackId: number, userId: number): Promise<Rating | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(ratings)
+    .where(and(eq(ratings.trackId, trackId), eq(ratings.userId, userId)))
+    .limit(1);
+  
+  return result[0];
+}
+
+export async function upsertTrackRating(trackId: number, userId: number, ratingValue: number): Promise<Rating> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Check if rating exists
+  const existing = await getTrackRating(trackId, userId);
+  
+  if (existing) {
+    // Update existing rating
+    await db.update(ratings)
+      .set({ rating: ratingValue })
+      .where(eq(ratings.id, existing.id));
+    
+    const updated = await db.select().from(ratings).where(eq(ratings.id, existing.id)).limit(1);
+    return updated[0];
+  } else {
+    // Create new rating
+    return createRating({
+      userId,
+      trackId,
+      rating: ratingValue
+    });
+  }
+}
+
+export async function getTrackRatings(trackId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(ratings).where(eq(ratings.trackId, trackId));
+}
+
 // Platform constraints operations
 export async function getPlatformConstraints(platform: string) {
   const db = await getDb();

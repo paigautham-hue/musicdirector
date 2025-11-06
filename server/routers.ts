@@ -454,6 +454,31 @@ export const appRouter = router({
         }
         
         return { success: true };
+      }),
+    
+    // Rate a track
+    rate: protectedProcedure
+      .input(z.object({
+        trackId: z.number(),
+        rating: z.number().min(1).max(5)
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const rating = await db.upsertTrackRating(input.trackId, ctx.user.id, input.rating);
+        return { success: true, rating };
+      }),
+    
+    // Get user's rating for a track
+    getRating: protectedProcedure
+      .input(z.object({ trackId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        return db.getTrackRating(input.trackId, ctx.user.id);
+      }),
+    
+    // Get all ratings for a track (for average calculation)
+    getAllRatings: publicProcedure
+      .input(z.object({ trackId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getTrackRatings(input.trackId);
       })
   }),
 

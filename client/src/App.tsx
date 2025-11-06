@@ -19,6 +19,10 @@ import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentHistory from "./pages/PaymentHistory";
 import MyPrompts from "./pages/MyPrompts";
+import Explore from "./pages/Explore";
+import AlbumDetail from "./pages/AlbumDetail";
+import UserProfile from "./pages/UserProfile";
+import CommunityPrompts from "./pages/CommunityPrompts";
 
 function Router() {
   return (
@@ -38,6 +42,10 @@ function Router() {
       <Route path="/payment/success" component={PaymentSuccess} />
       <Route path="/payment/history" component={PaymentHistory} />
       <Route path="/prompts" component={MyPrompts} />
+      <Route path="/explore" component={Explore} />
+      <Route path="/album/:id" component={AlbumDetail} />
+      <Route path="/profile/:id" component={UserProfile} />
+      <Route path="/community-prompts" component={CommunityPrompts} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

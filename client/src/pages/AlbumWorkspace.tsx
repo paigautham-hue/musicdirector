@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check, Volume2 } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check, Volume2, Eye, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
@@ -96,6 +98,16 @@ export default function AlbumWorkspace() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to start music generation");
+    }
+  });
+
+  const updateVisibility = trpc.social.updateAlbumVisibility.useMutation({
+    onSuccess: () => {
+      toast.success("Album visibility updated!");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update visibility");
     }
   });
   
@@ -294,6 +306,32 @@ export default function AlbumWorkspace() {
               <Badge variant="secondary">{album.platform}</Badge>
               <Badge variant="outline">Score: {album.score}/100</Badge>
               <Badge variant="outline">{album.trackCount} tracks</Badge>
+              {album.visibility === "public" ? (
+                <Badge variant="default" className="bg-green-500">
+                  <Eye className="w-3 h-3 mr-1" />
+                  Public
+                </Badge>
+              ) : (
+                <Badge variant="secondary">
+                  <EyeOff className="w-3 h-3 mr-1" />
+                  Private
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="visibility"
+                checked={album.visibility === "public"}
+                onCheckedChange={(checked) => {
+                  updateVisibility.mutate({
+                    albumId: album.id,
+                    visibility: checked ? "public" : "private"
+                  });
+                }}
+              />
+              <Label htmlFor="visibility" className="cursor-pointer">
+                {album.visibility === "public" ? "Public" : "Private"} - {album.visibility === "public" ? "Visible in Explore" : "Only visible to you"}
+              </Label>
             </div>
             <div>
               <label className="text-sm font-medium mb-2 block">Optimize for Platform</label>

@@ -4,6 +4,7 @@ import {
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
   systemSettings, musicJobs, audioFiles, payments, creditTransactions, promptTemplates,
+  comments, likes, follows,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
   type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
@@ -697,4 +698,425 @@ export async function getAudioFilesByAlbumId(albumId: number): Promise<AudioFile
   
   const trackIds = albumTracks.map(t => t.id);
   return db.select().from(audioFiles).where(inArray(audioFiles.trackId, trackIds));
+}
+
+
+// ============================================================================
+// SOCIAL FEATURES - Gallery, Comments, Likes, Follows
+// ============================================================================
+
+/**
+ * Get public albums with optional filters and pagination
+ */
+export async function getPublicAlbumsWithFilters(params: {
+  search?: string;
+  platform?: string;
+  sortBy?: "newest" | "trending" | "top_rated" | "most_played";
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { search, platform, sortBy = "newest", limit = 20, offset = 0 } = params;
+
+  let conditions = [eq(albums.visibility, "public")];
+
+  // Apply search filter
+  if (search) {
+    conditions.push(
+      or(
+        like(albums.title, `%${search}%`),
+        like(albums.theme, `%${search}%`)
+      ) as any
+    );
+  }
+
+  // Apply platform filter
+  if (platform) {
+    conditions.push(eq(albums.platform, platform));
+  }
+
+  let query = db
+    .select({
+      id: albums.id,
+      userId: albums.userId,
+      title: albums.title,
+      theme: albums.theme,
+      platform: albums.platform,
+      description: albums.description,
+      coverUrl: albums.coverUrl,
+      score: albums.score,
+      vibe: albums.vibe,
+      language: albums.language,
+      trackCount: albums.trackCount,
+      visibility: albums.visibility,
+      playCount: albums.playCount,
+      viewCount: albums.viewCount,
+      createdAt: albums.createdAt,
+      updatedAt: albums.updatedAt,
+      userName: users.name,
+      userAvatar: users.avatarUrl,
+    })
+    .from(albums)
+    .leftJoin(users, eq(albums.userId, users.id))
+    .where(and(...conditions));
+
+  // Apply sorting and execute query
+  let results;
+  switch (sortBy) {
+    case "newest":
+      results = await query.orderBy(desc(albums.createdAt)).limit(limit).offset(offset);
+      break;
+    case "trending":
+      results = await query.orderBy(desc(sql`${albums.playCount} + ${albums.viewCount}`)).limit(limit).offset(offset);
+      break;
+    case "top_rated":
+      results = await query.orderBy(desc(albums.score)).limit(limit).offset(offset);
+      break;
+    case "most_played":
+      results = await query.orderBy(desc(albums.playCount)).limit(limit).offset(offset);
+      break;
+    default:
+      results = await query.orderBy(desc(albums.createdAt)).limit(limit).offset(offset);
+  }
+  return results;
+}
+
+/**
+ * Get album details with social stats
+ */
+export async function getAlbumWithSocialStats(albumId: number, userId?: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const album = await getAlbumById(albumId);
+  if (!album) return null;
+
+  const user = await db.select().from(users).where(eq(users.id, album.userId)).limit(1);
+  
+  const ratingStats = await db
+    .select({
+      avgRating: sql<number>`COALESCE(AVG(${ratings.rating}), 0)`,
+      ratingCount: sql<number>`COUNT(*)`,
+    })
+    .from(ratings)
+    .where(eq(ratings.albumId, albumId));
+
+  const likeCount = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(likes)
+    .where(eq(likes.albumId, albumId));
+
+  let userRating = null;
+  let userLiked = false;
+
+  if (userId) {
+    const userRatingResult = await db
+      .select()
+      .from(ratings)
+      .where(and(eq(ratings.userId, userId), eq(ratings.albumId, albumId)))
+      .limit(1);
+    userRating = userRatingResult[0]?.rating || null;
+
+    const userLikeResult = await db
+      .select()
+      .from(likes)
+      .where(and(eq(likes.userId, userId), eq(likes.albumId, albumId)))
+      .limit(1);
+    userLiked = userLikeResult.length > 0;
+  }
+
+  return {
+    album,
+    user: user[0],
+    avgRating: Number(ratingStats[0]?.avgRating || 0),
+    ratingCount: Number(ratingStats[0]?.ratingCount || 0),
+    likeCount: Number(likeCount[0]?.count || 0),
+    userRating,
+    userLiked,
+  };
+}
+
+/**
+ * Increment album view count
+ */
+export async function incrementAlbumViews(albumId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(albums)
+    .set({ viewCount: sql`${albums.viewCount} + 1` })
+    .where(eq(albums.id, albumId));
+}
+
+/**
+ * Increment album play count
+ */
+export async function incrementAlbumPlays(albumId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(albums)
+    .set({ playCount: sql`${albums.playCount} + 1` })
+    .where(eq(albums.id, albumId));
+}
+
+/**
+ * Add comment to album
+ */
+export async function addAlbumComment(data: { userId: number; albumId: number; content: string }) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.insert(comments).values(data);
+  return Number(result[0].insertId);
+}
+
+/**
+ * Get comments for album
+ */
+export async function getAlbumComments(albumId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select({
+      id: comments.id,
+      userId: comments.userId,
+      albumId: comments.albumId,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      updatedAt: comments.updatedAt,
+      userName: users.name,
+      userAvatar: users.avatarUrl,
+    })
+    .from(comments)
+    .leftJoin(users, eq(comments.userId, users.id))
+    .where(eq(comments.albumId, albumId))
+    .orderBy(desc(comments.createdAt));
+
+  return result;
+}
+
+/**
+ * Toggle like on album
+ */
+export async function toggleAlbumLike(userId: number, albumId: number) {
+  const db = await getDb();
+  if (!db) return { liked: false };
+
+  // Check if already liked
+  const existing = await db
+    .select()
+    .from(likes)
+    .where(and(eq(likes.userId, userId), eq(likes.albumId, albumId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Unlike
+    await db.delete(likes).where(and(eq(likes.userId, userId), eq(likes.albumId, albumId)));
+    return { liked: false };
+  } else {
+    // Like
+    await db.insert(likes).values({ userId, albumId });
+    return { liked: true };
+  }
+}
+
+/**
+ * Follow/unfollow user
+ */
+export async function toggleUserFollow(followerId: number, followingId: number) {
+  const db = await getDb();
+  if (!db) return { following: false };
+
+  if (followerId === followingId) {
+    throw new Error("Cannot follow yourself");
+  }
+
+  // Check if already following
+  const existing = await db
+    .select()
+    .from(follows)
+    .where(and(eq(follows.followerId, followerId), eq(follows.followingId, followingId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Unfollow
+    await db.delete(follows).where(and(eq(follows.followerId, followerId), eq(follows.followingId, followingId)));
+    return { following: false };
+  } else {
+    // Follow
+    await db.insert(follows).values({ followerId, followingId });
+    return { following: true };
+  }
+}
+
+/**
+ * Get user profile with stats
+ */
+export async function getUserProfileWithStats(userId: number, viewerId?: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!user[0]) return null;
+
+  const publicAlbumCount = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(albums)
+    .where(and(eq(albums.userId, userId), eq(albums.visibility, "public")));
+  
+  const followerCount = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(follows)
+    .where(eq(follows.followingId, userId));
+  
+  const followingCount = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(follows)
+    .where(eq(follows.followerId, userId));
+
+  // Get total likes across all user's albums
+  const totalLikes = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(likes)
+    .leftJoin(albums, eq(likes.albumId, albums.id))
+    .where(and(eq(albums.userId, userId), eq(albums.visibility, "public")));
+
+  // Get total views and plays
+  const albumStats = await db
+    .select({
+      totalViews: sql<number>`SUM(${albums.viewCount})`,
+      totalPlays: sql<number>`SUM(${albums.playCount})`,
+      avgScore: sql<number>`AVG(${albums.score})`,
+    })
+    .from(albums)
+    .where(and(eq(albums.userId, userId), eq(albums.visibility, "public")));
+
+  let isFollowing = false;
+  if (viewerId && viewerId !== userId) {
+    const followResult = await db
+      .select()
+      .from(follows)
+      .where(and(eq(follows.followerId, viewerId), eq(follows.followingId, userId)))
+      .limit(1);
+    isFollowing = followResult.length > 0;
+  }
+
+  return {
+    user: user[0],
+    albumCount: Number(publicAlbumCount[0]?.count || 0),
+    followerCount: Number(followerCount[0]?.count || 0),
+    followingCount: Number(followingCount[0]?.count || 0),
+    totalLikes: Number(totalLikes[0]?.count || 0),
+    totalViews: Number(albumStats[0]?.totalViews || 0),
+    totalPlays: Number(albumStats[0]?.totalPlays || 0),
+    avgRating: Number(albumStats[0]?.avgScore || 0),
+    isFollowing,
+  };
+}
+
+/**
+ * Get public prompts with pagination
+ */
+export async function getPublicPromptsWithUsers(params: { limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { limit = 20, offset = 0 } = params;
+
+  const result = await db
+    .select({
+      id: promptTemplates.id,
+      userId: promptTemplates.userId,
+      name: promptTemplates.name,
+      theme: promptTemplates.theme,
+      vibe: promptTemplates.vibe,
+      platform: promptTemplates.platform,
+      language: promptTemplates.language,
+      audience: promptTemplates.audience,
+      influences: promptTemplates.influences,
+      trackCount: promptTemplates.trackCount,
+      visibility: promptTemplates.visibility,
+      usageCount: promptTemplates.usageCount,
+      createdAt: promptTemplates.createdAt,
+      userName: users.name,
+      userAvatar: users.avatarUrl,
+    })
+    .from(promptTemplates)
+    .leftJoin(users, eq(promptTemplates.userId, users.id))
+    .where(eq(promptTemplates.visibility, "public"))
+    .orderBy(desc(promptTemplates.usageCount), desc(promptTemplates.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  return result;
+}
+
+/**
+ * Increment prompt usage count
+ */
+export async function incrementPromptUsageCount(promptId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(promptTemplates)
+    .set({ usageCount: sql`${promptTemplates.usageCount} + 1` })
+    .where(eq(promptTemplates.id, promptId));
+}
+
+/**
+ * Get leaderboard data
+ */
+export async function getLeaderboardData(type: "albums" | "creators", limit = 10) {
+  const db = await getDb();
+  if (!db) return [];
+
+  if (type === "albums") {
+    // Top rated public albums
+    const result = await db
+      .select({
+        albumId: albums.id,
+        albumTitle: albums.title,
+        albumCover: albums.coverUrl,
+        userId: users.id,
+        userName: users.name,
+        userAvatar: users.avatarUrl,
+        playCount: albums.playCount,
+        viewCount: albums.viewCount,
+        score: albums.score,
+      })
+      .from(albums)
+      .leftJoin(users, eq(albums.userId, users.id))
+      .where(eq(albums.visibility, "public"))
+      .orderBy(desc(albums.score), desc(albums.playCount))
+      .limit(limit);
+
+    return result;
+  } else {
+    // Top creators by public album count and plays
+    const result = await db
+      .select({
+        userId: users.id,
+        userName: users.name,
+        userAvatar: users.avatarUrl,
+        userBio: users.bio,
+        albumCount: sql<number>`COUNT(DISTINCT ${albums.id})`,
+        totalPlays: sql<number>`SUM(${albums.playCount})`,
+        totalViews: sql<number>`SUM(${albums.viewCount})`,
+      })
+      .from(users)
+      .leftJoin(albums, and(eq(albums.userId, users.id), eq(albums.visibility, "public")))
+      .groupBy(users.id, users.name, users.avatarUrl, users.bio)
+      .having(sql`COUNT(DISTINCT ${albums.id}) > 0`)
+      .orderBy(desc(sql`SUM(${albums.playCount})`), desc(sql`COUNT(DISTINCT ${albums.id})`))
+      .limit(limit);
+
+    return result;
+  }
 }

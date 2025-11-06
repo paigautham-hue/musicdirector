@@ -2,7 +2,9 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Trash2, Edit2, Music, Loader2 } from "lucide-react";
+import { Trash2, Edit2, Music, Loader2, Eye, EyeOff, Globe } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -50,6 +52,16 @@ export default function MyPrompts() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to update prompt");
+    },
+  });
+
+  const updateVisibility = trpc.social.updatePromptVisibility.useMutation({
+    onSuccess: () => {
+      toast.success("Visibility updated!");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update visibility");
     },
   });
 
@@ -143,25 +155,58 @@ export default function MyPrompts() {
                 key={template.id}
                 className="bg-gray-900 border-gray-800 p-6 hover:border-yellow-500/50 transition-colors"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-bold text-yellow-500">{template.name}</h3>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(template)}
-                      className="h-8 w-8"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(template.id)}
-                      className="h-8 w-8 text-red-500 hover:text-red-400"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-xl font-bold text-yellow-500">{template.name}</h3>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(template)}
+                        className="h-8 w-8"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(template.id)}
+                        className="h-8 w-8 text-red-500 hover:text-red-400"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id={`visibility-${template.id}`}
+                        checked={template.visibility === "public"}
+                        onCheckedChange={(checked) => {
+                          updateVisibility.mutate({
+                            promptId: template.id,
+                            visibility: checked ? "public" : "private"
+                          });
+                        }}
+                      />
+                      <Label htmlFor={`visibility-${template.id}`} className="text-sm cursor-pointer">
+                        {template.visibility === "public" ? (
+                          <Badge variant="default" className="bg-green-500">
+                            <Globe className="w-3 h-3 mr-1" />
+                            Public
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary">
+                            <EyeOff className="w-3 h-3 mr-1" />
+                            Private
+                          </Badge>
+                        )}
+                      </Label>
+                    </div>
+                    {template.visibility === "public" && template.usageCount > 0 && (
+                      <span className="text-xs text-gray-400">{template.usageCount} uses</span>
+                    )}
                   </div>
                 </div>
 

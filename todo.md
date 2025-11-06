@@ -337,3 +337,102 @@
 - [x] Tighten line spacing for lyrics
 - [x] Optimize cover page layout
 - [x] Test PDF generation with compact layout
+
+## Social Discovery Features
+
+### Database Schema Updates
+- [x] Add visibility field to albums table (public/private/unlisted)
+- [x] Add visibility field to prompts table
+- [x] Create comments table for album reviews
+- [x] Add view count and play count to albums
+- [x] Add follower/following relationships table
+- [x] Add likes/favorites table for albums
+- [x] Add user bio and avatar fields
+
+### Backend Implementation
+- [x] Create social router with all tRPC endpoints
+- [x] Public albums API with filters (trending, top-rated, recent, search)
+- [x] Comments CRUD operations
+- [x] Likes/favorites management
+- [x] Follow/unfollow users
+- [x] User profile queries with stats
+- [x] Public prompt templates browsing
+- [x] Album visibility controls (public/private)
+- [x] Prompt visibility controls (public/private)
+- [x] View and play count tracking
+- [x] Leaderboard data aggregation
+
+### Public Gallery & Explore
+- [x] Create Explore page showing all public albums
+- [x] Add search functionality (by title, theme, artist)
+- [x] Add filters (platform, date)
+- [x] Add sorting (trending, top-rated, newest, most-played)
+- [x] Implement pagination for large result sets
+- [x] Add album detail view for public albums
+- [x] Add trending sidebar widget
+- [x] Add community stats display
+
+### Community Ratings & Comments
+- [x] Update ratings to show community average
+- [x] Add comment/review system for albums
+- [x] Add like/favorite button for albums
+- [x] Display play count and view count
+- [x] Auto-increment view counts on album detail page
+- [x] Show comment count and like count
+
+### User Profiles
+- [x] Create user profile page showing public albums
+- [x] Add bio and profile picture support
+- [x] Show user statistics (albums created, total plays, avg rating, followers)
+- [x] Add follow/unfollow functionality
+- [x] Show follower/following counts
+- [x] Add tabs for albums and statistics
+
+### Prompt Sharing
+- [x] Add public prompt gallery (Community Prompts page)
+- [x] Allow users to share prompts publicly
+- [x] Add "Use This Prompt" for community prompts
+- [x] Show prompt usage count
+- [x] Add visibility toggle in My Prompts page
+- [x] Auto-increment usage count when prompts are used
+
+### Leaderboards & Trending
+- [x] Create leaderboard endpoint (top albums, top creators)
+- [x] Add trending algorithm (based on views + plays) based on recent plays/ratings
+- [ ] Show "Featured" albums section
+- [ ] Add "New & Noteworthy" section
+- [ ] Create genre-specific leaderboards
+
+### Backend Endpoints
+- [ ] Add endpoint to get public albums with filters
+- [ ] Add endpoint to post/get comments
+- [ ] Add endpoint to follow/unfollow users
+- [ ] Add endpoint to like/favorite albums
+- [ ] Add endpoint to increment play/view counts
+- [ ] Add endpoint to get user profile data
+- [ ] Add endpoint to get leaderboard data
+- [ ] Add endpoint to get trending albums
+
+### UI/UX
+- [ ] Add "Make Public" toggle in album settings
+- [ ] Update navigation to include Gallery/Explore
+- [ ] Create album cards for grid display### UI Components
+- [x] Add user avatar components
+- [x] Create comment/review UI components
+- [x] Add like/favorite buttons with toggle
+- [x] Add follow buttons with user stats
+- [x] Add visibility toggle switches (albums & prompts)
+- [x] Add public/private badges
+- [x] Add usage count display for shared prompts
+- [x] Add community stats dashboard
+- [x] Add loading states and skeletons
+- [x] Add responsive design for all new pages
+
+### Navigation & Integration
+- [x] Add Explore link to main navigation
+- [x] Add Community Prompts link to main navigation
+- [x] Register all social routes in App.tsx
+- [x] Add visibility controls to AlbumWorkspace
+- [x] Add visibility controls to MyPrompts
+- [x] Add optimistic updates for likes and follows
+- [x] Add toast notifications for all social actions

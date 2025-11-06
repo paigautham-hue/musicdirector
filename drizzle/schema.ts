@@ -9,6 +9,8 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
+  bio: text("bio"),
+  avatarUrl: text("avatarUrl"),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   plan: varchar("plan", { length: 64 }).default("free").notNull(),
   musicGenerationQuota: int("musicGenerationQuota").default(1).notNull(), // How many albums with music they can generate
@@ -41,6 +43,7 @@ export const albums = mysqlTable("albums", {
   trackCount: int("trackCount").default(10).notNull(),
   visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
   playCount: int("playCount").default(0).notNull(),
+  viewCount: int("viewCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
@@ -407,6 +410,8 @@ export const promptTemplates = mysqlTable("promptTemplates", {
   audience: text("audience"),
   influences: text("influences"), // JSON array
   trackCount: int("trackCount").default(10).notNull(),
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  usageCount: int("usageCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 }, (table) => ({
@@ -416,3 +421,57 @@ export const promptTemplates = mysqlTable("promptTemplates", {
 
 export type PromptTemplate = typeof promptTemplates.$inferSelect;
 export type InsertPromptTemplate = typeof promptTemplates.$inferInsert;
+
+
+/**
+ * Comments/reviews on albums
+ */
+export const comments = mysqlTable("comments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  albumId: int("albumId").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  albumIdIdx: index("albumId_idx").on(table.albumId),
+  createdAtIdx: index("createdAt_idx").on(table.createdAt),
+}));
+
+export type Comment = typeof comments.$inferSelect;
+export type InsertComment = typeof comments.$inferInsert;
+
+/**
+ * Likes/favorites for albums
+ */
+export const likes = mysqlTable("likes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  albumId: int("albumId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  albumIdIdx: index("albumId_idx").on(table.albumId),
+  uniqueUserAlbum: index("unique_user_album").on(table.userId, table.albumId),
+}));
+
+export type Like = typeof likes.$inferSelect;
+export type InsertLike = typeof likes.$inferInsert;
+
+/**
+ * User follow relationships
+ */
+export const follows = mysqlTable("follows", {
+  id: int("id").autoincrement().primaryKey(),
+  followerId: int("followerId").notNull(), // User who is following
+  followingId: int("followingId").notNull(), // User being followed
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  followerIdIdx: index("followerId_idx").on(table.followerId),
+  followingIdIdx: index("followingId_idx").on(table.followingId),
+  uniqueFollowerFollowing: index("unique_follower_following").on(table.followerId, table.followingId),
+}));
+
+export type Follow = typeof follows.$inferSelect;
+export type InsertFollow = typeof follows.$inferInsert;

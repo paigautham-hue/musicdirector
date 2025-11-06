@@ -82,9 +82,14 @@ export default function Home() {
                       Knowledge Hub
                     </a>
                   </Link>
-                  <Link href="/gallery">
+                  <Link href="/explore">
                     <a className="text-foreground/80 hover:text-foreground transition-colors">
-                      Gallery
+                      Explore
+                    </a>
+                  </Link>
+                  <Link href="/community-prompts">
+                    <a className="text-foreground/80 hover:text-foreground transition-colors">
+                      Community Prompts
                     </a>
                   </Link>
                   <Link href="/impact-stories">

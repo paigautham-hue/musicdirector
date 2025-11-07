@@ -747,3 +747,8 @@
 - [x] Investigate why Vibe & Genres field is empty when loading prompts
 - [x] Fix prompt data parsing/formatting for vibe and influences fields
 - [x] Test prompt loading on published website
+
+## Fix My Prompts Page Display
+- [x] Investigate why personal prompts aren't showing in My Prompts page
+- [x] Fix prompts display to show both user's personal prompts and community prompts
+- [x] Test prompts page to ensure both sections are visible

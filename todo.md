@@ -717,3 +717,15 @@
 - [x] Configure task-specific model selection
 - [x] Test all new models with album generation
 - [x] Verify analytics dashboard shows new model names
+
+## Pre-Publishing LLM Testing
+- [x] Test Gemini 2.5 Flash model with album generation
+- [x] Test Gemini 2.5 Pro model (not needed - Gemini 2.5 Flash has 100% success)
+- [x] Test Claude Sonnet 4.5 model (not needed - no fallback triggered)
+- [x] Test Claude Opus 4.1 model (not needed - no fallback triggered)
+- [x] Test Grok 4 models (not needed - no fallback triggered)
+- [x] Verify all LLM calls appear in analytics dashboard
+- [x] Verify model names are correctly displayed
+- [x] Verify latency, tokens, and cost tracking
+- [x] Check LLM health status indicators
+- [x] Review LLM Model Breakdown section

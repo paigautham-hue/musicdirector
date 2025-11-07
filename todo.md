@@ -667,3 +667,8 @@
 - [x] Integrate profile picture display in navigation
 - [x] Add profile route to App.tsx
 - [x] Test profile creation and editing flow
+
+## Fix Track Database Insertion Error
+- [x] Investigate database schema for tracks table
+- [x] Fix track insertion logic to match schema requirements
+- [x] Test album generation end-to-end

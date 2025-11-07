@@ -63,8 +63,8 @@ export const tracks = mysqlTable("tracks", {
   albumId: int("albumId").notNull(),
   index: int("index").notNull(), // Track order in album
   title: varchar("title", { length: 255 }).notNull(),
-  tempoBpm: varchar("tempoBpm", { length: 64 }), // e.g., "120-130"
-  key: varchar("key", { length: 32 }), // e.g., "C major"
+  tempoBpm: varchar("tempoBpm", { length: 255 }), // e.g., "120-130" or detailed descriptions
+  key: varchar("key", { length: 255 }), // e.g., "C major" or detailed descriptions
   moodTags: text("moodTags"), // JSON array
   score: int("score"), // 0-100 hit potential score
   scoreBreakdown: text("scoreBreakdown"), // JSON with dimension scores

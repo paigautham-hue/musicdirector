@@ -192,7 +192,7 @@ export function AppNav() {
             </div>
 
             {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4 min-h-0">
+            <div className="flex-1 overflow-y-auto py-4" style={{ maxHeight: 'calc(100vh - 60px - 140px)' }}>
               {isAuthenticated ? (
                 <div className="space-y-1 px-2">
                   <Link href="/library">

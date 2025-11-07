@@ -758,3 +758,8 @@
 - [x] Add "My Prompts" link to navigation menu
 - [x] Ensure users can access both Community Prompts and My Prompts pages
 - [x] Test navigation links on published website
+
+## Add Logout Button to Mobile Menu
+- [x] Check mobile menu footer implementation in AppNav component
+- [x] Add visible logout button to mobile menu
+- [x] Test logout functionality on mobile devices

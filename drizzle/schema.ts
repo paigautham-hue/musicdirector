@@ -516,3 +516,22 @@ export const playlistTracks = mysqlTable("playlistTracks", {
 
 export type PlaylistTrack = typeof playlistTracks.$inferSelect;
 export type InsertPlaylistTrack = typeof playlistTracks.$inferInsert;
+
+/**
+ * User ratings for playlists
+ */
+export const playlistRatings = mysqlTable("playlistRatings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  playlistId: int("playlistId").notNull(),
+  rating: int("rating").notNull(), // 1-5 stars
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  playlistIdIdx: index("playlistId_idx").on(table.playlistId),
+  uniqueUserPlaylist: index("unique_user_playlist").on(table.userId, table.playlistId),
+}));
+
+export type PlaylistRating = typeof playlistRatings.$inferSelect;
+export type InsertPlaylistRating = typeof playlistRatings.$inferInsert;

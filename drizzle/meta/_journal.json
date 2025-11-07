@@ -71,6 +71,13 @@
       "when": 1762532171281,
       "tag": "0009_cloudy_tarot",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1762533053238,
+      "tag": "0010_wet_leo",
+      "breakpoints": true
     }
   ]
 }

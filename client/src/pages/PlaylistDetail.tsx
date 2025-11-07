@@ -4,7 +4,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Music, Play, Pause, SkipForward, SkipBack, Trash2, Eye, EyeOff, Share2, Clock, ArrowLeft } from "lucide-react";
+import { Music, Play, Pause, SkipForward, SkipBack, Trash2, Eye, EyeOff, Share2, Clock, ArrowLeft, Star } from "lucide-react";
+import { StarRating } from "@/components/StarRating";
+import { PlaylistAISuggestions } from "@/components/PlaylistAISuggestions";
 import { toast } from "sonner";
 import { APP_TITLE, getLoginUrl } from "@/const";
 
@@ -34,6 +36,32 @@ export default function PlaylistDetail() {
   });
 
   const incrementPlayCountMutation = trpc.playlists.incrementPlayCount.useMutation();
+
+  const { data: ratingStats } = trpc.playlists.getRatingStats.useQuery(
+    { playlistId: playlistId! },
+    { enabled: !!playlistId }
+  );
+
+  const { data: userRating } = trpc.playlists.getUserRating.useQuery(
+    { playlistId: playlistId! },
+    { enabled: !!playlistId && isAuthenticated }
+  );
+
+  const rateMutation = trpc.playlists.rate.useMutation({
+    onSuccess: () => {
+      toast.success("Rating submitted!");
+      utils.playlists.getRatingStats.invalidate();
+      utils.playlists.getUserRating.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to rate playlist");
+    },
+  });
+
+  const handleRate = (rating: number) => {
+    if (!playlistId) return;
+    rateMutation.mutate({ playlistId, rating });
+  };
 
   useEffect(() => {
     if (playlist && playlist.tracks.length > 0 && playlistId) {
@@ -152,13 +180,35 @@ export default function PlaylistDetail() {
               {playlist.description && (
                 <p className="text-muted-foreground mb-2">{playlist.description}</p>
               )}
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                 <span>By {playlist.userName || "Unknown"}</span>
                 <span>•</span>
                 <span>{playlist.tracks.length} tracks</span>
                 <span>•</span>
                 <span>{playlist.playCount} plays</span>
               </div>
+              {ratingStats && ratingStats.ratingCount > 0 && (
+                <div className="flex items-center gap-2 mb-2">
+                  <StarRating
+                    rating={ratingStats.averageRating}
+                    readonly
+                    size="md"
+                  />
+                  <span className="text-sm text-muted-foreground">
+                    {ratingStats.averageRating.toFixed(1)} ({ratingStats.ratingCount} {ratingStats.ratingCount === 1 ? "rating" : "ratings"})
+                  </span>
+                </div>
+              )}
+              {isAuthenticated && !isOwner && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Rate this playlist:</span>
+                  <StarRating
+                    rating={userRating?.rating || 0}
+                    onRate={handleRate}
+                    size="md"
+                  />
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={handleShare}>
@@ -297,6 +347,18 @@ export default function PlaylistDetail() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* AI Suggestions */}
+              {isOwner && playlistId && (
+                <Card className="mt-4">
+                  <CardContent className="p-6">
+                    <PlaylistAISuggestions
+                      playlistId={playlistId}
+                      onAddTrack={() => utils.playlists.get.invalidate()}
+                    />
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </div>
         )}

@@ -1,16 +1,16 @@
-import { eq, desc, and, or, like, sql, inArray } from "drizzle-orm";
+import { eq, desc, and, or, like, sql, inArray, avg, count } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
   systemSettings, musicJobs, audioFiles, payments, creditTransactions, promptTemplates,
-  comments, likes, follows, apiUsageLogs, llmUsageLogs, playlists, playlistTracks,
+  comments, likes, follows, apiUsageLogs, llmUsageLogs, playlists, playlistTracks, playlistRatings,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
   type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
   type PromptTemplate, type InsertApiUsageLog, type InsertLlmUsageLog, type Playlist,
   type PlaylistTrack, type InsertPlaylist, type InsertPlaylistTrack,
-  type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
+  type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating, type InsertPlaylistRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
   type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
   type InsertAudioFile, type InsertPayment, type InsertCreditTransaction, type InsertPromptTemplate
@@ -1370,11 +1370,14 @@ export async function getPublicPlaylists(params: { limit?: number; offset?: numb
       updatedAt: playlists.updatedAt,
       userName: users.name,
       userAvatar: users.avatarUrl,
-      trackCount: sql<number>`COUNT(${playlistTracks.id})`,
+      trackCount: sql<number>`COUNT(DISTINCT ${playlistTracks.id})`,
+      averageRating: sql<number>`COALESCE(AVG(${playlistRatings.rating}), 0)`,
+      ratingCount: sql<number>`COUNT(DISTINCT ${playlistRatings.id})`,
     })
     .from(playlists)
     .leftJoin(users, eq(playlists.userId, users.id))
     .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
+    .leftJoin(playlistRatings, eq(playlists.id, playlistRatings.playlistId))
     .where(eq(playlists.visibility, "public"))
     .groupBy(playlists.id)
     .orderBy(desc(playlists.playCount), desc(playlists.createdAt))
@@ -1602,4 +1605,88 @@ export async function incrementPlaylistPlayCount(playlistId: number) {
     .update(playlists)
     .set({ playCount: sql`${playlists.playCount} + 1` })
     .where(eq(playlists.id, playlistId));
+}
+
+
+// ============================================================================
+// PLAYLIST RATINGS
+// ============================================================================
+
+/**
+ * Rate a playlist (create or update rating)
+ */
+export async function ratePlaylist(userId: number, playlistId: number, rating: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Check if user already rated this playlist
+  const existing = await db
+    .select()
+    .from(playlistRatings)
+    .where(and(eq(playlistRatings.userId, userId), eq(playlistRatings.playlistId, playlistId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    // Update existing rating
+    await db
+      .update(playlistRatings)
+      .set({ rating, updatedAt: new Date() })
+      .where(eq(playlistRatings.id, existing[0].id));
+  } else {
+    // Create new rating
+    await db.insert(playlistRatings).values({
+      userId,
+      playlistId,
+      rating,
+    });
+  }
+}
+
+/**
+ * Get user's rating for a playlist
+ */
+export async function getUserPlaylistRating(userId: number, playlistId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(playlistRatings)
+    .where(and(eq(playlistRatings.userId, userId), eq(playlistRatings.playlistId, playlistId)))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+/**
+ * Get average rating and count for a playlist
+ */
+export async function getPlaylistRatingStats(playlistId: number) {
+  const db = await getDb();
+  if (!db) return { averageRating: 0, ratingCount: 0 };
+
+  const result = await db
+    .select({
+      averageRating: avg(playlistRatings.rating),
+      ratingCount: count(playlistRatings.id),
+    })
+    .from(playlistRatings)
+    .where(eq(playlistRatings.playlistId, playlistId));
+
+  return {
+    averageRating: result[0]?.averageRating ? Number(result[0].averageRating) : 0,
+    ratingCount: result[0]?.ratingCount ? Number(result[0].ratingCount) : 0,
+  };
+}
+
+/**
+ * Delete a rating
+ */
+export async function deletePlaylistRating(userId: number, playlistId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .delete(playlistRatings)
+    .where(and(eq(playlistRatings.userId, userId), eq(playlistRatings.playlistId, playlistId)));
 }

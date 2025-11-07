@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
+import { suggestTracksForPlaylist } from "../aiSuggestions";
 import {
   createPlaylist,
   getUserPlaylists,
@@ -11,6 +12,10 @@ import {
   removeTrackFromPlaylist,
   reorderPlaylistTracks,
   incrementPlaylistPlayCount,
+  ratePlaylist,
+  getUserPlaylistRating,
+  getPlaylistRatingStats,
+  deletePlaylistRating,
 } from "../db";
 
 export const playlistRouter = router({
@@ -158,5 +163,83 @@ export const playlistRouter = router({
     .mutation(async ({ input }) => {
       await incrementPlaylistPlayCount(input.playlistId);
       return { success: true };
+    }),
+
+  /**
+   * Rate a playlist
+   */
+  rate: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.number(),
+        rating: z.number().min(1).max(5),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ratePlaylist(ctx.user.id, input.playlistId, input.rating);
+      return { success: true };
+    }),
+
+  /**
+   * Get user's rating for a playlist
+   */
+  getUserRating: protectedProcedure
+    .input(z.object({ playlistId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const rating = await getUserPlaylistRating(ctx.user.id, input.playlistId);
+      return rating;
+    }),
+
+  /**
+   * Get rating stats for a playlist
+   */
+  getRatingStats: publicProcedure
+    .input(z.object({ playlistId: z.number() }))
+    .query(async ({ input }) => {
+      const stats = await getPlaylistRatingStats(input.playlistId);
+      return stats;
+    }),
+
+  /**
+   * Delete user's rating
+   */
+  deleteRating: protectedProcedure
+    .input(z.object({ playlistId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      await deletePlaylistRating(ctx.user.id, input.playlistId);
+      return { success: true };
+    }),
+
+  /**
+   * Get AI track suggestions for a playlist
+   */
+  getSuggestions: protectedProcedure
+    .input(
+      z.object({
+        playlistId: z.number(),
+        limit: z.number().optional().default(10),
+      })
+    )
+    .query(async ({ input }) => {
+      const playlist = await getPlaylistWithTracks(input.playlistId);
+      if (!playlist) {
+        throw new Error("Playlist not found");
+      }
+
+      const playlistTracks = playlist.tracks.map((t) => ({
+        id: t.trackId || 0,
+        title: t.trackTitle || "Unknown",
+        albumTitle: t.albumTitle || undefined,
+      }));
+
+      const excludeTrackIds = playlistTracks.map((t) => t.id);
+
+      const suggestions = await suggestTracksForPlaylist(
+        playlistTracks,
+        excludeTrackIds,
+        input.limit
+      );
+
+      return suggestions;
     }),
 });

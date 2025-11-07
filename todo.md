@@ -783,3 +783,21 @@
 - [x] Test playlist creation, editing, and deletion
 - [x] Test adding/removing tracks from playlists
 - [x] Test public playlist discovery
+
+## Add Playlist Rating System
+- [x] Create playlistRatings table in database schema
+- [x] Add database helper functions for rating CRUD operations
+- [x] Create backend tRPC endpoints for rating playlists
+- [x] Add star rating component to playlist detail page
+- [x] Display average rating and rating count on playlist cards
+- [x] Add user's rating indicator (if already rated)
+- [x] Update public playlists query to include rating data
+
+## Add AI Track Suggestions for Playlists
+- [x] Create AI service function to analyze playlist tracks and suggest similar tracks
+- [x] Add backend tRPC endpoint for getting track suggestions
+- [x] Create AI suggestions UI component for playlist editing
+- [x] Add "Get AI Suggestions" button to playlist detail page
+- [x] Display suggested tracks with reasoning (why it matches)
+- [x] Allow users to quickly add suggested tracks to playlist
+- [x] Test AI suggestions with various playlist themes

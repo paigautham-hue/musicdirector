@@ -2,7 +2,8 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Music, Play, ListMusic, TrendingUp } from "lucide-react";
+import { Music, Play, ListMusic, TrendingUp, Star } from "lucide-react";
+import { StarRating } from "@/components/StarRating";
 import { Link } from "wouter";
 
 export default function PublicPlaylists() {
@@ -104,9 +105,23 @@ export default function PublicPlaylists() {
                         <p className="text-sm font-medium truncate">
                           {playlist.userName || "Unknown"}
                         </p>
-                        <p className="text-xs text-muted-foreground">
-                          {playlist.playCount} plays
-                        </p>
+                        <div className="flex items-center gap-2">
+                          {playlist.ratingCount > 0 && (
+                            <div className="flex items-center gap-1">
+                              <StarRating
+                                rating={playlist.averageRating}
+                                readonly
+                                size="sm"
+                              />
+                              <span className="text-xs text-muted-foreground">
+                                {playlist.averageRating.toFixed(1)}
+                              </span>
+                            </div>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {playlist.playCount} plays
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <Link href={`/playlist/${playlist.id}`}>

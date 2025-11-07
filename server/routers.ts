@@ -62,6 +62,7 @@ export const appRouter = router({
         // Start generation in background
         (async () => {
           try {
+            console.log(`[Album Generation] Starting job ${jobId} for user ${ctx.user.id}`);
             setProgress(jobId, {
               stage: "Initializing",
               progress: 0,
@@ -131,16 +132,25 @@ export const appRouter = router({
               setProgress(jobId, finalProgress);
             }
             
+            console.log(`[Album Generation] Job ${jobId} completed successfully. Album ID: ${album.id}`);
+            
             // Clear after 5 minutes
             setTimeout(() => clearProgress(jobId), 5 * 60 * 1000);
           } catch (error: any) {
+            console.error(`[Album Generation] Job ${jobId} failed:`, error);
             setProgress(jobId, {
               stage: "Error",
               progress: 0,
               message: error.message || "Failed to generate album"
             });
+            
+            // Clear error progress after 5 minutes
+            setTimeout(() => clearProgress(jobId), 5 * 60 * 1000);
           }
-        })();
+        })().catch((error) => {
+          // Catch any unhandled promise rejections
+          console.error(`[Album Generation] Unhandled error in job ${jobId}:`, error);
+        });
         
         // Return job ID immediately
         return { jobId };

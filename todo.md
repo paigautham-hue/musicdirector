@@ -651,3 +651,9 @@
 - [x] Find where album creation logic generates two albums per prompt
 - [x] Update logic to create only one album per request (added double-submission guard)
 - [x] Test album creation to verify single album generation
+
+## Fix Album Generation When User Navigates Away
+- [x] Investigate why album generation fails when user leaves the page
+- [x] Ensure background generation continues independently of frontend polling (added comprehensive error handling and logging)
+- [x] Add mechanism to resume/show completed albums when user returns (albums auto-appear in Library)
+- [x] Test album generation with navigation away scenario

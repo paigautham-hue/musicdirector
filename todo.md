@@ -695,3 +695,15 @@
 - [x] Add Admin link to Home page navigation for admin users
 - [x] Ensure Admin link only shows for users with admin role
 - [x] Test Admin link visibility on Home page
+
+## LLM Usage Logging & Multi-LLM Integration
+- [x] Add LLM usage logging to invokeLLM function
+- [x] Create multi-LLM router with intelligent model selection
+- [ ] Integrate GPT-4 (OpenAI) for structured output and complex reasoning (deferred - GPT-5 uses different API)
+- [x] Integrate Gemini 2.5 Pro for creative writing and lyrics generation
+- [x] Integrate Grok 4 for advanced reasoning and analysis
+- [x] Implement automatic fallback between providers
+- [x] Add provider-specific cost tracking
+- [x] Configure model selection based on task type
+- [x] Test multi-LLM system with album generation
+- [x] Verify LLM usage appears in analytics dashboard

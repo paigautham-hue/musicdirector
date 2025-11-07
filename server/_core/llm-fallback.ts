@@ -1,5 +1,6 @@
 import { ENV } from "./env";
 import { InvokeParams, InvokeResult, Message, Tool } from "./llm";
+import { logLlmUsage } from "../db";
 
 /**
  * LLM Fallback System
@@ -46,8 +47,8 @@ function getProviderConfig(provider: LLMProvider): ProviderConfig | null {
       return {
         name: "Google Gemini",
         apiKey: geminiKey,
-        endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${geminiKey}`,
-        model: "gemini-2.0-flash-exp",
+        endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key=${geminiKey}`,
+        model: "gemini-2.0-flash-thinking-exp-01-21",
       };
     
     case "grok":
@@ -57,7 +58,7 @@ function getProviderConfig(provider: LLMProvider): ProviderConfig | null {
         name: "Grok",
         apiKey: grokKey,
         endpoint: "https://api.x.ai/v1/chat/completions",
-        model: "grok-beta",
+        model: "grok-2-latest",
       };
     
     default:
@@ -367,13 +368,16 @@ function extractJSON(content: string): string {
   return content.trim();
 }
 
-export async function invokeLLMWithFallback(params: InvokeParams): Promise<InvokeResult> {
+export async function invokeLLMWithFallback(params: InvokeParams, userId?: number): Promise<InvokeResult> {
   const errors: Array<{ provider: string; error: string }> = [];
+  const startTime = Date.now();
   
   for (const provider of PROVIDER_ORDER) {
+    const providerStartTime = Date.now();
     try {
       const result = await invokeProvider(provider, params);
-      console.log(`[LLM Fallback] ✓ ${provider} succeeded`);
+      const latency = Date.now() - providerStartTime;
+      console.log(`[LLM Fallback] ✓ ${provider} succeeded in ${latency}ms`);
       
       // If response_format is set, extract JSON from markdown if needed
       if (params.response_format && result.choices[0]?.message?.content) {
@@ -384,11 +388,61 @@ export async function invokeLLMWithFallback(params: InvokeParams): Promise<Invok
         }
       }
       
+      // Log successful LLM usage
+      try {
+        const config = getProviderConfig(provider);
+        const promptTokens = result.usage?.prompt_tokens || 0;
+        const completionTokens = result.usage?.completion_tokens || 0;
+        const totalTokens = result.usage?.total_tokens || 0;
+        
+        // Estimate cost (rough estimates per 1M tokens)
+        let costPer1MTokens = 0.0001; // default
+        if (provider === 'anthropic') costPer1MTokens = 0.003;
+        else if (provider === 'gemini') costPer1MTokens = 0.0001;
+        else if (provider === 'grok') costPer1MTokens = 0.0002;
+        
+        const costUsd = ((totalTokens / 1000000) * costPer1MTokens).toFixed(6);
+        
+        await logLlmUsage({
+          userId,
+          model: `${config?.name || provider}/${result.model}`,
+          operation: 'album_generation',
+          promptTokens,
+          completionTokens,
+          totalTokens,
+          costUsd,
+          latencyMs: latency,
+          success: true,
+        });
+      } catch (logError) {
+        console.error('[LLM Fallback] Failed to log usage:', logError);
+      }
+      
       return result;
     } catch (error) {
+      const latency = Date.now() - providerStartTime;
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[LLM Fallback] ✗ ${provider} failed:`, errorMessage);
+      console.error(`[LLM Fallback] ✗ ${provider} failed in ${latency}ms:`, errorMessage);
       errors.push({ provider, error: errorMessage });
+      
+      // Log failed attempt
+      try {
+        const config = getProviderConfig(provider);
+        await logLlmUsage({
+          userId,
+          model: `${config?.name || provider}/${config?.model || 'unknown'}`,
+          operation: 'album_generation',
+          promptTokens: 0,
+          completionTokens: 0,
+          totalTokens: 0,
+          costUsd: '0.000000',
+          latencyMs: latency,
+          success: false,
+          errorMessage,
+        });
+      } catch (logError) {
+        console.error('[LLM Fallback] Failed to log error:', logError);
+      }
       
       // Continue to next provider
       continue;

@@ -1,17 +1,23 @@
+import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, Heart } from "lucide-react";
+import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, Heart, Menu, X, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
-import { getLoginUrl } from "@/const";
-import { AppNav } from "@/components/AppNav";
+import { getLoginUrl, APP_TITLE } from "@/const";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
   const { data: albums } = trpc.albums.list.useQuery({ limit: 1 }, { enabled: isAuthenticated });
   const hasAlbums = albums && albums.length > 0;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const logoutMutation = trpc.auth.logout.useMutation({
+    onSuccess: () => {
+      window.location.href = "/";
+    },
+  });
 
   const featuredThemes = [
     {
@@ -46,8 +52,239 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
-      {/* Navigation - Using AppNav component */}
-      <AppNav />
+      {/* Navigation */}
+      <nav style={{ backgroundColor: '#0a0a0f', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/">
+              <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
+                <Music className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#d4af37' }} />
+                <span style={{ background: 'linear-gradient(to right, #d4af37, #d4af37, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  {APP_TITLE}
+                </span>
+              </a>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6">
+              {isAuthenticated ? (
+                <>
+                  <Link href="/library"><a style={{ color: '#fff', fontSize: '14px' }}>Library</a></Link>
+                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
+                  <Link href="/community-prompts"><a style={{ color: '#fff', fontSize: '14px' }}>Prompts</a></Link>
+                  <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <Link href="/new">
+                    <Button size="sm" style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
+                      Create
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" size="sm" onClick={() => logoutMutation.mutate()} style={{ color: '#fff' }}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
+                  <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <Button size="sm" asChild style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
+                    <a href={getLoginUrl()}>Get Started</a>
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="lg:hidden"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{ color: '#fff' }}
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div
+          style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 60 }}
+          onClick={() => setMobileMenuOpen(false)}
+          className="lg:hidden"
+        />
+      )}
+
+      {/* Mobile Menu */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          height: '100%',
+          width: '280px',
+          backgroundColor: '#0a0a0f',
+          borderLeft: '1px solid rgba(255,255,255,0.1)',
+          transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 300ms ease-in-out',
+          zIndex: 70,
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+        className="lg:hidden"
+      >
+        {/* Menu Header */}
+        <div style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#fff', fontWeight: 600 }}>Menu</span>
+          <Button variant="ghost" size="sm" onClick={() => setMobileMenuOpen(false)} style={{ color: '#fff' }}>
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Menu Items - Scrollable */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '16px 8px', minHeight: 0 }}>
+          {isAuthenticated ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <Link href="/library">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Library
+                </a>
+              </Link>
+              <Link href="/explore">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Explore
+                </a>
+              </Link>
+              <Link href="/community-prompts">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Community Prompts
+                </a>
+              </Link>
+              <Link href="/prompts">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Prompts
+                </a>
+              </Link>
+              <Link href="/knowledge">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Knowledge Hub
+                </a>
+              </Link>
+              <Link href="/impact-stories">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Impact Stories
+                </a>
+              </Link>
+              <Link href="/pricing">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Pricing
+                </a>
+              </Link>
+              {user?.role === 'admin' && (
+                <Link href="/admin">
+                  <a
+                    style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin
+                  </a>
+                </Link>
+              )}
+              <div style={{ paddingTop: '16px' }}>
+                <Link href="/new">
+                  <Button
+                    style={{ width: '100%', background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Create Album
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <Link href="/explore">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Explore
+                </a>
+              </Link>
+              <Link href="/pricing">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Pricing
+                </a>
+              </Link>
+              <div style={{ paddingTop: '16px' }}>
+                <Button
+                  style={{ width: '100%', background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}
+                  asChild
+                >
+                  <a href={getLoginUrl()}>Get Started</a>
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Profile Footer */}
+        {isAuthenticated && user && (
+          <div style={{ flexShrink: 0, padding: '16px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#d4af37', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <User className="w-5 h-5" style={{ color: '#0a0a0f' }} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ color: '#fff', fontWeight: 600, fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.name || 'User'}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {user.email}
+                </div>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              style={{ width: '100%', borderColor: 'rgba(255,255,255,0.2)', color: '#fff' }}
+              onClick={() => {
+                logoutMutation.mutate();
+                setMobileMenuOpen(false);
+              }}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Hero Section with Visual Elements */}
       <div className="relative">

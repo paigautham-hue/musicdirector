@@ -74,6 +74,9 @@ export default function Home() {
                   <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
                   <Link href="/community-prompts"><a style={{ color: '#fff', fontSize: '14px' }}>Prompts</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  {user?.role === 'admin' && (
+                    <Link href="/admin"><a style={{ color: '#fff', fontSize: '14px' }}>Admin</a></Link>
+                  )}
                   <Link href="/new">
                     <Button size="sm" style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
                       Create

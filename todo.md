@@ -690,3 +690,8 @@
 - [x] Add visual charts for API usage trends
 - [x] Test monitoring with real API calls
 - [x] Verify alerts trigger correctly
+
+## Admin Link Visibility
+- [x] Add Admin link to Home page navigation for admin users
+- [x] Ensure Admin link only shows for users with admin role
+- [x] Test Admin link visibility on Home page

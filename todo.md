@@ -631,3 +631,8 @@
 ## Replace Ready to Create Icon
 - [x] Generate visually stunning graphic for Ready to Create CTA section
 - [x] Update Home.tsx to use new graphic instead of simple Wand2 icon circle
+
+## Fix Promise for Peace Image
+- [x] Check what happened to the image in A Promise for Peace section
+- [x] Create stylized version of friend's photo matching website theme
+- [x] Integrate styled photo into Promise for Peace section

@@ -503,7 +503,7 @@ export default function Home() {
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary via-accent to-blue-500 rounded-2xl opacity-20 blur-xl group-hover:opacity-30 transition-opacity" />
                 <div className="relative">
                   <img
-                    src="/images/promised-friend.jpg"
+                    src="/images/promised-friend.png"
                     alt="PROMISED - A Promise for Peace"
                     className="w-full h-auto rounded-xl border-2 border-primary/30 shadow-2xl group-hover:scale-105 transition-transform duration-300"
                   />

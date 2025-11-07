@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Music, Menu, X, User, LogOut, ChevronDown } from "lucide-react";
+import { Music, Menu, X, User, LogOut, ChevronDown, BarChart3, CreditCard, Image } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { APP_TITLE, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -146,6 +146,25 @@ export function AppNav() {
                           Edit Profile
                         </DropdownMenuItem>
                       </Link>
+                      <Link href="/playlist-stats">
+                        <DropdownMenuItem>
+                          <BarChart3 className="w-4 h-4 mr-2" />
+                          Playlist Stats
+                        </DropdownMenuItem>
+                      </Link>
+                      <Link href="/payment/history">
+                        <DropdownMenuItem>
+                          <CreditCard className="w-4 h-4 mr-2" />
+                          Payment History
+                        </DropdownMenuItem>
+                      </Link>
+                      <Link href="/gallery">
+                        <DropdownMenuItem>
+                          <Image className="w-4 h-4 mr-2" />
+                          Gallery
+                        </DropdownMenuItem>
+                      </Link>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout
@@ -185,7 +204,7 @@ export function AppNav() {
           className={`fixed top-0 right-0 h-full w-[280px] border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
-          style={{ zIndex: 60, backgroundColor: '#0a0a0f' }}
+          style={{ zIndex: 9999, backgroundColor: '#0a0a0f' }}
         >
           <div className="flex flex-col h-full">
             {/* Mobile Menu Header */}
@@ -274,6 +293,22 @@ export function AppNav() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Impact Stories
+                    </a>
+                  </Link>
+                  <Link href="/payment/history">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Payment History
+                    </a>
+                  </Link>
+                  <Link href="/gallery">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Gallery
                     </a>
                   </Link>
                   <Link href="/pricing">

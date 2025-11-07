@@ -252,6 +252,14 @@ export function AppNav() {
                       Discover Playlists
                     </a>
                   </Link>
+                  <Link href="/playlist-stats">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Playlist Stats
+                    </a>
+                  </Link>
                   <Link href="/knowledge">
                     <a
                       className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"

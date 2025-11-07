@@ -1348,15 +1348,20 @@ export async function getUserPlaylists(userId: number) {
 }
 
 /**
- * Get public playlists with pagination
+ * Get public playlists with pagination, search, and sorting
  */
-export async function getPublicPlaylists(params: { limit?: number; offset?: number }) {
+export async function getPublicPlaylists(params: { 
+  limit?: number; 
+  offset?: number;
+  search?: string;
+  sortBy?: "recent" | "popular" | "top_rated";
+}) {
   const db = await getDb();
   if (!db) return [];
 
-  const { limit = 20, offset = 0 } = params;
+  const { limit = 20, offset = 0, search, sortBy = "popular" } = params;
 
-  const result = await db
+  let query = db
     .select({
       id: playlists.id,
       userId: playlists.userId,
@@ -1378,9 +1383,28 @@ export async function getPublicPlaylists(params: { limit?: number; offset?: numb
     .leftJoin(users, eq(playlists.userId, users.id))
     .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
     .leftJoin(playlistRatings, eq(playlists.id, playlistRatings.playlistId))
-    .where(eq(playlists.visibility, "public"))
-    .groupBy(playlists.id)
-    .orderBy(desc(playlists.playCount), desc(playlists.createdAt))
+    .where(
+      and(
+        eq(playlists.visibility, "public"),
+        search ? or(
+          like(playlists.name, `%${search}%`),
+          like(playlists.description, `%${search}%`)
+        ) : undefined
+      )
+    )
+    .groupBy(playlists.id);
+
+  // Apply sorting
+  if (sortBy === "recent") {
+    query = query.orderBy(desc(playlists.createdAt)) as any;
+  } else if (sortBy === "top_rated") {
+    query = query.orderBy(desc(sql`COALESCE(AVG(${playlistRatings.rating}), 0)`), desc(playlists.createdAt)) as any;
+  } else {
+    // popular (default)
+    query = query.orderBy(desc(playlists.playCount), desc(playlists.createdAt)) as any;
+  }
+
+  const result = await query
     .limit(limit)
     .offset(offset);
 
@@ -1689,4 +1713,47 @@ export async function deletePlaylistRating(userId: number, playlistId: number) {
   await db
     .delete(playlistRatings)
     .where(and(eq(playlistRatings.userId, userId), eq(playlistRatings.playlistId, playlistId)));
+}
+
+
+/**
+ * Get playlist statistics for a user
+ */
+export async function getPlaylistStats(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get user's playlists with play counts
+  const userPlaylists = await db
+    .select({
+      id: playlists.id,
+      name: playlists.name,
+      playCount: playlists.playCount,
+      trackCount: sql<number>`COUNT(DISTINCT ${playlistTracks.id})`,
+      createdAt: playlists.createdAt,
+    })
+    .from(playlists)
+    .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
+    .where(eq(playlists.userId, userId))
+    .groupBy(playlists.id)
+    .orderBy(desc(playlists.playCount))
+    .limit(10);
+
+  // Get total stats
+  const totalStats = await db
+    .select({
+      totalPlaylists: sql<number>`COUNT(DISTINCT ${playlists.id})`,
+      totalPlays: sql<number>`SUM(${playlists.playCount})`,
+      totalTracks: sql<number>`COUNT(DISTINCT ${playlistTracks.id})`,
+    })
+    .from(playlists)
+    .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
+    .where(eq(playlists.userId, userId));
+
+  return {
+    mostPlayedPlaylists: userPlaylists,
+    totalPlaylists: totalStats[0]?.totalPlaylists || 0,
+    totalPlays: totalStats[0]?.totalPlays || 0,
+    totalTracks: totalStats[0]?.totalTracks || 0,
+  };
 }

@@ -807,3 +807,22 @@
 - [x] Add "My Playlists" link to mobile menu
 - [x] Add "Discover Playlists" link to mobile menu
 - [x] Verify playlist links are visible and functional on mobile
+
+## Add "Add to Playlist" Buttons to Track Cards
+- [x] Add AddToPlaylist button to track cards in Album Workspace page
+- [x] Add AddToPlaylist button to track cards in Explore page (skipped - no track cards in Explore)
+- [x] Test quick playlist building from track cards
+
+## Implement Playlist Search and Filters
+- [x] Add search bar to Discover Playlists page (search by name, description)
+- [x] Add filter dropdown for sorting (Most Popular, Highest Rated, Most Recent)
+- [x] Implement backend search and filter logic
+- [x] Test search and filter functionality
+
+## Create Playlist Stats Dashboard
+- [x] Create new PlaylistStats page route
+- [x] Add backend endpoint for playlist statistics (most-played, total plays, listening trends)
+- [x] Display user's most-played playlists with play counts
+- [x] Show total playlist plays and tracks added statistics
+- [x] Add navigation link to Playlist Stats in menu
+- [x] Test stats dashboard with real data

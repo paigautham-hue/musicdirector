@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
 import { suggestTracksForPlaylist } from "../aiSuggestions";
+import { getPlaylistStats } from "../db";
 import {
   createPlaylist,
   getUserPlaylists,
@@ -59,12 +60,16 @@ export const playlistRouter = router({
       z.object({
         limit: z.number().min(1).max(100).default(20),
         offset: z.number().min(0).default(0),
+        search: z.string().optional(),
+        sortBy: z.enum(["recent", "popular", "top_rated"]).optional().default("popular"),
       })
     )
     .query(async ({ input }) => {
       const playlists = await getPublicPlaylists({
         limit: input.limit,
         offset: input.offset,
+        search: input.search,
+        sortBy: input.sortBy,
       });
       return playlists;
     }),
@@ -242,4 +247,12 @@ export const playlistRouter = router({
 
       return suggestions;
     }),
+
+  /**
+   * Get playlist statistics for current user
+   */
+  getStats: protectedProcedure.query(async ({ ctx }) => {
+    const stats = await getPlaylistStats(ctx.user.id);
+    return stats;
+  }),
 });

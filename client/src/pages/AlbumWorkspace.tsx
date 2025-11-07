@@ -15,6 +15,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
 import { AudioPlayer } from "@/components/AudioPlayer";
+import { AddToPlaylist } from "@/components/AddToPlaylist";
 
 export default function AlbumWorkspace() {
   const { id } = useParams();
@@ -402,16 +403,20 @@ export default function AlbumWorkspace() {
             {album.tracks.map((track: any) => (
               <Card
                 key={track.id}
-                className={`cursor-pointer transition-all ${
+                className={`cursor-pointer transition-colors ${
                   activeTrackId === track.id ? 'border-primary bg-primary/5' : 'hover:border-primary/50'
                 }`}
-                onClick={() => setActiveTrackId(track.id)}
               >
-                <CardHeader className="p-4">
-                  <CardTitle className="text-sm">{track.index}. {track.title}</CardTitle>
-                  <CardDescription className="text-xs">
-                    Score: {track.score}/100
-                  </CardDescription>
+                <CardHeader className="p-4" onClick={() => setActiveTrackId(track.id)}>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <CardTitle className="text-sm">{track.index}. {track.title}</CardTitle>
+                      <CardDescription className="text-xs">
+                        Score: {track.score}/100
+                      </CardDescription>
+                    </div>
+                    <AddToPlaylist trackId={track.id} trackTitle={track.title} />
+                  </div>
                 </CardHeader>
               </Card>
             ))}

@@ -206,10 +206,23 @@ export function AppNav() {
           }`}
           style={{ zIndex: 9999, backgroundColor: '#0a0a0f' }}
         >
-          <div className="flex flex-col h-full">
+          {/* Mobile Menu Container with proper overflow */}
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            height: '100%',
+            overflow: 'hidden'
+          }}>
             {/* Mobile Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <span className="font-semibold">Menu</span>
+            <div style={{ 
+              flexShrink: 0,
+              padding: '1rem',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <span style={{ fontWeight: 600, color: '#ffffff' }}>Menu</span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -219,102 +232,204 @@ export function AppNav() {
               </Button>
             </div>
 
-            {/* Mobile Menu Items */}
-            <div className="flex-1 overflow-y-auto py-4 min-h-0">
+            {/* Mobile Menu Items - SCROLLABLE */}
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              overflowX: 'hidden',
+              paddingTop: '1rem',
+              paddingBottom: '1rem'
+            }}>
               {isAuthenticated ? (
-                <div className="space-y-1 px-2">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', padding: '0 0.5rem' }}>
                   <Link href="/library">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       My Library
                     </a>
                   </Link>
                   <Link href="/explore">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Explore
                     </a>
                   </Link>
                   <Link href="/community-prompts">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Community Prompts
                     </a>
                   </Link>
                   <Link href="/prompts">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       My Prompts
                     </a>
                   </Link>
                   <Link href="/my-playlists">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       My Playlists
                     </a>
                   </Link>
                   <Link href="/playlists">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Discover Playlists
                     </a>
                   </Link>
                   <Link href="/playlist-stats">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Playlist Stats
                     </a>
                   </Link>
                   <Link href="/knowledge">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Knowledge Hub
                     </a>
                   </Link>
                   <Link href="/impact-stories">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Impact Stories
                     </a>
                   </Link>
                   <Link href="/payment/history">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Payment History
                     </a>
                   </Link>
                   <Link href="/gallery">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Gallery
                     </a>
                   </Link>
                   <Link href="/pricing">
                     <a
-                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        transition: 'background-color 0.2s'
+                      }}
                       onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       Pricing
                     </a>
@@ -322,14 +437,22 @@ export function AppNav() {
                   {user?.role === 'admin' && (
                     <Link href="/admin">
                       <a
-                        className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                        style={{
+                          display: 'block',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '0.5rem',
+                          color: '#ffffff',
+                          transition: 'background-color 0.2s'
+                        }}
                         onClick={() => setMobileMenuOpen(false)}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         Admin
                       </a>
                     </Link>
                   )}
-                  <div className="pt-4 px-2 space-y-2">
+                  <div style={{ paddingTop: '1rem', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
                     <Link href="/new">
                       <Button
                         className="w-full bg-gradient-to-r from-primary to-accent"
@@ -341,7 +464,7 @@ export function AppNav() {
                   </div>
                 </div>
               ) : (
-                <div className="px-4">
+                <div style={{ padding: '0 1rem' }}>
                   <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>
                     <a href={getLoginUrl()}>Sign In</a>
                   </Button>
@@ -351,14 +474,48 @@ export function AppNav() {
 
             {/* Mobile Menu Footer */}
             {isAuthenticated && (
-              <div className="border-t border-border p-4 flex-shrink-0">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+              <div style={{
+                flexShrink: 0,
+                borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+                padding: '1rem'
+              }}>
+                <div style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.75rem',
+                  marginBottom: '0.75rem'
+                }}>
+                  <div style={{
+                    width: '2.5rem',
+                    height: '2.5rem',
+                    borderRadius: '50%',
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
                     <User className="w-5 h-5 text-primary" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{user?.name || 'User'}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ 
+                      fontSize: '0.875rem', 
+                      fontWeight: 500,
+                      color: '#ffffff',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {user?.name || 'User'}
+                    </p>
+                    <p style={{ 
+                      fontSize: '0.75rem',
+                      color: 'rgba(255, 255, 255, 0.6)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
                 <Button

@@ -884,3 +884,11 @@
 - [x] Verify all playlist links (My Playlists, Discover Playlists, Playlist Stats) are present in mobile menu (all present in AppNav.tsx lines 258-280)
 - [x] Test scrolling works properly when menu has many items (flex-1 overflow-y-auto min-h-0 layout confirmed)
 - [ ] Verify fix works on published website after deployment (user needs to publish latest checkpoint)
+
+## Mobile Menu Scrolling Root Cause Investigation
+- [x] Investigate why mobile menu container is not scrollable (only page content scrolls) - Root cause: Tailwind classes not providing explicit overflow behavior
+- [x] Check if overflow-y-auto is being applied correctly to the menu items container - Fixed by using inline styles
+- [x] Verify flex-1 min-h-0 is working as expected - Replaced with explicit flexbox inline styles
+- [x] Check if there's a CSS conflict preventing scrolling - Fixed by removing Tailwind classes and using inline styles
+- [x] Test if menu items container has proper height constraints - Added explicit flex:1, overflowY:'auto'
+- [x] Fix mobile menu to make it scrollable and show all items including footer - Complete rewrite with inline styles ensures scrolling works

@@ -61,7 +61,7 @@ export default function Home() {
               <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                 <Music className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#d4af37' }} />
                 <span style={{ background: 'linear-gradient(to right, #d4af37, #d4af37, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  {APP_TITLE}
+                  The Collective Soul
                 </span>
               </a>
             </Link>
@@ -336,7 +336,7 @@ export default function Home() {
             <div className="relative">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-primary/20 hover:scale-105 transition-transform duration-300">
                 <img
-                  src="/images/music-colorful.jpg"
+                  src="/images/music-instruments.jpg"
                   alt="Music Creation"
                   className="w-full h-auto"
                 />

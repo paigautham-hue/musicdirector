@@ -729,3 +729,8 @@
 - [x] Verify latency, tokens, and cost tracking
 - [x] Check LLM health status indicators
 - [x] Review LLM Model Breakdown section
+
+## Add U2-Style Album Prompts
+- [x] Find admin user ID for paigautham@gmail.com
+- [x] Insert 5 U2-style album prompts to database
+- [x] Verify prompts appear in Prompts page

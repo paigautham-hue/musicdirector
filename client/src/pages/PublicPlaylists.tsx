@@ -1,0 +1,135 @@
+import { useState } from "react";
+import { trpc } from "@/lib/trpc";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Music, Play, ListMusic, TrendingUp } from "lucide-react";
+import { Link } from "wouter";
+
+export default function PublicPlaylists() {
+  const [limit] = useState(20);
+  const [offset, setOffset] = useState(0);
+
+  const { data: playlists, isLoading } = trpc.playlists.public.useQuery({
+    limit,
+    offset,
+  });
+
+  const handleLoadMore = () => {
+    setOffset((prev) => prev + limit);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
+      {/* Header */}
+      <div className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center gap-3">
+            <TrendingUp className="w-8 h-8 text-primary" />
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
+                Discover Playlists
+              </h1>
+              <p className="text-muted-foreground mt-1">
+                Explore curated playlists from the community
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="container mx-auto px-4 py-8">
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Card key={i} className="animate-pulse">
+                <CardHeader>
+                  <div className="h-6 bg-muted rounded w-3/4 mb-2" />
+                  <div className="h-4 bg-muted rounded w-1/2" />
+                </CardHeader>
+                <CardContent>
+                  <div className="h-4 bg-muted rounded w-full mb-2" />
+                  <div className="h-4 bg-muted rounded w-2/3" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : !playlists || playlists.length === 0 ? (
+          <Card className="max-w-2xl mx-auto">
+            <CardContent className="flex flex-col items-center justify-center py-12">
+              <ListMusic className="w-16 h-16 text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold mb-2">No Public Playlists Yet</h3>
+              <p className="text-muted-foreground text-center mb-6">
+                Be the first to create and share a public playlist!
+              </p>
+              <Link href="/my-playlists">
+                <Button>Create a Playlist</Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {playlists.map((playlist) => (
+                <Card key={playlist.id} className="hover:shadow-lg transition-shadow group">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg truncate">{playlist.name}</CardTitle>
+                        <CardDescription className="mt-1">
+                          {playlist.trackCount} {playlist.trackCount === 1 ? "track" : "tracks"}
+                        </CardDescription>
+                      </div>
+                    </div>
+                    {playlist.description && (
+                      <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                        {playlist.description}
+                      </p>
+                    )}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-3 mb-4">
+                      {playlist.userAvatar ? (
+                        <img
+                          src={playlist.userAvatar}
+                          alt={playlist.userName || "User"}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                          <Music className="w-4 h-4 text-primary" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {playlist.userName || "Unknown"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {playlist.playCount} plays
+                        </p>
+                      </div>
+                    </div>
+                    <Link href={`/playlist/${playlist.id}`}>
+                      <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                        <Play className="w-4 h-4 mr-2" />
+                        Play Playlist
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {playlists.length >= limit && (
+              <div className="flex justify-center mt-8">
+                <Button onClick={handleLoadMore} variant="outline">
+                  Load More
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

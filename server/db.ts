@@ -4,11 +4,12 @@ import {
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
   systemSettings, musicJobs, audioFiles, payments, creditTransactions, promptTemplates,
-  comments, likes, follows, apiUsageLogs, llmUsageLogs,
+  comments, likes, follows, apiUsageLogs, llmUsageLogs, playlists, playlistTracks,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
   type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
-  type PromptTemplate, type InsertApiUsageLog, type InsertLlmUsageLog,
+  type PromptTemplate, type InsertApiUsageLog, type InsertLlmUsageLog, type Playlist,
+  type PlaylistTrack, type InsertPlaylist, type InsertPlaylistTrack,
   type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
   type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
@@ -1299,4 +1300,306 @@ export async function getLlmUsageStats(timeRange: 'hour' | 'day' | 'week' = 'day
     ...stats[0],
     modelBreakdown
   };
+}
+
+// ============================================================================
+// Playlist Management
+// ============================================================================
+
+/**
+ * Create a new playlist
+ */
+export async function createPlaylist(data: InsertPlaylist) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(playlists).values(data);
+  return result[0].insertId;
+}
+
+/**
+ * Get user's playlists
+ */
+export async function getUserPlaylists(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const result = await db
+    .select({
+      id: playlists.id,
+      userId: playlists.userId,
+      name: playlists.name,
+      description: playlists.description,
+      coverImage: playlists.coverImage,
+      visibility: playlists.visibility,
+      playCount: playlists.playCount,
+      likeCount: playlists.likeCount,
+      createdAt: playlists.createdAt,
+      updatedAt: playlists.updatedAt,
+      trackCount: sql<number>`COUNT(${playlistTracks.id})`,
+    })
+    .from(playlists)
+    .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
+    .where(eq(playlists.userId, userId))
+    .groupBy(playlists.id)
+    .orderBy(desc(playlists.updatedAt));
+
+  return result;
+}
+
+/**
+ * Get public playlists with pagination
+ */
+export async function getPublicPlaylists(params: { limit?: number; offset?: number }) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const { limit = 20, offset = 0 } = params;
+
+  const result = await db
+    .select({
+      id: playlists.id,
+      userId: playlists.userId,
+      name: playlists.name,
+      description: playlists.description,
+      coverImage: playlists.coverImage,
+      visibility: playlists.visibility,
+      playCount: playlists.playCount,
+      likeCount: playlists.likeCount,
+      createdAt: playlists.createdAt,
+      updatedAt: playlists.updatedAt,
+      userName: users.name,
+      userAvatar: users.avatarUrl,
+      trackCount: sql<number>`COUNT(${playlistTracks.id})`,
+    })
+    .from(playlists)
+    .leftJoin(users, eq(playlists.userId, users.id))
+    .leftJoin(playlistTracks, eq(playlists.id, playlistTracks.playlistId))
+    .where(eq(playlists.visibility, "public"))
+    .groupBy(playlists.id)
+    .orderBy(desc(playlists.playCount), desc(playlists.createdAt))
+    .limit(limit)
+    .offset(offset);
+
+  return result;
+}
+
+/**
+ * Get playlist by ID with tracks
+ */
+export async function getPlaylistWithTracks(playlistId: number, viewerId?: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Get playlist details
+  const playlistResult = await db
+    .select({
+      id: playlists.id,
+      userId: playlists.userId,
+      name: playlists.name,
+      description: playlists.description,
+      coverImage: playlists.coverImage,
+      visibility: playlists.visibility,
+      playCount: playlists.playCount,
+      likeCount: playlists.likeCount,
+      createdAt: playlists.createdAt,
+      updatedAt: playlists.updatedAt,
+      userName: users.name,
+      userAvatar: users.avatarUrl,
+    })
+    .from(playlists)
+    .leftJoin(users, eq(playlists.userId, users.id))
+    .where(eq(playlists.id, playlistId))
+    .limit(1);
+
+  if (!playlistResult[0]) return null;
+
+  const playlist = playlistResult[0];
+
+  // Check if viewer can access this playlist
+  if (playlist.visibility === "private" && (!viewerId || viewerId !== playlist.userId)) {
+    return null;
+  }
+
+  // Get tracks in playlist
+  const tracksResult = await db
+    .select({
+      playlistTrackId: playlistTracks.id,
+      position: playlistTracks.position,
+      addedAt: playlistTracks.addedAt,
+      trackId: tracks.id,
+      trackTitle: tracks.title,
+      trackIndex: tracks.index,
+      albumId: albums.id,
+      albumTitle: albums.title,
+      albumCover: albums.coverUrl,
+      audioUrl: audioFiles.fileUrl,
+      duration: audioFiles.duration,
+    })
+    .from(playlistTracks)
+    .leftJoin(tracks, eq(playlistTracks.trackId, tracks.id))
+    .leftJoin(albums, eq(tracks.albumId, albums.id))
+    .leftJoin(audioFiles, and(eq(audioFiles.trackId, tracks.id), eq(audioFiles.isActive, true)))
+    .where(eq(playlistTracks.playlistId, playlistId))
+    .orderBy(playlistTracks.position);
+
+  return {
+    ...playlist,
+    tracks: tracksResult,
+  };
+}
+
+/**
+ * Update playlist
+ */
+export async function updatePlaylist(playlistId: number, userId: number, data: Partial<InsertPlaylist>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db
+    .update(playlists)
+    .set(data)
+    .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)));
+}
+
+/**
+ * Delete playlist
+ */
+export async function deletePlaylist(playlistId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Delete playlist tracks first
+  await db.delete(playlistTracks).where(eq(playlistTracks.playlistId, playlistId));
+
+  // Delete playlist
+  await db.delete(playlists).where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)));
+}
+
+/**
+ * Add track to playlist
+ */
+export async function addTrackToPlaylist(playlistId: number, trackId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Verify playlist ownership
+  const playlistResult = await db
+    .select()
+    .from(playlists)
+    .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)))
+    .limit(1);
+
+  if (!playlistResult[0]) {
+    throw new Error("Playlist not found or access denied");
+  }
+
+  // Check if track already exists in playlist
+  const existing = await db
+    .select()
+    .from(playlistTracks)
+    .where(and(eq(playlistTracks.playlistId, playlistId), eq(playlistTracks.trackId, trackId)))
+    .limit(1);
+
+  if (existing.length > 0) {
+    throw new Error("Track already in playlist");
+  }
+
+  // Get next position
+  const maxPositionResult = await db
+    .select({ maxPosition: sql<number>`MAX(${playlistTracks.position})` })
+    .from(playlistTracks)
+    .where(eq(playlistTracks.playlistId, playlistId));
+
+  const nextPosition = (maxPositionResult[0]?.maxPosition ?? -1) + 1;
+
+  // Add track
+  await db.insert(playlistTracks).values({
+    playlistId,
+    trackId,
+    position: nextPosition,
+  });
+
+  // Update playlist updatedAt
+  await db.update(playlists).set({ updatedAt: new Date() }).where(eq(playlists.id, playlistId));
+}
+
+/**
+ * Remove track from playlist
+ */
+export async function removeTrackFromPlaylist(playlistTrackId: number, userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Get playlist track to verify ownership
+  const playlistTrackResult = await db
+    .select({
+      playlistId: playlistTracks.playlistId,
+      position: playlistTracks.position,
+    })
+    .from(playlistTracks)
+    .leftJoin(playlists, eq(playlistTracks.playlistId, playlists.id))
+    .where(and(eq(playlistTracks.id, playlistTrackId), eq(playlists.userId, userId)))
+    .limit(1);
+
+  if (!playlistTrackResult[0]) {
+    throw new Error("Playlist track not found or access denied");
+  }
+
+  const { playlistId, position } = playlistTrackResult[0];
+
+  // Delete track
+  await db.delete(playlistTracks).where(eq(playlistTracks.id, playlistTrackId));
+
+  // Reorder remaining tracks
+  await db
+    .update(playlistTracks)
+    .set({ position: sql`${playlistTracks.position} - 1` })
+    .where(and(eq(playlistTracks.playlistId, playlistId), sql`${playlistTracks.position} > ${position}`));
+
+  // Update playlist updatedAt
+  await db.update(playlists).set({ updatedAt: new Date() }).where(eq(playlists.id, playlistId));
+}
+
+/**
+ * Reorder tracks in playlist
+ */
+export async function reorderPlaylistTracks(playlistId: number, userId: number, trackOrder: number[]) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Verify playlist ownership
+  const playlistResult = await db
+    .select()
+    .from(playlists)
+    .where(and(eq(playlists.id, playlistId), eq(playlists.userId, userId)))
+    .limit(1);
+
+  if (!playlistResult[0]) {
+    throw new Error("Playlist not found or access denied");
+  }
+
+  // Update positions
+  for (let i = 0; i < trackOrder.length; i++) {
+    await db
+      .update(playlistTracks)
+      .set({ position: i })
+      .where(eq(playlistTracks.id, trackOrder[i]));
+  }
+
+  // Update playlist updatedAt
+  await db.update(playlists).set({ updatedAt: new Date() }).where(eq(playlists.id, playlistId));
+}
+
+/**
+ * Increment playlist play count
+ */
+export async function incrementPlaylistPlayCount(playlistId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(playlists)
+    .set({ playCount: sql`${playlists.playCount} + 1` })
+    .where(eq(playlists.id, playlistId));
 }

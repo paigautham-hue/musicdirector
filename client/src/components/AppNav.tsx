@@ -80,6 +80,15 @@ export function AppNav() {
                       Community
                     </a>
                   </Link>
+                  <Link href="/playlists">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/playlists' || location === '/my-playlists' || location.startsWith('/playlist/')
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
+                      Playlists
+                    </a>
+                  </Link>
                   <Link href="/pricing">
                     <a className={`text-sm font-medium transition-colors ${
                       location === '/pricing' 
@@ -225,6 +234,22 @@ export function AppNav() {
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       My Prompts
+                    </a>
+                  </Link>
+                  <Link href="/my-playlists">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Playlists
+                    </a>
+                  </Link>
+                  <Link href="/playlists">
+                    <a
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Discover Playlists
                     </a>
                   </Link>
                   <Link href="/knowledge">

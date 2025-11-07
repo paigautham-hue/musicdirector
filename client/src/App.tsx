@@ -24,6 +24,9 @@ import AlbumDetail from "./pages/AlbumDetail";
 import UserProfile from "./pages/UserProfile";
 import CommunityPrompts from "./pages/CommunityPrompts";
 import Profile from "./pages/Profile";
+import MyPlaylists from "./pages/MyPlaylists";
+import PlaylistDetail from "./pages/PlaylistDetail";
+import PublicPlaylists from "./pages/PublicPlaylists";
 
 function Router() {
   return (
@@ -48,6 +51,9 @@ function Router() {
       <Route path="/profile/:id" component={UserProfile} />
       <Route path="/profile" component={Profile} />
       <Route path="/community-prompts" component={CommunityPrompts} />
+      <Route path="/my-playlists" component={MyPlaylists} />
+      <Route path="/playlists" component={PublicPlaylists} />
+      <Route path="/playlist/:id" component={PlaylistDetail} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

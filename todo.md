@@ -763,3 +763,23 @@
 - [x] Check mobile menu footer implementation in AppNav component
 - [x] Add visible logout button to mobile menu
 - [x] Test logout functionality on mobile devices
+
+## Implement Playlist Feature
+- [x] Create database schema for playlists table (name, description, userId, visibility, coverImage, createdAt, updatedAt)
+- [x] Create database schema for playlist_tracks junction table (playlistId, trackId, position, addedAt)
+- [x] Add database helper functions for playlist CRUD operations
+- [x] Create backend tRPC router for playlists (create, list, get, update, delete)
+- [x] Add endpoints for adding/removing tracks from playlists
+- [x] Add endpoints for reordering tracks in playlists
+- [x] Create My Playlists page with list view and create dialog
+- [x] Add "Add to Playlist" button component (AddToPlaylist.tsx)
+- [x] Add "Add to Playlist" button to track cards in Album Workspace
+- [x] Add "Add to Playlist" button to track cards in Explore page
+- [x] Create Playlist Detail page with track list and audio player
+- [x] Add public playlist gallery page for discovery
+- [x] Add playlist visibility toggle (public/private)
+- [x] Add playlist sharing functionality
+- [x] Add navigation link to Playlists in main menu
+- [x] Test playlist creation, editing, and deletion
+- [x] Test adding/removing tracks from playlists
+- [x] Test public playlist discovery

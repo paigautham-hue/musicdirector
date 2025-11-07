@@ -475,3 +475,44 @@ export const follows = mysqlTable("follows", {
 
 export type Follow = typeof follows.$inferSelect;
 export type InsertFollow = typeof follows.$inferInsert;
+
+/**
+ * User-created playlists
+ */
+export const playlists = mysqlTable("playlists", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  coverImage: text("coverImage"), // URL to cover image
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  playCount: int("playCount").default(0).notNull(),
+  likeCount: int("likeCount").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userId_idx").on(table.userId),
+  visibilityIdx: index("visibility_idx").on(table.visibility),
+  createdAtIdx: index("createdAt_idx").on(table.createdAt),
+}));
+
+export type Playlist = typeof playlists.$inferSelect;
+export type InsertPlaylist = typeof playlists.$inferInsert;
+
+/**
+ * Junction table for tracks in playlists
+ */
+export const playlistTracks = mysqlTable("playlistTracks", {
+  id: int("id").autoincrement().primaryKey(),
+  playlistId: int("playlistId").notNull(),
+  trackId: int("trackId").notNull(),
+  position: int("position").notNull(), // Order in playlist (0-indexed)
+  addedAt: timestamp("addedAt").defaultNow().notNull(),
+}, (table) => ({
+  playlistIdIdx: index("playlistId_idx").on(table.playlistId),
+  trackIdIdx: index("trackId_idx").on(table.trackId),
+  uniquePlaylistTrack: index("unique_playlist_track").on(table.playlistId, table.trackId),
+}));
+
+export type PlaylistTrack = typeof playlistTracks.$inferSelect;
+export type InsertPlaylistTrack = typeof playlistTracks.$inferInsert;

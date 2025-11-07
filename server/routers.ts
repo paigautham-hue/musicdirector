@@ -13,6 +13,7 @@ import { getPlatformAdapter, PLATFORM_ADAPTERS } from "./adapters";
 import { checkContentSafety } from "./contentSafety";
 import { exportAlbumBundle } from "./exportAlbum";
 import { socialRouter } from "./socialRouter";
+import { playlistRouter } from "./routers/playlistRouter";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== 'admin') {
@@ -24,6 +25,7 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 export const appRouter = router({
   system: systemRouter,
   social: socialRouter,
+  playlists: playlistRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

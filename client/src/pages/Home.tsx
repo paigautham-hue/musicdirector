@@ -359,8 +359,8 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="border-border/50 bg-card/50 backdrop-blur hover:shadow-xl transition-all hover:scale-105 hover:border-primary/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 mx-auto">
-                  <Music className="w-8 h-8 text-primary" />
+                <div className="w-24 h-24 mb-4 mx-auto">
+                  <img src="/images/ai-creative-support.png" alt="AI Creative Support" className="w-full h-full object-cover rounded-lg" />
                 </div>
                 <CardTitle className="text-center">AI Creative Support</CardTitle>
               </CardHeader>
@@ -372,8 +372,8 @@ export default function Home() {
             </Card>
             <Card className="border-border/50 bg-card/50 backdrop-blur hover:shadow-xl transition-all hover:scale-105 hover:border-primary/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-4 mx-auto">
-                  <Sparkles className="w-8 h-8 text-accent" />
+                <div className="w-24 h-24 mb-4 mx-auto">
+                  <img src="/images/quality-scoring.png" alt="Quality Scoring" className="w-full h-full object-cover rounded-lg" />
                 </div>
                 <CardTitle className="text-center">Quality Scoring</CardTitle>
               </CardHeader>
@@ -385,8 +385,8 @@ export default function Home() {
             </Card>
             <Card className="border-border/50 bg-card/50 backdrop-blur hover:shadow-xl transition-all hover:scale-105 hover:border-primary/50">
               <CardHeader>
-                <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 mx-auto">
-                  <Palette className="w-8 h-8 text-blue-500" />
+                <div className="w-24 h-24 mb-4 mx-auto">
+                  <img src="/images/album-artwork-feature.png" alt="Album Artwork" className="w-full h-full object-cover rounded-lg" />
                 </div>
                 <CardTitle className="text-center">Album Artwork</CardTitle>
               </CardHeader>

@@ -153,7 +153,7 @@ export default function ImpactStories() {
             <Link href="/">
               <a className="flex items-center gap-2 text-2xl font-bold">
                 <Music className="w-8 h-8 text-primary" />
-                <span>{APP_TITLE}</span>
+                <span>The Collective Soul</span>
               </a>
             </Link>
             <Link href="/">
@@ -285,7 +285,7 @@ export default function ImpactStories() {
             <div className="flex items-center gap-2">
               <Music className="w-6 h-6 text-primary" />
               <span className="text-sm text-muted-foreground">
-                © 2025 {APP_TITLE}. All rights reserved.
+                © 2025 The Collective Soul. All rights reserved.
               </span>
             </div>
             <div className="flex gap-6">

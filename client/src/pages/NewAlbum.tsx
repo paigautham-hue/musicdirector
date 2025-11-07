@@ -247,7 +247,7 @@ export default function NewAlbum() {
               <a className="flex items-center gap-2 text-2xl font-bold">
                 <Music className="w-8 h-8 text-primary" />
                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  {APP_TITLE}
+                  The Collective Soul
                 </span>
               </a>
             </Link>

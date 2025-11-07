@@ -636,3 +636,8 @@
 - [x] Check what happened to the image in A Promise for Peace section
 - [x] Create stylized version of friend's photo matching website theme
 - [x] Integrate styled photo into Promise for Peace section
+
+## Update Branding Across All Pages
+- [x] Find all pages using APP_TITLE or "AI Album Creator"
+- [x] Replace {APP_TITLE} with hardcoded "The Collective Soul" in page headers
+- [x] Verify branding is consistent across entire website

@@ -16,7 +16,7 @@ export default function KnowledgeHub() {
             <Link href="/">
               <a className="flex items-center gap-2 text-2xl font-bold">
                 <Music className="w-8 h-8 text-primary" />
-                <span>{APP_TITLE}</span>
+                <span>The Collective Soul</span>
               </a>
             </Link>
             <Link href="/">

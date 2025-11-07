@@ -641,3 +641,13 @@
 - [x] Find all pages using APP_TITLE or "AI Album Creator"
 - [x] Replace {APP_TITLE} with hardcoded "The Collective Soul" in page headers
 - [x] Verify branding is consistent across entire website
+
+## Populate Database with Saved Prompts
+- [x] Read and parse 13 prompts from uploaded file
+- [x] Insert prompts into database for admin user (paigautham@gmail.com)
+- [x] Verify prompts are accessible in the website
+
+## Fix Album Creation Duplication
+- [x] Find where album creation logic generates two albums per prompt
+- [x] Update logic to create only one album per request (added double-submission guard)
+- [x] Test album creation to verify single album generation

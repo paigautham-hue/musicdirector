@@ -215,6 +215,11 @@ export default function NewAlbum() {
       return;
     }
 
+    // Prevent double submission
+    if (isGenerating) {
+      return;
+    }
+
     setIsGenerating(true);
     createAlbumMutation.mutate({
       theme,

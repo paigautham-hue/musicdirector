@@ -672,3 +672,11 @@
 - [x] Investigate database schema for tracks table
 - [x] Fix track insertion logic to match schema requirements
 - [x] Test album generation end-to-end
+
+## Album UX Improvements
+- [x] Add music generation indicator badge to album cards in My Library
+- [x] Implement owner-only delete permissions (hide delete button for non-owners)
+- [x] Add public/private visibility selector to album creation wizard (step 4)
+- [x] Test music indicator display
+- [x] Test delete permissions with different users
+- [x] Test visibility selector in creation flow

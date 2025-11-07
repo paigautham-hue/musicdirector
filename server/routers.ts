@@ -83,7 +83,8 @@ export const appRouter = router({
         audience: z.string().optional(),
         influences: z.array(z.string()).optional(),
         trackCount: z.number().min(1).max(20).default(10),
-        platform: z.enum(["suno", "udio", "elevenlabs", "mubert", "stable_audio"])
+        platform: z.enum(["suno", "udio", "elevenlabs", "mubert", "stable_audio"]),
+        visibility: z.enum(["public", "private"]).default("private")
       }))
       .mutation(async ({ ctx, input }) => {
         // Check content safety
@@ -132,7 +133,8 @@ export const appRouter = router({
               language: input.language,
               audience: input.audience,
               influences: input.influences ? JSON.stringify(input.influences) : null,
-              trackCount: input.trackCount
+              trackCount: input.trackCount,
+              visibility: input.visibility
             });
             
             // Save tracks and assets
@@ -406,6 +408,28 @@ export const appRouter = router({
         const audioFiles = await db.getAudioFilesByAlbumId(input.albumId);
         
         return { jobs, audioFiles };
+      }),
+    
+    // Get music status for multiple albums (for library view)
+    getBulkMusicStatus: protectedProcedure
+      .input(z.object({ albumIds: z.array(z.number()) }))
+      .query(async ({ ctx, input }) => {
+        const statusMap: Record<number, { hasMusic: boolean; trackCount: number; completedCount: number }> = {};
+        
+        for (const albumId of input.albumIds) {
+          const album = await db.getAlbumById(albumId);
+          if (album && album.userId === ctx.user.id) {
+            const audioFiles = await db.getAudioFilesByAlbumId(albumId);
+            const tracks = await db.getTracksByAlbumId(albumId);
+            statusMap[albumId] = {
+              hasMusic: audioFiles.length > 0,
+              trackCount: tracks.length,
+              completedCount: audioFiles.length
+            };
+          }
+        }
+        
+        return statusMap;
       }),
     
     // Get public albums for gallery

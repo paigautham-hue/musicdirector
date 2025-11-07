@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Plus, Loader2, Trash2 } from "lucide-react";
+import { Music, Plus, Loader2, Trash2, Music2 } from "lucide-react";
 import { AppNav } from "@/components/AppNav";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
@@ -13,6 +13,10 @@ import { APP_TITLE } from "@/const";
 export default function MyLibrary() {
   const { user } = useAuth();
   const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ limit: 50 });
+  const { data: musicStatus } = trpc.albums.getBulkMusicStatus.useQuery(
+    { albumIds: albums?.map(a => a.id) || [] },
+    { enabled: !!albums && albums.length > 0 }
+  );
   
   const deleteMutation = trpc.albums.delete.useMutation({
     onSuccess: () => {
@@ -44,7 +48,16 @@ export default function MyLibrary() {
                 <Link href={`/album/${album.id}`}>
                   <Card className="cursor-pointer hover:border-primary/50 transition-all h-full">
                     {album.coverUrl && (
-                      <img src={album.coverUrl} alt={album.title} className="w-full h-48 object-cover rounded-t-lg" />
+                      <div className="relative">
+                        <img src={album.coverUrl} alt={album.title} className="w-full h-48 object-cover rounded-t-lg" />
+                        {/* Music Generated Indicator */}
+                        {musicStatus?.[album.id]?.hasMusic && (
+                          <div className="absolute bottom-2 right-2 bg-green-500/90 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+                            <Music2 className="h-3 w-3" />
+                            Music Ready
+                          </div>
+                        )}
+                      </div>
                     )}
                     <CardHeader>
                       <CardTitle>{album.title}</CardTitle>
@@ -59,8 +72,9 @@ export default function MyLibrary() {
                   </Card>
                 </Link>
                 
-                {/* Delete Button - Always visible with better styling */}
-                <div className="absolute top-3 right-3 z-10">
+                {/* Delete Button - Only visible for album owner */}
+                {user?.id === album.userId && (
+                  <div className="absolute top-3 right-3 z-10">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -90,7 +104,8 @@ export default function MyLibrary() {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>

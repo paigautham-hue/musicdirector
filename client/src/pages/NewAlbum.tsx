@@ -37,6 +37,7 @@ export default function NewAlbum() {
   const [influences, setInfluences] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string>("suno");
   const [trackCount, setTrackCount] = useState(10);
+  const [visibility, setVisibility] = useState<"public" | "private">("private");
   
   // Parse URL parameters to pre-fill form from saved prompts
   useEffect(() => {
@@ -228,7 +229,8 @@ export default function NewAlbum() {
       audience: audience || undefined,
       influences: influences.length > 0 ? influences : undefined,
       trackCount,
-      platform: platform as any
+      platform: platform as any,
+      visibility
     });
   };
 
@@ -461,6 +463,24 @@ export default function NewAlbum() {
                       onChange={(e) => setTrackCount(parseInt(e.target.value) || 1)}
                       className="text-lg"
                     />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="visibility" className="text-lg font-semibold">
+                      Album Visibility
+                    </Label>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Choose who can see your album
+                    </p>
+                    <Select value={visibility} onValueChange={(value: "public" | "private") => setVisibility(value)}>
+                      <SelectTrigger id="visibility" className="text-lg">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="private">Private - Only you can see it</SelectItem>
+                        <SelectItem value="public">Public - Anyone can discover it in the gallery</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="bg-muted/50 rounded-lg p-6 space-y-3">
                     <h3 className="font-semibold text-lg">Review Your Album</h3>

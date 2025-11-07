@@ -742,3 +742,8 @@
 ## Add Dylanesque Folk-Rock Album Prompts
 - [x] Insert 5 Dylanesque folk-rock album prompts to database
 - [x] Verify prompts appear in Community Prompts page
+
+## Fix Community Prompts Display
+- [x] Investigate why Vibe & Genres field is empty when loading prompts
+- [x] Fix prompt data parsing/formatting for vibe and influences fields
+- [x] Test prompt loading on published website

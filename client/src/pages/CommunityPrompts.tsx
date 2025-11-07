@@ -33,7 +33,7 @@ export default function CommunityPrompts() {
     });
 
     if (vibe.length > 0) {
-      params.set("vibes", JSON.stringify(vibe));
+      params.set("vibe", JSON.stringify(vibe));
     }
     if (prompt.audience) {
       params.set("audience", prompt.audience);

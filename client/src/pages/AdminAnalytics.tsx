@@ -367,6 +367,35 @@ export default function AdminAnalytics() {
                   </CardContent>
                 </Card>
               </div>
+
+              {/* LLM Model Breakdown */}
+              {llmStats?.modelBreakdown && llmStats.modelBreakdown.length > 0 && (
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>LLM Model Breakdown</CardTitle>
+                    <CardDescription>Usage statistics by model</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      {llmStats.modelBreakdown.map((model: any) => (
+                        <div key={model.model} className="flex items-center justify-between p-3 rounded-lg bg-card border border-border">
+                          <div className="flex-1">
+                            <div className="font-mono text-sm font-medium">{model.model}</div>
+                            <div className="text-xs text-muted-foreground mt-1">
+                              {model.count} calls • {Math.round(model.avgLatency)}ms avg • {model.totalTokens.toLocaleString()} tokens
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-1 text-xs rounded-full bg-green-500/10 text-green-500">
+                              {((model.count / (llmStats.totalCalls || 1)) * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </section>
           </>
         )}

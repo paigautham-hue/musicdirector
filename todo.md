@@ -707,3 +707,13 @@
 - [x] Configure model selection based on task type
 - [x] Test multi-LLM system with album generation
 - [x] Verify LLM usage appears in analytics dashboard
+
+## LLM Model Upgrades (November 2025)
+- [x] Update Gemini models to 2.5 Pro (max power) and 2.5 Flash (speed)
+- [ ] Add GPT-5 and GPT-4o support with OpenAI API (deferred - GPT-5 uses different API structure)
+- [x] Update Claude models to Opus 4.1 (max reasoning) and Sonnet 4.5 (agents/coding)
+- [x] Update Grok models to Grok 4 Heavy, Grok 4, and Grok 4 Fast
+- [x] Implement tier-based routing (Tier 1: Max Power, Tier 2: Balanced, Tier 3: Speed)
+- [x] Configure task-specific model selection
+- [x] Test all new models with album generation
+- [x] Verify analytics dashboard shows new model names

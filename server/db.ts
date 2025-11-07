@@ -1282,5 +1282,21 @@ export async function getLlmUsageStats(timeRange: 'hour' | 'day' | 'week' = 'day
     .from(llmUsageLogs)
     .where(sql`${llmUsageLogs.timestamp} >= ${startTime}`);
 
-  return stats[0];
+  // Get per-model breakdown
+  const modelBreakdown = await db
+    .select({
+      model: llmUsageLogs.model,
+      count: sql<number>`COUNT(*)`,
+      avgLatency: sql<number>`AVG(${llmUsageLogs.latencyMs})`,
+      totalTokens: sql<number>`SUM(${llmUsageLogs.totalTokens})`
+    })
+    .from(llmUsageLogs)
+    .where(sql`${llmUsageLogs.timestamp} >= ${startTime}`)
+    .groupBy(llmUsageLogs.model)
+    .orderBy(sql`COUNT(*) DESC`);
+
+  return {
+    ...stats[0],
+    modelBreakdown
+  };
 }

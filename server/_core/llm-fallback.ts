@@ -3,14 +3,27 @@ import { InvokeParams, InvokeResult, Message, Tool } from "./llm";
 import { logLlmUsage } from "../db";
 
 /**
- * LLM Fallback System
- * Tries multiple LLM providers in order until one succeeds
- * Providers: Manus Forge (primary), Anthropic, Gemini, Grok, Perplexity
+ * LLM Fallback System with Tier-Based Routing (November 2025)
+ * 
+ * Tier 1 (Max Power - Complex Reasoning): Gemini 2.5 Pro, Claude Opus 4.1, Grok 4 Heavy, GPT-5
+ * Tier 2 (Balanced - Standard Tasks): Gemini 2.5 Flash, Claude Sonnet 4.5, Grok 4, GPT-4o
+ * Tier 3 (Speed - Simple Tasks): Grok 4 Fast, Gemini 2.5 Flash
+ * 
+ * Providers: Manus Forge (primary), Anthropic, Gemini, Grok, OpenAI
  */
 
-type LLMProvider = "forge" | "anthropic" | "gemini" | "grok" | "perplexity";
+type LLMProvider = "forge" | "anthropic" | "gemini" | "grok" | "openai";
+type TaskTier = "max_power" | "balanced" | "speed";
 
-const PROVIDER_ORDER: LLMProvider[] = ["forge", "anthropic", "gemini", "grok"];
+// Default to balanced tier for most tasks
+const DEFAULT_TIER: TaskTier = "balanced";
+
+// Provider order by tier
+const TIER_PROVIDER_ORDER: Record<TaskTier, LLMProvider[]> = {
+  max_power: ["gemini", "anthropic", "grok", "openai", "forge"],
+  balanced: ["forge", "gemini", "anthropic", "grok", "openai"],
+  speed: ["grok", "forge", "gemini"],
+};
 
 interface ProviderConfig {
   name: string;
@@ -19,7 +32,7 @@ interface ProviderConfig {
   model: string;
 }
 
-function getProviderConfig(provider: LLMProvider): ProviderConfig | null {
+function getProviderConfig(provider: LLMProvider, tier: TaskTier = "balanced"): ProviderConfig | null {
   switch (provider) {
     case "forge":
       return {
@@ -28,7 +41,7 @@ function getProviderConfig(provider: LLMProvider): ProviderConfig | null {
         endpoint: ENV.forgeApiUrl 
           ? `${ENV.forgeApiUrl.replace(/\/$/, "")}/v1/chat/completions`
           : "https://forge.manus.im/v1/chat/completions",
-        model: "gemini-2.5-flash",
+        model: tier === "max_power" ? "gemini-2.5-pro" : "gemini-2.5-flash",
       };
     
     case "anthropic":
@@ -38,27 +51,41 @@ function getProviderConfig(provider: LLMProvider): ProviderConfig | null {
         name: "Anthropic Claude",
         apiKey: anthropicKey,
         endpoint: "https://api.anthropic.com/v1/messages",
-        model: "claude-3-5-sonnet-20241022",
+        model: tier === "max_power" ? "claude-opus-4-1" : "claude-sonnet-4-5",
       };
     
     case "gemini":
       const geminiKey = process.env.GEMINI_API_KEY;
       if (!geminiKey) return null;
+      const geminiModel = tier === "max_power" ? "gemini-2.5-pro" : "gemini-2.5-flash";
       return {
         name: "Google Gemini",
         apiKey: geminiKey,
-        endpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-thinking-exp-01-21:generateContent?key=${geminiKey}`,
-        model: "gemini-2.0-flash-thinking-exp-01-21",
+        endpoint: `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiKey}`,
+        model: geminiModel,
       };
     
     case "grok":
       const grokKey = process.env.XAI_API_KEY;
       if (!grokKey) return null;
+      let grokModel = "grok-4";
+      if (tier === "max_power") grokModel = "grok-4-heavy";
+      else if (tier === "speed") grokModel = "grok-4-fast";
       return {
         name: "Grok",
         apiKey: grokKey,
         endpoint: "https://api.x.ai/v1/chat/completions",
-        model: "grok-2-latest",
+        model: grokModel,
+      };
+    
+    case "openai":
+      const openaiKey = process.env.OPENAI_API_KEY;
+      if (!openaiKey) return null;
+      return {
+        name: "OpenAI",
+        apiKey: openaiKey,
+        endpoint: "https://api.openai.com/v1/chat/completions",
+        model: tier === "max_power" ? "gpt-5" : "gpt-4o",
       };
     
     default:
@@ -326,13 +353,51 @@ async function invokeGrok(config: ProviderConfig, params: InvokeParams): Promise
   return await response.json() as InvokeResult;
 }
 
-async function invokeProvider(provider: LLMProvider, params: InvokeParams): Promise<InvokeResult> {
-  const config = getProviderConfig(provider);
+async function invokeOpenAI(config: ProviderConfig, params: InvokeParams): Promise<InvokeResult> {
+  const { messages, tools, toolChoice, tool_choice, response_format } = params;
+  
+  const payload: Record<string, unknown> = {
+    model: config.model,
+    messages: messages.map(normalizeMessage),
+    max_tokens: 8192,
+  };
+  
+  if (tools && tools.length > 0) {
+    payload.tools = tools;
+  }
+  
+  if (toolChoice || tool_choice) {
+    payload.tool_choice = toolChoice || tool_choice;
+  }
+  
+  if (response_format) {
+    payload.response_format = response_format;
+  }
+  
+  const response = await fetch(config.endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "authorization": `Bearer ${config.apiKey}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`${config.name} failed: ${response.status} ${response.statusText} – ${errorText}`);
+  }
+  
+  return await response.json() as InvokeResult;
+}
+
+async function invokeProvider(provider: LLMProvider, params: InvokeParams, tier: TaskTier = "balanced"): Promise<InvokeResult> {
+  const config = getProviderConfig(provider, tier);
   if (!config || !config.apiKey) {
     throw new Error(`${provider} is not configured`);
   }
   
-  console.log(`[LLM Fallback] Trying ${config.name}...`);
+  console.log(`[LLM Fallback] Trying ${config.name} (${config.model})...`);
   
   switch (provider) {
     case "forge":
@@ -343,105 +408,61 @@ async function invokeProvider(provider: LLMProvider, params: InvokeParams): Prom
       return await invokeGemini(config, params);
     case "grok":
       return await invokeGrok(config, params);
+    case "openai":
+      return await invokeOpenAI(config, params);
     default:
       throw new Error(`Unknown provider: ${provider}`);
   }
 }
 
-/**
- * Extract JSON from markdown code blocks or raw text
- */
-function extractJSON(content: string): string {
-  // Try to find JSON in markdown code blocks
-  const codeBlockMatch = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (codeBlockMatch) {
-    return codeBlockMatch[1].trim();
-  }
+export async function invokeLLMWithFallback(params: InvokeParams & { tier?: TaskTier }): Promise<InvokeResult> {
+  const tier = params.tier || DEFAULT_TIER;
+  const providerOrder = TIER_PROVIDER_ORDER[tier];
   
-  // Try to find JSON object/array
-  const jsonMatch = content.match(/({[\s\S]*}|\[[\s\S]*\])/);
-  if (jsonMatch) {
-    return jsonMatch[0].trim();
-  }
+  const errors: string[] = [];
   
-  // Return as-is if no pattern found
-  return content.trim();
-}
-
-export async function invokeLLMWithFallback(params: InvokeParams, userId?: number): Promise<InvokeResult> {
-  const errors: Array<{ provider: string; error: string }> = [];
-  const startTime = Date.now();
-  
-  for (const provider of PROVIDER_ORDER) {
-    const providerStartTime = Date.now();
+  for (const provider of providerOrder) {
     try {
-      const result = await invokeProvider(provider, params);
-      const latency = Date.now() - providerStartTime;
-      console.log(`[LLM Fallback] ✓ ${provider} succeeded in ${latency}ms`);
+      const startTime = Date.now();
+      const result = await invokeProvider(provider, params, tier);
+      const latencyMs = Date.now() - startTime;
       
-      // If response_format is set, extract JSON from markdown if needed
-      if (params.response_format && result.choices[0]?.message?.content) {
-        const content = result.choices[0].message.content;
-        if (typeof content === 'string') {
-          const extracted = extractJSON(content);
-          result.choices[0].message.content = extracted;
-        }
-      }
+      console.log(`[LLM Fallback] ✓ ${provider} succeeded in ${latencyMs}ms`);
       
-      // Log successful LLM usage
-      try {
-        const config = getProviderConfig(provider);
-        const promptTokens = result.usage?.prompt_tokens || 0;
-        const completionTokens = result.usage?.completion_tokens || 0;
-        const totalTokens = result.usage?.total_tokens || 0;
-        
-        // Estimate cost (rough estimates per 1M tokens)
-        let costPer1MTokens = 0.0001; // default
-        if (provider === 'anthropic') costPer1MTokens = 0.003;
-        else if (provider === 'gemini') costPer1MTokens = 0.0001;
-        else if (provider === 'grok') costPer1MTokens = 0.0002;
-        
-        const costUsd = ((totalTokens / 1000000) * costPer1MTokens).toFixed(6);
-        
+      // Log LLM usage
+      const config = getProviderConfig(provider, tier);
+      if (config) {
         await logLlmUsage({
-          userId,
-          model: `${config?.name || provider}/${result.model}`,
-          operation: 'album_generation',
-          promptTokens,
-          completionTokens,
-          totalTokens,
-          costUsd,
-          latencyMs: latency,
+          model: config.model,
+          operation: "chat_completion",
+          latencyMs,
+          promptTokens: result.usage?.prompt_tokens || 0,
+          completionTokens: result.usage?.completion_tokens || 0,
+          totalTokens: result.usage?.total_tokens || 0,
+          costUsd: "0.0000", // Cost calculation can be added later
           success: true,
         });
-      } catch (logError) {
-        console.error('[LLM Fallback] Failed to log usage:', logError);
       }
       
       return result;
-    } catch (error) {
-      const latency = Date.now() - providerStartTime;
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(`[LLM Fallback] ✗ ${provider} failed in ${latency}ms:`, errorMessage);
-      errors.push({ provider, error: errorMessage });
+      console.error(`[LLM Fallback] ✗ ${provider} failed:`, errorMessage);
+      errors.push(`${provider}: ${errorMessage}`);
       
       // Log failed attempt
-      try {
-        const config = getProviderConfig(provider);
+      const config = getProviderConfig(provider, tier);
+      if (config) {
         await logLlmUsage({
-          userId,
-          model: `${config?.name || provider}/${config?.model || 'unknown'}`,
-          operation: 'album_generation',
+          model: config.model,
+          operation: "chat_completion",
+          latencyMs: 0,
           promptTokens: 0,
           completionTokens: 0,
           totalTokens: 0,
-          costUsd: '0.000000',
-          latencyMs: latency,
+          costUsd: "0.0000",
           success: false,
-          errorMessage,
         });
-      } catch (logError) {
-        console.error('[LLM Fallback] Failed to log error:', logError);
       }
       
       // Continue to next provider
@@ -450,6 +471,5 @@ export async function invokeLLMWithFallback(params: InvokeParams, userId?: numbe
   }
   
   // All providers failed
-  const errorSummary = errors.map(e => `${e.provider}: ${e.error}`).join("; ");
-  throw new Error(`All LLM providers failed: ${errorSummary}`);
+  throw new Error(`All LLM providers failed:\n${errors.join("\n")}`);
 }

@@ -738,3 +738,7 @@
 ## Add Reggae-Style Album Prompts
 - [x] Insert 5 reggae-style album prompts to database
 - [x] Verify prompts appear in Community Prompts page
+
+## Add Dylanesque Folk-Rock Album Prompts
+- [x] Insert 5 Dylanesque folk-rock album prompts to database
+- [x] Verify prompts appear in Community Prompts page

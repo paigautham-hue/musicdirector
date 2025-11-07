@@ -557,8 +557,8 @@ export default function Home() {
         <div className="container mx-auto px-6">
           <Card className="border-primary/30 bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-xl shadow-2xl">
             <CardContent className="p-12 text-center space-y-8">
-              <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto">
-                <Wand2 className="w-10 h-10 text-primary animate-pulse" />
+              <div className="w-32 h-32 mx-auto">
+                <img src="/images/ready-to-create.png" alt="Ready to Create" className="w-full h-full object-cover rounded-lg" />
               </div>
               <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
                 Ready to Create?

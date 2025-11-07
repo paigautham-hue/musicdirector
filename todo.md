@@ -627,3 +627,7 @@
 - [x] Generate visually stunning graphic for Quality Scoring
 - [x] Generate visually stunning graphic for Album Artwork
 - [x] Update Home.tsx to use new graphics instead of icon circles
+
+## Replace Ready to Create Icon
+- [x] Generate visually stunning graphic for Ready to Create CTA section
+- [x] Update Home.tsx to use new graphic instead of simple Wand2 icon circle

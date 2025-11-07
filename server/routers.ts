@@ -670,21 +670,28 @@ export const appRouter = router({
     // Get API usage statistics
     apiUsageStats: adminProcedure
       .input(z.object({
-        timeRange: z.enum(["hour", "day", "week", "month"]).default("day")
+        timeRange: z.enum(["hour", "day", "week"]).default("day")
       }))
       .query(async ({ input }) => {
-        const { getApiUsageStats } = await import("./analytics");
-        return getApiUsageStats(input.timeRange);
+        return db.getApiUsageStats(input.timeRange);
+      }),
+    
+    // Get API endpoint breakdown
+    apiEndpointBreakdown: adminProcedure
+      .input(z.object({
+        timeRange: z.enum(["hour", "day", "week"]).default("day")
+      }))
+      .query(async ({ input }) => {
+        return db.getApiEndpointBreakdown(input.timeRange);
       }),
     
     // Get LLM usage statistics
     llmUsageStats: adminProcedure
       .input(z.object({
-        timeRange: z.enum(["hour", "day", "week", "month"]).default("day")
+        timeRange: z.enum(["hour", "day", "week"]).default("day")
       }))
       .query(async ({ input }) => {
-        const { getLlmUsageStats } = await import("./analytics");
-        return getLlmUsageStats(input.timeRange);
+        return db.getLlmUsageStats(input.timeRange);
       }),
     
     // Get user statistics

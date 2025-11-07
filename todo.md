@@ -680,3 +680,13 @@
 - [x] Test music indicator display
 - [x] Test delete permissions with different users
 - [x] Test visibility selector in creation flow
+
+## API Monitoring & Health Enhancements
+- [x] Add API tracking middleware to capture all endpoint calls
+- [x] Implement real-time health status indicators (green/yellow/red badges)
+- [x] Add detailed endpoint breakdown showing most-called APIs
+- [x] Create alerting system for error rate thresholds
+- [x] Add endpoint-specific metrics (latency, success rate per endpoint)
+- [x] Add visual charts for API usage trends
+- [x] Test monitoring with real API calls
+- [x] Verify alerts trigger correctly

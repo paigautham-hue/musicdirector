@@ -3,17 +3,51 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Activity, TrendingUp, Users, Database, Zap, DollarSign, Clock, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Loader2, Activity, TrendingUp, Users, Database, Zap, DollarSign, Clock, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { Link } from "wouter";
 
+// Health status component with color-coded badges
+function HealthStatus({ label, value, threshold }: { label: string; value: number; threshold: { good: number; warning: number } }) {
+  const status = value >= threshold.good ? 'healthy' : value >= threshold.warning ? 'warning' : 'critical';
+  const icon = status === 'healthy' ? <CheckCircle2 className="h-4 w-4" /> : 
+               status === 'warning' ? <AlertCircle className="h-4 w-4" /> : 
+               <XCircle className="h-4 w-4" />;
+  const variant = status === 'healthy' ? 'default' : status === 'warning' ? 'secondary' : 'destructive';
+  const bgColor = status === 'healthy' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                  status === 'warning' ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' : 
+                  'bg-red-500/10 text-red-500 border-red-500/20';
+  
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-sm font-medium">{label}:</span>
+      <Badge className={`${bgColor} flex items-center gap-1`}>
+        {icon}
+        {value.toFixed(1)}%
+      </Badge>
+    </div>
+  );
+}
+
 export default function AdminAnalytics() {
-  const [timeRange, setTimeRange] = useState<"hour" | "day" | "week" | "month">("day");
+  const [timeRange, setTimeRange] = useState<"hour" | "day" | "week">("day");
   
   const { data: apiStats, isLoading: apiLoading } = trpc.admin.apiUsageStats.useQuery({ timeRange });
+  const { data: apiEndpoints, isLoading: endpointsLoading } = trpc.admin.apiEndpointBreakdown.useQuery({ timeRange });
   const { data: llmStats, isLoading: llmLoading } = trpc.admin.llmUsageStats.useQuery({ timeRange });
   const { data: userStats, isLoading: userLoading } = trpc.admin.userStats.useQuery();
   
-  const isLoading = apiLoading || llmLoading || userLoading;
+  const isLoading = apiLoading || llmLoading || userLoading || endpointsLoading;
+
+  // Calculate health metrics
+  const apiSuccessRate = apiStats?.totalRequests ? (apiStats.successfulRequests / apiStats.totalRequests) * 100 : 0;
+  const llmSuccessRate = llmStats?.totalCalls ? (llmStats.successfulCalls / llmStats.totalCalls) * 100 : 0;
+  const errorRate = apiStats?.totalRequests ? (apiStats.failedRequests / apiStats.totalRequests) * 100 : 0;
+
+  // Alert thresholds
+  const hasHighErrorRate = errorRate > 5; // Alert if error rate > 5%
+  const hasSlowApi = (apiStats?.avgLatency || 0) > 1000; // Alert if avg latency > 1s
+  const hasLlmIssues = llmSuccessRate < 95; // Alert if LLM success rate < 95%
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,7 +71,6 @@ export default function AdminAnalytics() {
               <SelectItem value="hour">Last Hour</SelectItem>
               <SelectItem value="day">Last 24 Hours</SelectItem>
               <SelectItem value="week">Last 7 Days</SelectItem>
-              <SelectItem value="month">Last 30 Days</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -50,6 +83,68 @@ export default function AdminAnalytics() {
           </div>
         ) : (
           <>
+            {/* System Health Alerts */}
+            {(hasHighErrorRate || hasSlowApi || hasLlmIssues) && (
+              <Card className="border-red-500/50 bg-red-500/5">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-red-500">
+                    <AlertCircle className="h-5 w-5" />
+                    System Health Alerts
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {hasHighErrorRate && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      <span>High error rate detected: {errorRate.toFixed(2)}% (threshold: 5%)</span>
+                    </div>
+                  )}
+                  {hasSlowApi && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      <span>Slow API response: {apiStats?.avgLatency}ms average (threshold: 1000ms)</span>
+                    </div>
+                  )}
+                  {hasLlmIssues && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      <span>LLM reliability issues: {llmSuccessRate.toFixed(1)}% success rate (threshold: 95%)</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Real-Time Health Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  System Health Status
+                </CardTitle>
+                <CardDescription>Real-time health indicators for all services</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <HealthStatus 
+                    label="API Health" 
+                    value={apiSuccessRate} 
+                    threshold={{ good: 95, warning: 90 }} 
+                  />
+                  <HealthStatus 
+                    label="LLM Health" 
+                    value={llmSuccessRate} 
+                    threshold={{ good: 95, warning: 90 }} 
+                  />
+                  <HealthStatus 
+                    label="Uptime" 
+                    value={100 - errorRate} 
+                    threshold={{ good: 99, warning: 95 }} 
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
             {/* User Statistics */}
             <section>
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -137,7 +232,7 @@ export default function AdminAnalytics() {
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{apiStats?.successRate || 0}%</div>
+                    <div className="text-2xl font-bold">{apiSuccessRate.toFixed(2)}%</div>
                     <p className="text-xs text-muted-foreground">
                       {apiStats?.failedRequests || 0} failed
                     </p>
@@ -150,7 +245,7 @@ export default function AdminAnalytics() {
                     <Clock className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{apiStats?.avgLatency || 0}ms</div>
+                    <div className="text-2xl font-bold">{Math.round(apiStats?.avgLatency || 0)}ms</div>
                     <p className="text-xs text-muted-foreground">
                       Average response time
                     </p>
@@ -163,43 +258,55 @@ export default function AdminAnalytics() {
                     <AlertCircle className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">
-                      {apiStats ? ((apiStats.failedRequests / (apiStats.totalRequests || 1)) * 100).toFixed(2) : 0}%
-                    </div>
+                    <div className="text-2xl font-bold">{errorRate.toFixed(2)}%</div>
                     <p className="text-xs text-muted-foreground">
                       Failed requests
                     </p>
                   </CardContent>
                 </Card>
               </div>
-              
-              {/* Top Endpoints */}
-              {apiStats?.byEndpoint && Object.keys(apiStats.byEndpoint).length > 0 && (
-                <Card className="mt-4">
-                  <CardHeader>
-                    <CardTitle>Top Endpoints</CardTitle>
-                    <CardDescription>Most frequently accessed API endpoints</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {Object.entries(apiStats.byEndpoint)
-                        .sort(([, a], [, b]) => b.count - a.count)
-                        .slice(0, 10)
-                        .map(([endpoint, stats]) => (
-                          <div key={endpoint} className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <p className="font-mono text-sm">{endpoint}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {stats.count} requests • {Math.round(stats.avgLatency)}ms avg • {stats.errors} errors
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </section>
+
+            {/* API Endpoint Breakdown */}
+            {apiEndpoints && apiEndpoints.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>API Endpoint Breakdown</CardTitle>
+                  <CardDescription>Detailed metrics for each API endpoint</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {apiEndpoints.map((endpoint: any) => (
+                      <div key={endpoint.endpoint} className="flex items-center justify-between border-b border-border/40 pb-3 last:border-0">
+                        <div className="flex-1 space-y-1">
+                          <p className="font-mono text-sm font-medium">{endpoint.endpoint}</p>
+                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <span>{endpoint.totalCalls} calls</span>
+                            <span>•</span>
+                            <span>{Math.round(endpoint.avgLatency)}ms avg</span>
+                            <span>•</span>
+                            <span className={endpoint.errorCount > 0 ? 'text-red-500' : ''}>
+                              {endpoint.errorCount} errors
+                            </span>
+                          </div>
+                        </div>
+                        <Badge 
+                          className={
+                            endpoint.successRate >= 95 
+                              ? 'bg-green-500/10 text-green-500 border-green-500/20' 
+                              : endpoint.successRate >= 90 
+                              ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' 
+                              : 'bg-red-500/10 text-red-500 border-red-500/20'
+                          }
+                        >
+                          {Number(endpoint.successRate).toFixed(1)}% success
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* LLM Usage Statistics */}
             <section>
@@ -227,7 +334,7 @@ export default function AdminAnalytics() {
                     <TrendingUp className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{llmStats?.successRate || 0}%</div>
+                    <div className="text-2xl font-bold">{llmSuccessRate.toFixed(2)}%</div>
                     <p className="text-xs text-muted-foreground">
                       LLM reliability
                     </p>
@@ -240,7 +347,7 @@ export default function AdminAnalytics() {
                     <DollarSign className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">${llmStats?.totalCost || "0.00"}</div>
+                    <div className="text-2xl font-bold">${Number(llmStats?.totalCost || 0).toFixed(4)}</div>
                     <p className="text-xs text-muted-foreground">
                       {llmStats?.totalTokens?.toLocaleString() || 0} tokens
                     </p>
@@ -253,49 +360,13 @@ export default function AdminAnalytics() {
                     <Clock className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{llmStats?.avgLatency || 0}ms</div>
+                    <div className="text-2xl font-bold">{Math.round(llmStats?.avgLatency || 0)}ms</div>
                     <p className="text-xs text-muted-foreground">
                       Response time
                     </p>
                   </CardContent>
                 </Card>
               </div>
-              
-              {/* LLM Model Breakdown */}
-              {llmStats?.byModel && Object.keys(llmStats.byModel).length > 0 && (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-4">
-                  {Object.entries(llmStats.byModel).map(([model, stats]) => (
-                    <Card key={model}>
-                      <CardHeader>
-                        <CardTitle className="text-base">{model}</CardTitle>
-                        <CardDescription>{stats.calls} calls</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Success Rate:</span>
-                          <span className="font-medium">{stats.successRate}%</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Avg Latency:</span>
-                          <span className="font-medium">{stats.avgLatency}ms</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Total Tokens:</span>
-                          <span className="font-medium">{stats.totalTokens.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Total Cost:</span>
-                          <span className="font-medium">${stats.totalCost.toFixed(4)}</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Errors:</span>
-                          <span className="font-medium text-destructive">{stats.errors}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
             </section>
           </>
         )}

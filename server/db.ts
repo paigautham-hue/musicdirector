@@ -4,11 +4,11 @@ import {
   InsertUser, users, albums, tracks, trackAssets, ratings, 
   platformConstraints, knowledgeUpdates, moderationFlags, auditLogs, featureFlags,
   systemSettings, musicJobs, audioFiles, payments, creditTransactions, promptTemplates,
-  comments, likes, follows,
+  comments, likes, follows, apiUsageLogs, llmUsageLogs,
   type Album, type Track, type TrackAsset, type Rating, type PlatformConstraint,
   type KnowledgeUpdate, type ModerationFlag, type AuditLog, type FeatureFlag,
   type SystemSetting, type MusicJob, type AudioFile, type Payment, type CreditTransaction,
-  type PromptTemplate,
+  type PromptTemplate, type InsertApiUsageLog, type InsertLlmUsageLog,
   type InsertAlbum, type InsertTrack, type InsertTrackAsset, type InsertRating,
   type InsertPlatformConstraint, type InsertKnowledgeUpdate, type InsertModerationFlag,
   type InsertAuditLog, type InsertFeatureFlag, type InsertSystemSetting, type InsertMusicJob,
@@ -1139,4 +1139,148 @@ export async function getLeaderboardData(type: "albums" | "creators", limit = 10
 
     return result;
   }
+}
+
+// ============================================================================
+// API Usage Tracking
+// ============================================================================
+
+export async function logApiUsage(params: {
+  endpoint: string;
+  method: string;
+  status: 'success' | 'error';
+  latency: number;
+  userId?: number;
+  errorMessage?: string;
+}) {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db.insert(apiUsageLogs).values({
+      endpoint: params.endpoint,
+      method: params.method,
+      statusCode: params.status === 'success' ? 200 : 500,
+      latencyMs: params.latency,
+      userId: params.userId,
+      errorMessage: params.errorMessage
+    });
+  } catch (error) {
+    console.error('[DB] Failed to log API usage:', error);
+  }
+}
+
+export async function logLlmUsage(params: InsertLlmUsageLog) {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db.insert(llmUsageLogs).values(params);
+  } catch (error) {
+    console.error('[DB] Failed to log LLM usage:', error);
+  }
+}
+
+export async function getApiUsageStats(timeRange: 'hour' | 'day' | 'week' = 'day') {
+  const db = await getDb();
+  if (!db) return null;
+
+  const now = new Date();
+  const startTime = new Date();
+  
+  switch (timeRange) {
+    case 'hour':
+      startTime.setHours(now.getHours() - 1);
+      break;
+    case 'day':
+      startTime.setDate(now.getDate() - 1);
+      break;
+    case 'week':
+      startTime.setDate(now.getDate() - 7);
+      break;
+  }
+
+  const stats = await db
+    .select({
+      totalRequests: sql<number>`COUNT(*)`,
+      successfulRequests: sql<number>`SUM(CASE WHEN ${apiUsageLogs.statusCode} = 200 THEN 1 ELSE 0 END)`,
+      failedRequests: sql<number>`SUM(CASE WHEN ${apiUsageLogs.statusCode} != 200 THEN 1 ELSE 0 END)`,
+      avgLatency: sql<number>`AVG(${apiUsageLogs.latencyMs})`,
+      maxLatency: sql<number>`MAX(${apiUsageLogs.latencyMs})`,
+      minLatency: sql<number>`MIN(${apiUsageLogs.latencyMs})`
+    })
+    .from(apiUsageLogs)
+    .where(sql`${apiUsageLogs.timestamp} >= ${startTime}`);
+
+  return stats[0];
+}
+
+export async function getApiEndpointBreakdown(timeRange: 'hour' | 'day' | 'week' = 'day') {
+  const db = await getDb();
+  if (!db) return [];
+
+  const now = new Date();
+  const startTime = new Date();
+  
+  switch (timeRange) {
+    case 'hour':
+      startTime.setHours(now.getHours() - 1);
+      break;
+    case 'day':
+      startTime.setDate(now.getDate() - 1);
+      break;
+    case 'week':
+      startTime.setDate(now.getDate() - 7);
+      break;
+  }
+
+  const breakdown = await db
+    .select({
+      endpoint: apiUsageLogs.endpoint,
+      totalCalls: sql<number>`COUNT(*)`,
+      successRate: sql<number>`(SUM(CASE WHEN ${apiUsageLogs.statusCode} = 200 THEN 1 ELSE 0 END) * 100.0 / COUNT(*))`,
+      avgLatency: sql<number>`AVG(${apiUsageLogs.latencyMs})`,
+      errorCount: sql<number>`SUM(CASE WHEN ${apiUsageLogs.statusCode} != 200 THEN 1 ELSE 0 END)`
+    })
+    .from(apiUsageLogs)
+    .where(sql`${apiUsageLogs.timestamp} >= ${startTime}`)
+    .groupBy(apiUsageLogs.endpoint)
+    .orderBy(desc(sql`COUNT(*)`))
+    .limit(20);
+
+  return breakdown;
+}
+
+export async function getLlmUsageStats(timeRange: 'hour' | 'day' | 'week' = 'day') {
+  const db = await getDb();
+  if (!db) return null;
+
+  const now = new Date();
+  const startTime = new Date();
+  
+  switch (timeRange) {
+    case 'hour':
+      startTime.setHours(now.getHours() - 1);
+      break;
+    case 'day':
+      startTime.setDate(now.getDate() - 1);
+      break;
+    case 'week':
+      startTime.setDate(now.getDate() - 7);
+      break;
+  }
+
+  const stats = await db
+    .select({
+      totalCalls: sql<number>`COUNT(*)`,
+      successfulCalls: sql<number>`SUM(CASE WHEN ${llmUsageLogs.success} = 1 THEN 1 ELSE 0 END)`,
+      failedCalls: sql<number>`SUM(CASE WHEN ${llmUsageLogs.success} = 0 THEN 1 ELSE 0 END)`,
+      totalTokens: sql<number>`SUM(${llmUsageLogs.totalTokens})`,
+      totalCost: sql<number>`SUM(CAST(${llmUsageLogs.costUsd} AS DECIMAL(10,4)))`,
+      avgLatency: sql<number>`AVG(${llmUsageLogs.latencyMs})`
+    })
+    .from(llmUsageLogs)
+    .where(sql`${llmUsageLogs.timestamp} >= ${startTime}`);
+
+  return stats[0];
 }

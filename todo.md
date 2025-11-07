@@ -752,3 +752,9 @@
 - [x] Investigate why personal prompts aren't showing in My Prompts page
 - [x] Fix prompts display to show both user's personal prompts and community prompts
 - [x] Test prompts page to ensure both sections are visible
+
+## Add My Prompts Navigation Link
+- [x] Check current navigation structure in AppNav component
+- [x] Add "My Prompts" link to navigation menu
+- [x] Ensure users can access both Community Prompts and My Prompts pages
+- [x] Test navigation links on published website

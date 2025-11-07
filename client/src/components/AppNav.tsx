@@ -62,13 +62,22 @@ export function AppNav() {
                       Explore
                     </a>
                   </Link>
+                  <Link href="/prompts">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/prompts' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
+                      My Prompts
+                    </a>
+                  </Link>
                   <Link href="/community-prompts">
                     <a className={`text-sm font-medium transition-colors ${
                       location === '/community-prompts' 
                         ? 'text-foreground border-b-2 border-primary pb-1' 
                         : 'text-foreground/80 hover:text-foreground'
                     }`}>
-                      Prompts
+                      Community
                     </a>
                   </Link>
                   <Link href="/pricing">

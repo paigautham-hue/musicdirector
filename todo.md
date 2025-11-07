@@ -606,3 +606,7 @@
 ## AppNav Mobile Menu Fix
 - [x] Add solid background to AppNav mobile menu container to ensure visibility
 - [x] Verify all navigation items are displayed in mobile menu
+
+## AppNav Mobile Menu Items Visibility Fix
+- [x] Add explicit white text color to all mobile menu navigation items
+- [x] Ensure menu items section is visible and scrollable

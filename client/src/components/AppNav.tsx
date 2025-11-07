@@ -174,7 +174,7 @@ export function AppNav() {
                 <div className="space-y-1 px-2">
                   <Link href="/library">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       My Library
@@ -182,7 +182,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/explore">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Explore
@@ -190,7 +190,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/community-prompts">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Community Prompts
@@ -198,7 +198,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/prompts">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       My Prompts
@@ -206,7 +206,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/knowledge">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Knowledge Hub
@@ -214,7 +214,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/impact-stories">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Impact Stories
@@ -222,7 +222,7 @@ export function AppNav() {
                   </Link>
                   <Link href="/pricing">
                     <a
-                      className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                      className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Pricing
@@ -231,7 +231,7 @@ export function AppNav() {
                   {user?.role === 'admin' && (
                     <Link href="/admin">
                       <a
-                        className="block px-4 py-3 rounded-lg text-foreground hover:bg-accent transition-colors"
+                        className="block px-4 py-3 rounded-lg text-white hover:bg-accent transition-colors"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Admin

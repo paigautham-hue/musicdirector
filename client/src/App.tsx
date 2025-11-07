@@ -23,6 +23,7 @@ import Explore from "./pages/Explore";
 import AlbumDetail from "./pages/AlbumDetail";
 import UserProfile from "./pages/UserProfile";
 import CommunityPrompts from "./pages/CommunityPrompts";
+import Profile from "./pages/Profile";
 
 function Router() {
   return (
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/explore" component={Explore} />
       <Route path="/album/:id" component={AlbumDetail} />
       <Route path="/profile/:id" component={UserProfile} />
+      <Route path="/profile" component={Profile} />
       <Route path="/community-prompts" component={CommunityPrompts} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

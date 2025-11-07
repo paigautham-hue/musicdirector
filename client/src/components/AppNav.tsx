@@ -99,7 +99,15 @@ export function AppNav() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
+                        {user?.avatarUrl ? (
+                          <img
+                            src={user.avatarUrl}
+                            alt={user.name || 'Profile'}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <User className="w-4 h-4" />
+                        )}
                         <ChevronDown className="w-3 h-3" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -114,6 +122,12 @@ export function AppNav() {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
+                      <Link href="/profile">
+                        <DropdownMenuItem>
+                          <User className="w-4 h-4 mr-2" />
+                          Edit Profile
+                        </DropdownMenuItem>
+                      </Link>
                       <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
                         <LogOut className="w-4 h-4 mr-2" />
                         Logout

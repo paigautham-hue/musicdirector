@@ -657,3 +657,13 @@
 - [x] Ensure background generation continues independently of frontend polling (added comprehensive error handling and logging)
 - [x] Add mechanism to resume/show completed albums when user returns (albums auto-appear in Library)
 - [x] Test album generation with navigation away scenario
+
+## User Profile Feature
+- [x] Add profilePicture and bio fields to users table schema (already exists)
+- [x] Push database schema changes (not needed)
+- [x] Create backend procedures for profile update and image upload
+- [x] Build profile setup page for first-time users
+- [x] Build profile edit page for existing users
+- [x] Integrate profile picture display in navigation
+- [x] Add profile route to App.tsx
+- [x] Test profile creation and editing flow

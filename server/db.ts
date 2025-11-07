@@ -100,6 +100,26 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function updateUserProfile(userId: number, updates: { avatarUrl?: string | null; bio?: string | null }) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const updateData: Record<string, unknown> = {};
+  if (updates.avatarUrl !== undefined) {
+    updateData.avatarUrl = updates.avatarUrl;
+  }
+  if (updates.bio !== undefined) {
+    updateData.bio = updates.bio;
+  }
+
+  await db.update(users).set(updateData).where(eq(users.id, userId));
+  
+  const result = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  return result[0];
+}
+
 // Album operations
 export async function createAlbum(album: InsertAlbum): Promise<Album> {
   const db = await getDb();

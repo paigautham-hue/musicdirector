@@ -34,6 +34,45 @@ export const appRouter = router({
     }),
   }),
 
+  profile: router({
+    update: protectedProcedure
+      .input(z.object({
+        bio: z.string().max(500).optional().nullable(),
+        avatarUrl: z.string().url().optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const updatedUser = await db.updateUserProfile(ctx.user.id, input);
+        return updatedUser;
+      }),
+    
+    uploadAvatar: protectedProcedure
+      .input(z.object({
+        base64Image: z.string(),
+        mimeType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { storagePut } = await import("./storage");
+        
+        // Convert base64 to buffer
+        const base64Data = input.base64Image.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, 'base64');
+        
+        // Generate unique filename
+        const timestamp = Date.now();
+        const randomSuffix = Math.random().toString(36).substring(7);
+        const extension = input.mimeType.split('/')[1] || 'jpg';
+        const fileKey = `user-${ctx.user.id}/avatar-${timestamp}-${randomSuffix}.${extension}`;
+        
+        // Upload to S3
+        const { url } = await storagePut(fileKey, buffer, input.mimeType);
+        
+        // Update user profile
+        const updatedUser = await db.updateUserProfile(ctx.user.id, { avatarUrl: url });
+        
+        return { avatarUrl: url, user: updatedUser };
+      }),
+  }),
+
   albums: router({
     // Create a new album with AI generation
     create: protectedProcedure

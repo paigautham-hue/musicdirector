@@ -1237,3 +1237,18 @@
 - [x] Add server-side download endpoint with Content-Disposition header
 - [x] Update frontend download button to use new endpoint
 - [ ] Test download on iOS Safari and Android Chrome
+
+## Community Prompts Usage Count
+- [x] Add usage count display to Community Prompts page (currently only shows in My Prompts)
+- [x] Update CommunityPrompts component to show how many times each prompt has been used
+- [x] Ensure usage count updates when prompts are used to generate albums
+
+## Admin Bulk Album Generation
+- [x] Create admin page for bulk album generation from prompts
+- [x] Add prompt selection UI with checkboxes for unused prompts
+- [x] Add "Select All Unused" and "Select All" options
+- [x] Implement backend endpoint for bulk album generation
+- [x] Add progress tracking for bulk generation jobs
+- [x] Show generated albums list after completion
+- [x] Add filter to show only prompts with 0 uses
+- [x] Add Bulk Generation link to Admin Dashboard

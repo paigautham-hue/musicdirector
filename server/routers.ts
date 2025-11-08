@@ -1242,6 +1242,102 @@ export const appRouter = router({
         await db.restartMusicJob(input.jobId);
         return { success: true };
       }),
+    
+    // Bulk generate albums from prompts
+    bulkGenerateAlbums: adminProcedure
+      .input(z.object({ promptIds: z.array(z.number()) }))
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        }
+        
+        const generatedAlbums: any[] = [];
+        
+        // Generate albums sequentially to avoid overwhelming the system
+        for (const promptId of input.promptIds) {
+          try {
+            // Get prompt details
+            const [prompt] = await dbInstance
+              .select()
+              .from(promptTemplates)
+              .where(eq(promptTemplates.id, promptId))
+              .limit(1);
+            
+            if (!prompt) {
+              console.log(`[Bulk Generation] Prompt ${promptId} not found, skipping`);
+              continue;
+            }
+            
+            // Parse vibe and influences
+            const vibe = prompt.vibe ? JSON.parse(prompt.vibe) : [];
+            const influences = prompt.influences ? JSON.parse(prompt.influences) : [];
+            
+            // Generate album using the prompt
+            const { generateAlbum } = await import('./albumGenerator');
+            const albumData = await generateAlbum({
+              theme: prompt.theme,
+              vibe,
+              influences,
+              platform: prompt.platform as any,
+              trackCount: prompt.trackCount,
+              language: prompt.language || 'en',
+              audience: prompt.audience || undefined,
+            });
+            
+            // Create album in database
+            const album = await db.createAlbum({
+              userId: ctx.user.id,
+              title: albumData.title,
+              theme: prompt.theme,
+              platform: prompt.platform,
+              trackCount: prompt.trackCount,
+              visibility: 'public', // Make bulk-generated albums public by default
+            });
+            
+            // Create tracks
+            for (let i = 0; i < albumData.tracks.length; i++) {
+              const trackData = albumData.tracks[i];
+              const track = await db.createTrack({
+                albumId: album.id,
+                title: trackData.title,
+                index: i + 1,
+                tempoBpm: trackData.tempoBpm,
+                key: trackData.key,
+              });
+              
+              // Create track assets
+              await db.createTrackAsset({ trackId: track.id, type: 'prompt', content: trackData.prompt });
+              await db.createTrackAsset({ trackId: track.id, type: 'lyrics', content: trackData.lyrics });
+            }
+            
+            generatedAlbums.push({
+              id: album.id,
+              title: albumData.title,
+              trackCount: prompt.trackCount,
+              promptId,
+            });
+            
+            console.log(`[Bulk Generation] Generated album "${albumData.title}" from prompt ${promptId}`);
+            
+            // Increment prompt usage count
+            await dbInstance
+              .update(promptTemplates)
+              .set({ usageCount: (prompt.usageCount || 0) + 1 })
+              .where(eq(promptTemplates.id, promptId));
+            
+          } catch (error) {
+            console.error(`[Bulk Generation] Failed to generate album for prompt ${promptId}:`, error);
+            // Continue with next prompt even if one fails
+          }
+        }
+        
+        return {
+          success: true,
+          albums: generatedAlbums,
+          count: generatedAlbums.length,
+        };
+      }),
   }),
 
   knowledge: router({

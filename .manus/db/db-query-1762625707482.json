@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, usageCount, visibility FROM promptTemplates WHERE visibility = 'public' ORDER BY usageCount DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, name, usageCount, visibility FROM promptTemplates WHERE visibility = 'public' ORDER BY usageCount DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "30027",
+      "name": "Borrowed Eyes",
+      "usageCount": "3",
+      "visibility": "public"
+    },
+    {
+      "id": "30025",
+      "name": "Maps Written in Pencil",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30023",
+      "name": "Leaving Babylon Inside",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30017",
+      "name": "Cathedral of Air",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30029",
+      "name": "Truth With Mud on Its Boots",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30021",
+      "name": "Free Mind Republic",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30015",
+      "name": "White Flag Cities",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30024",
+      "name": "Roots to the Future",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30020",
+      "name": "One Street, One Heart",
+      "usageCount": "1",
+      "visibility": "public"
+    },
+    {
+      "id": "30022",
+      "name": "Kindness Rebel",
+      "usageCount": "0",
+      "visibility": "public"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tusageCount\tvisibility\n30027\tBorrowed Eyes\t3\tpublic\n30025\tMaps Written in Pencil\t1\tpublic\n30023\tLeaving Babylon Inside\t1\tpublic\n30017\tCathedral of Air\t1\tpublic\n30029\tTruth With Mud on Its Boots\t1\tpublic\n30021\tFree Mind Republic\t1\tpublic\n30015\tWhite Flag Cities\t1\tpublic\n30024\tRoots to the Future\t1\tpublic\n30020\tOne Street, One Heart\t1\tpublic\n30022\tKindness Rebel\t0\tpublic\n",
+  "stderr": "",
+  "execution_time_ms": 1531
+}

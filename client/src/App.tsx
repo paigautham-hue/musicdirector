@@ -17,6 +17,7 @@ import AdminUserQuotas from "./pages/AdminUserQuotas";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminAudioManagement from "./pages/AdminAudioManagement";
 import AdminQueue from "./pages/AdminQueue";
+import AdminBulkGeneration from "./pages/AdminBulkGeneration";
 import Gallery from "./pages/Gallery";
 import ImpactStories from "./pages/ImpactStories";
 import Pricing from "./pages/Pricing";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/admin/analytics" component={AdminAnalytics} />
       <Route path="/admin/audio" component={AdminAudioManagement} />
       <Route path="/admin/queue" component={AdminQueue} />
+      <Route path="/admin/bulk-generation" component={AdminBulkGeneration} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/impact-stories" component={ImpactStories} />
       <Route path="/pricing" component={Pricing} />

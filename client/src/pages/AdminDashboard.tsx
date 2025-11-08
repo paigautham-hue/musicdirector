@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Settings, Users, BarChart3, AlertCircle, Music } from "lucide-react";
+import { ArrowLeft, Loader2, Settings, Users, BarChart3, AlertCircle, Music, Sparkles } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 import { AppNav } from "@/components/AppNav";
@@ -74,6 +74,12 @@ export default function AdminDashboard() {
               <Button className="bg-amber-500 hover:bg-amber-600">
                 <Settings className="w-4 h-4 mr-2" />
                 System Settings
+              </Button>
+            </Link>
+            <Link href="/admin/bulk-generation">
+              <Button className="bg-purple-500 hover:bg-purple-600">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Bulk Generation
               </Button>
             </Link>
           </div>

@@ -771,6 +771,60 @@ export const appRouter = router({
         }
         
         return { success: true };
+      }),
+    
+    // Retry all failed tracks in an album
+    retryAllFailed: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        }
+        
+        // Get album to check ownership
+        const album = await db.getAlbumById(input.albumId);
+        if (!album || album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        
+        // Get all tracks for this album
+        const albumTracks = await dbInstance
+          .select()
+          .from(tracks)
+          .where(eq(tracks.albumId, input.albumId));
+        
+        // Find all failed jobs for tracks in this album
+        const failedJobs = await dbInstance
+          .select()
+          .from(musicJobs)
+          .where(
+            and(
+              eq(musicJobs.albumId, input.albumId),
+              eq(musicJobs.status, "failed")
+            )
+          );
+        
+        if (failedJobs.length === 0) {
+          return { success: true, retriedCount: 0 };
+        }
+        
+        // Reset all failed jobs to pending
+        for (const job of failedJobs) {
+          await dbInstance
+            .update(musicJobs)
+            .set({
+              status: "pending",
+              progress: 0,
+              errorMessage: null,
+              statusMessage: null,
+              startedAt: null,
+              completedAt: null,
+            })
+            .where(eq(musicJobs.id, job.id));
+        }
+        
+        return { success: true, retriedCount: failedJobs.length };
       })
   }),
 

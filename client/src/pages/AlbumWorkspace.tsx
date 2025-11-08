@@ -147,6 +147,20 @@ export default function AlbumWorkspace() {
       toast.error(error.message || "Failed to retry generation");
     }
   });
+  
+  const retryAllFailedMutation = trpc.tracks.retryAllFailed.useMutation({
+    onSuccess: (data) => {
+      if (data.retriedCount > 0) {
+        toast.success(`Retrying ${data.retriedCount} failed track${data.retriedCount > 1 ? 's' : ''}...`);
+      } else {
+        toast.info("No failed tracks to retry");
+      }
+      refetchMusicStatus();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to retry tracks");
+    }
+  });
 
   const bookletMutation = trpc.downloads.albumBooklet.useMutation({
     onSuccess: (data) => {
@@ -582,9 +596,26 @@ export default function AlbumWorkspace() {
         {/* Music Player Section */}
         {musicStatus && musicStatus.jobs && musicStatus.jobs.length > 0 ? (
           <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Volume2 className="w-5 h-5 text-primary" />
-              <h2 className="text-2xl font-bold">Generated Music</h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Volume2 className="w-5 h-5 text-primary" />
+                <h2 className="text-2xl font-bold">Generated Music</h2>
+              </div>
+              {(() => {
+                const failedCount = musicStatus?.jobs?.filter((j: any) => j.status === "failed").length || 0;
+                return failedCount > 0 ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => retryAllFailedMutation.mutate({ albumId: album.id })}
+                    disabled={retryAllFailedMutation.isPending}
+                    className="gap-2"
+                  >
+                    <RefreshCw className={`w-4 h-4 ${retryAllFailedMutation.isPending ? 'animate-spin' : ''}`} />
+                    {retryAllFailedMutation.isPending ? 'Retrying...' : `Retry All Failed (${failedCount})`}
+                  </Button>
+                ) : null;
+              })()}
             </div>
             <div className="grid lg:grid-cols-[1fr_350px] gap-6">
               {/* Audio Players */}

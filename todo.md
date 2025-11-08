@@ -1172,3 +1172,11 @@
 - [x] Check if retry creates new job or reuses failed job
 - [x] Add better error logging to identify root cause
 - [ ] Test retry functionality after fix and verify actual Suno API errors are displayed
+
+## Batch Retry Feature
+- [x] Create backend endpoint to retry all failed tracks in an album
+- [x] Add "Retry All Failed" button to AlbumWorkspace page
+- [x] Show count of failed tracks in the button text
+- [x] Add loading state while batch retry is in progress
+- [x] Show toast notification when batch retry completes
+- [ ] Test batch retry with multiple failed tracks

@@ -1114,3 +1114,12 @@
 - [ ] Investigate stuck music generation (tracks stuck in "Pending" state)
 - [ ] Fix music generation status polling
 - [ ] Test all fixes across different scenarios
+
+## Playlist Visibility & Creator Display
+- [x] Change default playlist visibility to public
+- [x] Update AddToPlaylist component default to public
+- [x] Update MyPlaylists component default to public
+- [x] Update existing private playlists to public in database
+- [x] Add creator name display to playlist cards
+- [x] Add creator name display to playlist detail page
+- [x] Test playlist visibility and creator display

@@ -20,7 +20,7 @@ export function AddToPlaylist({ trackId, trackTitle, trigger }: AddToPlaylistPro
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createMode, setCreateMode] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
-  const [newPlaylistVisibility, setNewPlaylistVisibility] = useState<"private" | "public">("private");
+  const [newPlaylistVisibility, setNewPlaylistVisibility] = useState<"private" | "public">("public");
 
   const utils = trpc.useUtils();
   const { data: playlists, isLoading } = trpc.playlists.list.useQuery(undefined, {

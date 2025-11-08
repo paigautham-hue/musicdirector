@@ -21,7 +21,7 @@ export default function MyPlaylists() {
   const [editingPlaylist, setEditingPlaylist] = useState<any>(null);
   const [playlistName, setPlaylistName] = useState("");
   const [playlistDescription, setPlaylistDescription] = useState("");
-  const [playlistVisibility, setPlaylistVisibility] = useState<"private" | "public">("private");
+  const [playlistVisibility, setPlaylistVisibility] = useState<"private" | "public">("public");
 
   const utils = trpc.useUtils();
   const { data: playlists, isLoading } = trpc.playlists.list.useQuery(undefined, {

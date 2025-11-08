@@ -1014,3 +1014,14 @@
 - [x] Add better error messages distinguishing between "not found", "access denied", and "loading"
 - [x] Add loading skeleton for album pages
 - [ ] Test album access with different user roles and album visibility settings
+
+## Comprehensive Album Access Audit
+- [x] Audit ALL album-related endpoints for access control issues
+- [x] Check audio playback endpoints - FIXED download.track
+- [x] Check social/public album endpoints - All public
+- [x] Check AlbumDetail page endpoints - FIXED albums.get
+- [x] Check Explore page endpoints - Already public
+- [x] Fix any endpoints that block public album access
+- [x] Ensure consistent access control across all endpoints
+- [x] Fixed 5 endpoints: albums.get, download.track, getMusicStatus, export, albumBooklet
+- [ ] Test with real user account (non-admin, non-owner)

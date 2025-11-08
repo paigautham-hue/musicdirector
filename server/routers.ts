@@ -338,8 +338,13 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        // Allow access if: owner, admin, or album is public
+        const isOwner = album.userId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        const isPublic = album.visibility === 'public';
+        
+        if (!isOwner && !isAdmin && !isPublic) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
         }
         
         const exportData = await exportAlbumBundle(input.id);
@@ -435,9 +440,13 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        // Allow album owner or admin to access
-        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        // Allow access if: owner, admin, or album is public
+        const isOwner = album.userId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        const isPublic = album.visibility === 'public';
+        
+        if (!isOwner && !isAdmin && !isPublic) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
         }
         
         const jobs = await db.getMusicJobsByAlbumId(input.albumId);
@@ -1085,10 +1094,19 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Track not found' });
         }
         
-        // Get album to check ownership
+        // Get album to check access
         const album = await db.getAlbumById(track.albumId);
-        if (!album || (album.userId !== ctx.user.id && ctx.user.role !== 'admin')) {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow access if: owner, admin, or album is public
+        const isOwner = album.userId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        const isPublic = album.visibility === 'public';
+        
+        if (!isOwner && !isAdmin && !isPublic) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
         }
         
         // Get audio file
@@ -1113,8 +1131,13 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        // Allow access if: owner, admin, or album is public
+        const isOwner = album.userId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        const isPublic = album.visibility === 'public';
+        
+        if (!isOwner && !isAdmin && !isPublic) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
         }
         
         // Generate PDF

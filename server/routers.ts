@@ -278,8 +278,13 @@ export const appRouter = router({
       }))
       .mutation(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.albumId);
-        if (!album || album.userId !== ctx.user.id) {
-          throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow album owner or admin to access
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
         }
         
         const adapter = getPlatformAdapter(input.targetPlatform);
@@ -348,8 +353,13 @@ export const appRouter = router({
       .input(z.object({ albumId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.albumId);
-        if (!album || album.userId !== ctx.user.id) {
-          throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow album owner or admin to access
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
         }
         
         const shareToken = Math.random().toString(36).substring(2, 15);
@@ -368,8 +378,13 @@ export const appRouter = router({
       .input(z.object({ albumId: z.number() }))
       .mutation(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.albumId);
-        if (!album || album.userId !== ctx.user.id) {
-          throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow album owner or admin to access
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
         }
         
         const albumTracks = await db.getTracksByAlbumId(input.albumId);
@@ -402,8 +417,13 @@ export const appRouter = router({
       .input(z.object({ albumId: z.number() }))
       .query(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.albumId);
-        if (!album || album.userId !== ctx.user.id) {
-          throw new TRPCError({ code: 'NOT_FOUND' });
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow album owner or admin to access
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
         }
         
         const jobs = await db.getMusicJobsByAlbumId(input.albumId);

@@ -915,3 +915,11 @@
 - [x] Fix mobile menu to consistently show all navigation items across all pages - Moved mobile menu overlay and slide-in outside <nav> element
 - [ ] Test menu on homepage, album detail, library, explore, and other pages
 - [ ] Verify fix works on published website
+
+## Admin Music Generation & Platform Management (User Reported)
+- [x] Allow admins to generate/regenerate music for any user's albums (currently shows "NOT_FOUND" error) - Updated 4 permission checks in server/routers.ts to allow admin access
+- [x] Hide unavailable music platforms (udio, elevenlabs, mubert, stable_audio) from NewAlbum form - Replaced platform selection with Suno-only card
+- [x] Make Suno the default and only visible platform option - NewAlbum now shows only Suno AI with explanation
+- [ ] Add platform enable/disable controls to admin panel (deferred to future update)
+- [x] Fix "NOT_FOUND" error handling to show better error messages - Changed to 'Album not found' and 'Access denied' messages
+- [ ] Test admin can successfully generate music for other users' albums

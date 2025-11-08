@@ -415,32 +415,19 @@ export default function NewAlbum() {
                 <div className="space-y-6">
                   <div>
                     <Label className="text-lg font-semibold mb-4 block">
-                      Choose Your Platform *
+                      Music Generation Platform
                     </Label>
-                    <div className="grid gap-4">
-                      {[
-                        { value: "suno", name: "Suno AI", desc: "Popular AI music generator with lyrics support" },
-                        { value: "udio", name: "Udio", desc: "High-quality AI music with natural vocals" },
-                        { value: "elevenlabs", name: "ElevenLabs Music", desc: "Instrumental music generation" },
-                        { value: "mubert", name: "Mubert", desc: "AI-generated background music" },
-                        { value: "stable_audio", name: "Stable Audio", desc: "Precise control over audio generation" }
-                      ].map((p) => (
-                        <Card
-                          key={p.value}
-                          className={`cursor-pointer transition-all ${
-                            platform === p.value
-                              ? 'border-primary bg-primary/10'
-                              : 'border-border/50 hover:border-primary/50'
-                          }`}
-                          onClick={() => setPlatform(p.value)}
-                        >
-                          <CardHeader>
-                            <CardTitle className="text-lg">{p.name}</CardTitle>
-                            <CardDescription>{p.desc}</CardDescription>
-                          </CardHeader>
-                        </Card>
-                      ))}
-                    </div>
+                    <Card className="border-primary bg-primary/10">
+                      <CardHeader>
+                        <CardTitle className="text-lg">Suno AI</CardTitle>
+                        <CardDescription>
+                          Professional AI music generator with lyrics support. Currently the only available platform.
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                    <p className="text-sm text-muted-foreground mt-4">
+                      Additional platforms (Udio, ElevenLabs, Mubert, Stable Audio) will be enabled by admin when available.
+                    </p>
                   </div>
                 </div>
               )}

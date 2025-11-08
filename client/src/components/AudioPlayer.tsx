@@ -27,6 +27,8 @@ interface AudioPlayerProps {
   statusMessage?: string;
   onRatingChange?: () => void;
   onRetry?: () => void;
+  onTrackEnd?: () => void; // Callback when track finishes
+  totalTracks?: number; // Total number of tracks in album
 }
 
 type LoopMode = "none" | "one" | "all";
@@ -40,7 +42,9 @@ export function AudioPlayer({
   progress = 0,
   statusMessage,
   onRatingChange,
-  onRetry
+  onRetry,
+  onTrackEnd,
+  totalTracks
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -96,6 +100,10 @@ export function AudioPlayer({
       if (loopMode === "one") {
         audio.currentTime = 0;
         audio.play();
+      } else if (loopMode === "all" && onTrackEnd) {
+        // Auto-play next track when loop mode is "all"
+        setIsPlaying(false);
+        onTrackEnd();
       } else {
         setIsPlaying(false);
       }
@@ -442,7 +450,7 @@ export function AudioPlayer({
           </div>
         )}
 
-        <audio ref={audioRef} src={audioUrl} />
+        <audio ref={audioRef} src={audioUrl} data-track-id={trackId} />
       </CardContent>
     </Card>
   );

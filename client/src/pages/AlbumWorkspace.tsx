@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,8 @@ export default function AlbumWorkspace() {
   const [showAddTracksDialog, setShowAddTracksDialog] = useState(false);
   const [additionalTrackCount, setAdditionalTrackCount] = useState(5);
   const [addTracksJobId, setAddTracksJobId] = useState<string | null>(null);
+  const [currentPlayingTrackId, setCurrentPlayingTrackId] = useState<number | null>(null);
+  const audioRefs = useRef<Map<number, HTMLAudioElement>>(new Map());
 
   const copyToClipboard = async (text: string, type: 'prompt' | 'lyrics') => {
     try {
@@ -586,6 +588,35 @@ export default function AlbumWorkspace() {
                   }
                 }
                 
+                // Auto-play handler: play next track when current finishes
+                const handleTrackEnd = () => {
+                  const currentIndex = album.tracks.findIndex((t: any) => t.id === track.id);
+                  const nextTrack = album.tracks[currentIndex + 1];
+                  
+                  if (nextTrack) {
+                    // Find the next track's audio file
+                    const nextAudioFile = musicStatus.audioFiles.find(
+                      (a: any) => a.trackId === nextTrack.id && a.isActive
+                    );
+                    
+                    // Only auto-play if next track has audio available
+                    if (nextAudioFile?.fileUrl) {
+                      setCurrentPlayingTrackId(nextTrack.id);
+                      // Small delay to ensure UI updates
+                      setTimeout(() => {
+                        const nextAudioElement = document.querySelector(
+                          `audio[data-track-id="${nextTrack.id}"]`
+                        ) as HTMLAudioElement;
+                        if (nextAudioElement) {
+                          nextAudioElement.play().catch(err => {
+                            console.error("Auto-play failed:", err);
+                          });
+                        }
+                      }, 100);
+                    }
+                  }
+                };
+                
                 return (
                   <AudioPlayer
                     key={track.id}
@@ -597,6 +628,8 @@ export default function AlbumWorkspace() {
                     progress={job?.progress || 0}
                     statusMessage={job?.status === "failed" ? (job?.errorMessage || "Unknown error") : (job?.statusMessage || undefined)}
                     onRetry={() => retryGenerationMutation.mutate({ trackId: track.id })}
+                    onTrackEnd={handleTrackEnd}
+                    totalTracks={album.tracks.length}
                   />
                 );
               })}

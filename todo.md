@@ -1106,3 +1106,11 @@
 - [x] Add elegant link to https://soulapps.manus.space portfolio
 - [x] Add "Built by GP" credit in footer or navigation
 - [x] Test branding consistency across all pages
+
+## Critical Bug Fixes
+- [x] Add "Built by GP" credit to homepage navigation
+- [x] Fix playlist public/private toggle in creation dialog
+- [ ] Fix playlist visibility logic (showing created playlists)
+- [ ] Investigate stuck music generation (tracks stuck in "Pending" state)
+- [ ] Fix music generation status polling
+- [ ] Test all fixes across different scenarios

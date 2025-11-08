@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ListPlus, Plus, Check } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ListPlus, Plus, Check, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/_core/hooks/useAuth";
 
@@ -19,6 +20,7 @@ export function AddToPlaylist({ trackId, trackTitle, trigger }: AddToPlaylistPro
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createMode, setCreateMode] = useState(false);
   const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [newPlaylistVisibility, setNewPlaylistVisibility] = useState<"private" | "public">("private");
 
   const utils = trpc.useUtils();
   const { data: playlists, isLoading } = trpc.playlists.list.useQuery(undefined, {
@@ -68,7 +70,7 @@ export function AddToPlaylist({ trackId, trackTitle, trigger }: AddToPlaylistPro
 
     createPlaylistMutation.mutate({
       name: newPlaylistName,
-      visibility: "private",
+      visibility: newPlaylistVisibility,
     });
   };
 
@@ -109,6 +111,28 @@ export function AddToPlaylist({ trackId, trackTitle, trigger }: AddToPlaylistPro
                   }
                 }}
               />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="visibility">Visibility</Label>
+              <Select value={newPlaylistVisibility} onValueChange={(v: "private" | "public") => setNewPlaylistVisibility(v)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="private">
+                    <div className="flex items-center gap-2">
+                      <EyeOff className="w-4 h-4" />
+                      Private
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="public">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Public
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex gap-2">
               <Button

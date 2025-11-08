@@ -48,6 +48,7 @@ export function AudioPlayer({
   totalTracks
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isRetrying, setIsRetrying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
@@ -425,11 +426,17 @@ export function AudioPlayer({
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={onRetry}
+                    onClick={() => {
+                      setIsRetrying(true);
+                      onRetry();
+                      // Reset after 3 seconds to allow user to retry again if needed
+                      setTimeout(() => setIsRetrying(false), 3000);
+                    }}
+                    disabled={isRetrying}
                     className="gap-1"
                   >
-                    <RefreshCw className="w-3 h-3" />
-                    Retry
+                    <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} />
+                    {isRetrying ? 'Retrying...' : 'Retry'}
                   </Button>
                 )}
               </div>
@@ -449,12 +456,18 @@ export function AudioPlayer({
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={onRetry}
+                    onClick={() => {
+                      setIsRetrying(true);
+                      onRetry();
+                      // Reset after 3 seconds to allow user to retry again if needed
+                      setTimeout(() => setIsRetrying(false), 3000);
+                    }}
+                    disabled={isRetrying}
                     className="gap-1"
                     title="Retry generation"
                   >
-                    <RefreshCw className="w-3 h-3" />
-                    Retry
+                    <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} />
+                    {isRetrying ? 'Retrying...' : 'Retry'}
                   </Button>
                 )}
               </div>

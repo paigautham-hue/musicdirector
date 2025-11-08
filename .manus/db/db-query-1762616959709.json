@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, trackId, status, errorMessage, progress, statusMessage, platformJobId, DATE(createdAt) as created, DATE(startedAt) as started, DATE(completedAt) as completed FROM musicJobs WHERE status = 'failed' ORDER BY id DESC LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, status, errorMessage, progress, statusMessage, platformJobId, DATE(createdAt) as created, DATE(startedAt) as started, DATE(completedAt) as completed FROM musicJobs WHERE status = 'failed' ORDER BY id DESC LIMIT 5",
+  "rows": [
+    {
+      "id": "120020",
+      "trackId": "150016",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "progress": "0",
+      "statusMessage": "NULL",
+      "platformJobId": "92e4c2e61fbc669cb57100038d6c5b98",
+      "created": "2025-11-08",
+      "started": "NULL",
+      "completed": "NULL"
+    },
+    {
+      "id": "120006",
+      "trackId": "120167",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "progress": "0",
+      "statusMessage": "NULL",
+      "platformJobId": "b8d5f987ac9cc455e4e1e01968cec71e",
+      "created": "2025-11-08",
+      "started": "NULL",
+      "completed": "NULL"
+    },
+    {
+      "id": "120005",
+      "trackId": "120169",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "progress": "50",
+      "statusMessage": "Generating audio...",
+      "platformJobId": "d26c94581af0dfb76c99ba9a956d2508",
+      "created": "2025-11-08",
+      "started": "2025-11-08",
+      "completed": "NULL"
+    },
+    {
+      "id": "60145",
+      "trackId": "120174",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "progress": "0",
+      "statusMessage": "NULL",
+      "platformJobId": "NULL",
+      "created": "2025-11-07",
+      "started": "NULL",
+      "completed": "NULL"
+    },
+    {
+      "id": "60140",
+      "trackId": "120179",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "progress": "0",
+      "statusMessage": "NULL",
+      "platformJobId": "befbc4135e8e6f7b9681d8aed7db74fc",
+      "created": "2025-11-07",
+      "started": "NULL",
+      "completed": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tstatus\terrorMessage\tprogress\tstatusMessage\tplatformJobId\tcreated\tstarted\tcompleted\n120020\t150016\tfailed\tGeneration timed out after 20 minutes. Please retry.\t0\tNULL\t92e4c2e61fbc669cb57100038d6c5b98\t2025-11-08\tNULL\tNULL\n120006\t120167\tfailed\tGeneration timed out after 20 minutes. Please retry.\t0\tNULL\tb8d5f987ac9cc455e4e1e01968cec71e\t2025-11-08\tNULL\tNULL\n120005\t120169\tfailed\tGeneration timed out after 20 minutes. Please retry.\t50\tGenerating audio...\td26c94581af0dfb76c99ba9a956d2508\t2025-11-08\t2025-11-08\tNULL\n60145\t120174\tfailed\tGeneration timed out after 20 minutes. Please retry.\t0\tNULL\tNULL\t2025-11-07\tNULL\tNULL\n60140\t120179\tfailed\tGeneration timed out after 20 minutes. Please retry.\t0\tNULL\tbefbc4135e8e6f7b9681d8aed7db74fc\t2025-11-07\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1538
+}

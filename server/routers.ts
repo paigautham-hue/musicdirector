@@ -769,6 +769,8 @@ export const appRouter = router({
     retryGeneration: protectedProcedure
       .input(z.object({ trackId: z.number() }))
       .mutation(async ({ ctx, input }) => {
+        console.log(`[RETRY] User ${ctx.user.id} requesting retry for track ${input.trackId}`);
+        
         const dbInstance = await db.getDb();
         if (!dbInstance) {
           throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
@@ -777,12 +779,16 @@ export const appRouter = router({
         // Get track to verify ownership
         const [track] = await dbInstance.select().from(tracks).where(eq(tracks.id, input.trackId)).limit(1);
         if (!track) {
+          console.log(`[RETRY] Track ${input.trackId} not found`);
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Track not found' });
         }
+        
+        console.log(`[RETRY] Track ${input.trackId} found: "${track.title}" (Album ${track.albumId})`);
         
         // Get album to check ownership
         const album = await db.getAlbumById(track.albumId);
         if (!album || album.userId !== ctx.user.id) {
+          console.log(`[RETRY] Access denied for track ${input.trackId}`);
           throw new TRPCError({ code: 'FORBIDDEN' });
         }
         
@@ -794,7 +800,10 @@ export const appRouter = router({
           .limit(1);
         
         if (existingJob) {
-          // Reset existing job to pending
+          console.log(`[RETRY] Found existing failed job ${existingJob.id} for track ${input.trackId}`);
+          console.log(`[RETRY] Old job state: status=${existingJob.status}, platformJobId=${existingJob.platformJobId}, error="${existingJob.errorMessage}"`);
+          
+          // Reset existing job to pending - CRITICAL: Clear platformJobId to force new generation
           await dbInstance
             .update(musicJobs)
             .set({
@@ -802,16 +811,21 @@ export const appRouter = router({
               progress: 0,
               errorMessage: null,
               statusMessage: null,
+              platformJobId: null, // Clear old Suno task ID
               startedAt: null,
               completedAt: null,
             })
             .where(eq(musicJobs.id, existingJob.id));
+          
+          console.log(`[RETRY] Reset job ${existingJob.id} to pending status (cleared platformJobId)`);
         } else {
+          console.log(`[RETRY] No failed job found for track ${input.trackId}, creating new job`);
           // Create new job if none exists
           const { createTrackGenerationJob } = await import("./backgroundJobs");
           await createTrackGenerationJob(album.id, input.trackId, album.platform);
         }
         
+        console.log(`[RETRY] Retry initiated successfully for track ${input.trackId}`);
         return { success: true };
       }),
     

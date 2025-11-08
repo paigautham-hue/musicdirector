@@ -1207,3 +1207,27 @@
 - [ ] Test navigation flow: Home → Discover → Album → Back → Discover
 - [ ] Test navigation flow: Home → Prompts → Use Prompt → Back → Prompts
 - [ ] Verify no navigation dead ends exist
+
+## Retry Generation Failure Investigation
+- [ ] Check database state of failed jobs (status, taskId, errorMessage fields)
+- [ ] Verify retry endpoint properly resets job to pending state
+- [ ] Confirm retry endpoint clears old taskId and error fields
+- [ ] Check if background processor picks up retried jobs
+- [ ] Compare API request format between retry and fresh generation
+- [ ] Verify job queue doesn't have conflicts or duplicates
+- [ ] Check if transaction commits properly in retry endpoint
+- [ ] Test retry with actual failed job data
+- [ ] Ensure fix doesn't break new album generation
+
+## Music Generation Retry Investigation & Fix
+- [x] Investigate why retry shows "Retrying..." but tracks remain failed
+- [x] Analyze retry endpoint logic and database state handling
+- [x] Check background processor job pickup mechanism
+- [x] Identify root cause: platformJobId not being cleared on retry
+- [x] Add comprehensive logging to retry endpoint
+- [x] Add detailed logging to background job processor
+- [x] Clear platformJobId when resetting failed jobs to pending
+- [ ] Test retry functionality with failed tracks
+- [ ] Verify retries create new Suno API requests
+- [ ] Monitor server logs during retry attempts
+- [ ] Confirm retry timeout is 15 minutes (not 1 minute)

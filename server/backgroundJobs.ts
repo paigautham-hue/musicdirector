@@ -126,7 +126,9 @@ async function processJob(job: typeof musicJobs.$inferSelect) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
+  console.log(`[Background Jobs] ======================================`);
   console.log(`[Background Jobs] Processing job ${job.id} for album ${job.albumId}`);
+  console.log(`[Background Jobs] Job details: trackId=${job.trackId}, platform=${job.platform}, platformJobId=${job.platformJobId || 'null'}`);
   
   // Update status to processing
   await db
@@ -136,6 +138,8 @@ async function processJob(job: typeof musicJobs.$inferSelect) {
       startedAt: new Date(),
     })
     .where(eq(musicJobs.id, job.id));
+  
+  console.log(`[Background Jobs] Updated job ${job.id} status to 'processing'`);
   
   // Get album details
   const [album] = await db
@@ -214,7 +218,8 @@ async function generateMusicForTrack(
   const prompt = promptAsset.content;
   const lyrics = lyricsAsset?.content || "";
   
-  console.log(`[Background Jobs] Requesting music generation for track ${track.id}: "${track.title}"`);
+  console.log(`[Background Jobs] Requesting NEW music generation for track ${track.id}: "${track.title}"`);
+  console.log(`[Background Jobs] Request params: customMode=${!!lyrics}, instrumental=${!lyrics}, model=V5`);
   
   let result;
   try {
@@ -227,9 +232,14 @@ async function generateMusicForTrack(
       model: "V5",
       callBackUrl: "https://webhook.site/suno-callback", // Required by Suno API
     });
+    console.log(`[Background Jobs] Suno API request successful! Got taskId: ${result.data.taskId}`);
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
-    console.error(`[Background Jobs] Suno API generateMusic failed for track ${track.id}:`, errorMsg);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error(`[Background Jobs] Suno API generateMusic FAILED for track ${track.id}:`, {
+      error: errorMsg,
+      stack: errorStack
+    });
     throw new Error(`Failed to start music generation: ${errorMsg}`);
   }
   

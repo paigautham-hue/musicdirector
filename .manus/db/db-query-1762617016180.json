@@ -1,0 +1,82 @@
+{
+  "query": "SELECT id, trackId, status, platformJobId, errorMessage, progress FROM musicJobs WHERE status IN ('pending', 'processing') ORDER BY id DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, status, platformJobId, errorMessage, progress FROM musicJobs WHERE status IN ('pending', 'processing') ORDER BY id DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "120040",
+      "trackId": "150022",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "progress": "0"
+    },
+    {
+      "id": "120039",
+      "trackId": "150020",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "progress": "0"
+    },
+    {
+      "id": "120038",
+      "trackId": "150028",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "progress": "0"
+    },
+    {
+      "id": "120037",
+      "trackId": "150025",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "progress": "0"
+    },
+    {
+      "id": "120036",
+      "trackId": "150024",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "progress": "0"
+    },
+    {
+      "id": "120035",
+      "trackId": "150027",
+      "status": "processing",
+      "platformJobId": "e2696b0e971ff9b299a6e79545fa6b61",
+      "errorMessage": "NULL",
+      "progress": "50"
+    },
+    {
+      "id": "120034",
+      "trackId": "150023",
+      "status": "processing",
+      "platformJobId": "6d8c379b1da6a581f2513b45f37a924c",
+      "errorMessage": "NULL",
+      "progress": "50"
+    },
+    {
+      "id": "120028",
+      "trackId": "150034",
+      "status": "processing",
+      "platformJobId": "aef9010c78675700bd6f549182b5295a",
+      "errorMessage": "NULL",
+      "progress": "50"
+    },
+    {
+      "id": "120027",
+      "trackId": "150035",
+      "status": "processing",
+      "platformJobId": "0e72b04cfe48fdb91482cc5b95715123",
+      "errorMessage": "NULL",
+      "progress": "50"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tstatus\tplatformJobId\terrorMessage\tprogress\n120040\t150022\tpending\tNULL\tNULL\t0\n120039\t150020\tpending\tNULL\tNULL\t0\n120038\t150028\tpending\tNULL\tNULL\t0\n120037\t150025\tpending\tNULL\tNULL\t0\n120036\t150024\tpending\tNULL\tNULL\t0\n120035\t150027\tprocessing\te2696b0e971ff9b299a6e79545fa6b61\tNULL\t50\n120034\t150023\tprocessing\t6d8c379b1da6a581f2513b45f37a924c\tNULL\t50\n120028\t150034\tprocessing\taef9010c78675700bd6f549182b5295a\tNULL\t50\n120027\t150035\tprocessing\t0e72b04cfe48fdb91482cc5b95715123\tNULL\t50\n",
+  "stderr": "",
+  "execution_time_ms": 1596
+}

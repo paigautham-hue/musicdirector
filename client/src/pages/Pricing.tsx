@@ -6,6 +6,8 @@ import { trpc } from "@/lib/trpc";
 import { Check, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 
 // Credit packages (matches server/products.ts)
 const CREDIT_PACKAGES = [
@@ -91,33 +93,14 @@ export default function Pricing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🎵</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-              {APP_TITLE}
-            </span>
-          </div>
-          <nav className="flex items-center gap-6">
-            <Button variant="ghost" onClick={() => navigate("/")}>
-              Home
-            </Button>
-            {isAuthenticated && (
-              <Button variant="ghost" onClick={() => navigate("/library")}>
-                My Library
-              </Button>
-            )}
-            {!loading && !isAuthenticated && (
-              <Button onClick={() => window.location.href = getLoginUrl()}>
-                Log In
-              </Button>
-            )}
-          </nav>
-        </div>
-      </header>
-
+      <AppNav />
+      <PageHeader 
+        title="Pricing" 
+        description="Choose your credit package"
+        showBack
+        showHome
+      />
+      
       {/* Hero Section */}
       <section className="container py-20 text-center">
         <div className="mx-auto max-w-3xl space-y-6">

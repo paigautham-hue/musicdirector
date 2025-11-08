@@ -1,4 +1,6 @@
 import { Link } from "wouter";
+import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Music, Heart, Users, Globe, Sparkles, ArrowLeft } from "lucide-react";

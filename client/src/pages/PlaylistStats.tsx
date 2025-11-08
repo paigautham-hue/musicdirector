@@ -2,6 +2,8 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, ListMusic, Play, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
+import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function PlaylistStats() {

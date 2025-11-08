@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2, Settings, Users, BarChart3, AlertCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
+import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -30,24 +32,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <nav className="border-b border-border/50">
-        <div className="container mx-auto px-6 py-4">
-          <Link href="/">
-            <Button variant="ghost">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-          <div className="flex gap-3">
-            <Link href="/admin/users">
-              <Button className="bg-purple-500 hover:bg-purple-600">
-                <Users className="w-4 h-4 mr-2" />
+      <AppNav />
+      <PageHeader 
+        title="Admin Dashboard" 
+        description="System administration and management"
+        showBack
+        showHome
+      >
+        <div className="flex gap-3">
+          <Link href="/admin/users">
+            <Button className="bg-purple-500 hover:bg-purple-600">
+              <Users className="w-4 h-4 mr-2" />
                 Users
               </Button>
             </Link>
@@ -76,8 +71,9 @@ export default function AdminDashboard() {
               </Button>
             </Link>
           </div>
-        </div>
+      </PageHeader>
 
+      <div className="container mx-auto px-6 py-12">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />

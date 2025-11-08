@@ -9,6 +9,7 @@ import { Lightbulb, ArrowLeft, TrendingUp, Users, Music } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function CommunityPrompts() {
   const [, setLocation] = useLocation();
@@ -49,20 +50,12 @@ export default function CommunityPrompts() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
       <AppNav />
-      
-      {/* Header */}
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Community Prompts
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Discover and use prompts shared by the community
-            </p>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Community Prompts" 
+        description="Discover and use prompts shared by the community"
+        showBack
+        showHome
+      />
 
       {/* Stats Section */}
       <div className="container mx-auto px-4 py-8">

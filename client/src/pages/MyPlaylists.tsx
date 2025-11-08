@@ -12,6 +12,8 @@ import { Music, Plus, Trash2, Edit, Eye, EyeOff, Play, ListMusic } from "lucide-
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { APP_TITLE, getLoginUrl } from "@/const";
+import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function MyPlaylists() {
   const { user, isAuthenticated, loading } = useAuth();
@@ -139,19 +141,22 @@ export default function MyPlaylists() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
-      {/* Header */}
-      <div className="border-b border-border/50 bg-background/80 backdrop-blur-xl sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-                My Playlists
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Create and manage your music collections
-              </p>
-            </div>
-            <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
+      <AppNav />
+      <PageHeader 
+        title="My Playlists" 
+        description="Create and manage your music collections"
+        showBack
+        showHome
+      >
+        <Button onClick={() => setCreateDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Create Playlist
+        </Button>
+      </PageHeader>
+
+      {/* Create/Edit Dialog */}
+      <div className="container mx-auto px-4 py-6">
+        <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-gradient-to-r from-primary to-accent">
                   <Plus className="w-4 h-4 mr-2" />
@@ -218,8 +223,6 @@ export default function MyPlaylists() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-          </div>
-        </div>
       </div>
 
       {/* Content */}

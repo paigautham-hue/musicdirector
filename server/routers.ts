@@ -722,6 +722,34 @@ export const appRouter = router({
       return getUserStats();
     }),
     
+    // Get all users with detailed statistics
+    getAllUsers: adminProcedure.query(async () => {
+      return db.getAllUsersWithStats();
+    }),
+    
+    // Get user details by ID
+    getUserDetails: adminProcedure
+      .input(z.object({ userId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getUserDetailsById(input.userId);
+      }),
+    
+    // Update user role
+    updateUserRole: adminProcedure
+      .input(z.object({
+        userId: z.number(),
+        role: z.enum(["user", "admin"])
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.updateUserRole(input.userId, input.role);
+        await db.createAuditLog({
+          userId: ctx.user.id,
+          action: "user_role_updated",
+          payload: JSON.stringify({ targetUserId: input.userId, newRole: input.role })
+        });
+        return { success: true };
+      }),
+    
     // Get all feature flags
     featureFlags: adminProcedure.query(async () => {
       return db.getAllFeatureFlags();
@@ -786,11 +814,6 @@ export const appRouter = router({
       .query(async ({ input }) => {
         return db.getMusicJobs(input);
       }),
-    
-    // Get all users
-    getAllUsers: adminProcedure.query(async () => {
-      return db.getAllUsers();
-    }),
     
     // Update user quota
     updateUserQuota: adminProcedure

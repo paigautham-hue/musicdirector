@@ -923,3 +923,13 @@
 - [ ] Add platform enable/disable controls to admin panel (deferred to future update)
 - [x] Fix "NOT_FOUND" error handling to show better error messages - Changed to 'Album not found' and 'Access denied' messages
 - [ ] Test admin can successfully generate music for other users' albums
+
+## Admin User Management Enhancement (User Requested)
+- [x] Create backend queries to fetch user details with statistics (albums count, tracks count, ratings) - Added getAllUsersWithStats and getUserDetailsById to db.ts
+- [x] Build user list table with search and sort functionality - Created AdminUsers.tsx with searchable table
+- [x] Add user detail view showing albums, tracks, and activity - Added dialog with detailed user info
+- [x] Display user engagement metrics (join date, last login, active days) - Showing join date, last sign in, and activity stats
+- [x] Add quick action buttons (promote/demote admin, view albums, delete user) - Added View and Promote/Demote buttons
+- [x] Show user's album list with status (draft, generating, completed, failed) - Album list with play counts, visibility, and platform badges
+- [x] Display average ratings and total plays for user's content - Showing avgRating, totalPlays, totalViews in table
+- [ ] Test all user management features work correctly

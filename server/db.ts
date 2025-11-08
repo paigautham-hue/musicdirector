@@ -1757,3 +1757,82 @@ export async function getPlaylistStats(userId: number) {
     totalTracks: totalStats[0]?.totalTracks || 0,
   };
 }
+
+// ============================================================================
+// User Management Functions
+// ============================================================================
+
+export async function getAllUsersWithStats() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const allUsers = await db.select().from(users);
+  
+  const usersWithStats = await Promise.all(
+    allUsers.map(async (user) => {
+      const userAlbums = await db.select().from(albums).where(eq(albums.userId, user.id));
+      // Get tracks through albums since tracks don't have userId
+      const albumIds = userAlbums.map(a => a.id);
+      const userTracks = albumIds.length > 0 
+        ? await db.select().from(tracks).where(sql`${tracks.albumId} IN (${sql.join(albumIds.map(id => sql`${id}`), sql`, `)})`)
+        : [];
+      const userRatings = await db.select().from(ratings).where(eq(ratings.userId, user.id));
+      
+      const totalPlays = userAlbums.reduce((sum, album) => sum + album.playCount, 0);
+      const totalViews = userAlbums.reduce((sum, album) => sum + album.viewCount, 0);
+      const avgRating = userRatings.length > 0
+        ? userRatings.reduce((sum, r) => sum + r.rating, 0) / userRatings.length
+        : 0;
+      
+      return {
+        ...user,
+        albumCount: userAlbums.length,
+        trackCount: userTracks.length,
+        totalPlays,
+        totalViews,
+        avgRating: Math.round(avgRating * 10) / 10,
+        ratingCount: userRatings.length
+      };
+    })
+  );
+  
+  return usersWithStats;
+}
+
+export async function getUserDetailsById(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const user = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (user.length === 0) return null;
+
+  const userAlbums = await db.select().from(albums).where(eq(albums.userId, userId));
+  // Get tracks through albums since tracks don't have userId
+  const albumIds = userAlbums.map(a => a.id);
+  const userTracks = albumIds.length > 0
+    ? await db.select().from(tracks).where(sql`${tracks.albumId} IN (${sql.join(albumIds.map(id => sql`${id}`), sql`, `)})`)
+    : [];
+  const userRatings = await db.select().from(ratings).where(eq(ratings.userId, userId));
+  const userComments = await db.select().from(comments).where(eq(comments.userId, userId));
+  const userLikes = await db.select().from(likes).where(eq(likes.userId, userId));
+  const userFollowers = await db.select().from(follows).where(eq(follows.followingId, userId));
+  const userFollowing = await db.select().from(follows).where(eq(follows.followerId, userId));
+  
+  return {
+    user: user[0],
+    albums: userAlbums,
+    tracks: userTracks,
+    ratings: userRatings,
+    comments: userComments,
+    likes: userLikes,
+    followerCount: userFollowers.length,
+    followingCount: userFollowing.length
+  };
+}
+
+export async function updateUserRole(userId: number, role: "user" | "admin") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(users).set({ role }).where(eq(users.id, userId));
+}

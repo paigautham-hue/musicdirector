@@ -45,6 +45,12 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold">Admin Dashboard</h1>
           <div className="flex gap-3">
+            <Link href="/admin/users">
+              <Button className="bg-purple-500 hover:bg-purple-600">
+                <Users className="w-4 h-4 mr-2" />
+                Users
+              </Button>
+            </Link>
             <Link href="/admin/analytics">
               <Button className="bg-green-500 hover:bg-green-600">
                 <BarChart3 className="w-4 h-4 mr-2" />

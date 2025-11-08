@@ -10,6 +10,7 @@ import AlbumWorkspace from "./pages/AlbumWorkspace";
 import MyLibrary from "./pages/MyLibrary";
 import KnowledgeHub from "./pages/KnowledgeHub";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminUsers from "./pages/AdminUsers";
 import AdminSettings from "./pages/AdminSettings";
 import AdminUserQuotas from "./pages/AdminUserQuotas";
 import AdminAnalytics from "./pages/AdminAnalytics";
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/library" component={MyLibrary} />
       <Route path="/knowledge" component={KnowledgeHub} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/users" component={AdminUsers} />
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/quotas" component={AdminUserQuotas} />
       <Route path="/admin/analytics" component={AdminAnalytics} />

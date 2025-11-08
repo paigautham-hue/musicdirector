@@ -46,7 +46,7 @@ export default function AlbumWorkspace() {
     }
   };
   
-  const { data: album, isLoading, refetch } = trpc.albums.get.useQuery(
+  const { data: album, isLoading, error, refetch } = trpc.albums.get.useQuery(
     { id: parseInt(id!) },
     { enabled: !!id }
   );
@@ -238,8 +238,61 @@ export default function AlbumWorkspace() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background">
+        <AppNav />
+        <div className="container mx-auto px-6 py-8">
+          <div className="space-y-6">
+            {/* Album header skeleton */}
+            <div className="flex gap-6 animate-pulse">
+              <div className="w-64 h-64 bg-muted rounded-lg" />
+              <div className="flex-1 space-y-4">
+                <div className="h-8 bg-muted rounded w-3/4" />
+                <div className="h-4 bg-muted rounded w-1/2" />
+                <div className="h-4 bg-muted rounded w-2/3" />
+              </div>
+            </div>
+            {/* Tracks skeleton */}
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-20 bg-muted rounded-lg animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle errors with specific messages
+  if (error) {
+    const errorMessage = error.message || "An error occurred";
+    const isForbidden = errorMessage.includes("private") || errorMessage.includes("Access denied");
+    const isNotFound = errorMessage.includes("not found");
+    
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              {isForbidden ? "Access Denied" : isNotFound ? "Album Not Found" : "Error"}
+            </CardTitle>
+            <CardDescription>
+              {isForbidden 
+                ? "This album is private and you don't have permission to view it." 
+                : isNotFound
+                ? "The album you're looking for doesn't exist or has been deleted."
+                : errorMessage}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Link href="/library">
+              <Button className="w-full">Back to My Library</Button>
+            </Link>
+            <Link href="/explore">
+              <Button variant="outline" className="w-full">Explore Public Albums</Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     );
   }

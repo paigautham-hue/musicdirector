@@ -228,8 +228,13 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        // Allow access if: owner, admin, or album is public
+        const isOwner = album.userId === ctx.user.id;
+        const isAdmin = ctx.user.role === 'admin';
+        const isPublic = album.visibility === 'public';
+        
+        if (!isOwner && !isAdmin && !isPublic) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
         }
         
         const tracks = await db.getAlbumTracks(input.id);

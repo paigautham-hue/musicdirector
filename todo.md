@@ -1006,3 +1006,11 @@
 - [x] Auto-refresh progress every 3 seconds
 - [x] Handle completion and error states
 - [ ] Test progress tracking with Add More Tracks feature
+
+## Album Access Error Investigation
+- [x] Check if "Album Not Found" error is due to visibility/permissions issue
+- [x] Verify if error occurs for private albums accessed by non-owners
+- [x] Fixed: albums.get endpoint now allows public album access
+- [x] Add better error messages distinguishing between "not found", "access denied", and "loading"
+- [x] Add loading skeleton for album pages
+- [ ] Test album access with different user roles and album visibility settings

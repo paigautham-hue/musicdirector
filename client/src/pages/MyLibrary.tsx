@@ -12,6 +12,7 @@ import { APP_TITLE } from "@/const";
 
 export default function MyLibrary() {
   const { user } = useAuth();
+  const [makingPublic, setMakingPublic] = useState(false);
   const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ limit: 50 });
   const { data: musicStatus } = trpc.albums.getBulkMusicStatus.useQuery(
     { albumIds: albums?.map(a => a.id) || [] },
@@ -28,6 +29,44 @@ export default function MyLibrary() {
     }
   });
   
+  const updateVisibility = trpc.social.updateAlbumVisibility.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to update visibility');
+      setMakingPublic(false);
+    }
+  });
+  
+  const makeAllPublic = async () => {
+    if (!albums) return;
+    setMakingPublic(true);
+    
+    const privateAlbums = albums.filter(a => a.visibility === 'private');
+    
+    if (privateAlbums.length === 0) {
+      toast.info('All albums are already public!');
+      setMakingPublic(false);
+      return;
+    }
+    
+    try {
+      for (const album of privateAlbums) {
+        await updateVisibility.mutateAsync({
+          albumId: album.id,
+          visibility: 'public'
+        });
+      }
+      toast.success(`Made ${privateAlbums.length} album(s) public!`);
+      refetch();
+    } catch (error) {
+      toast.error('Failed to update some albums');
+    } finally {
+      setMakingPublic(false);
+    }
+  };
+  
 
 
   return (
@@ -35,7 +74,25 @@ export default function MyLibrary() {
       <AppNav />
 
       <div className="container mx-auto px-6 py-12">
-        <h1 className="text-4xl font-bold mb-8">My Albums</h1>
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-bold">My Albums</h1>
+          {albums && albums.length > 0 && (
+            <Button 
+              onClick={makeAllPublic}
+              disabled={makingPublic || !albums.some(a => a.visibility === 'private')}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {makingPublic ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Making Public...
+                </>
+              ) : (
+                'Make All Albums Public'
+              )}
+            </Button>
+          )}
+        </div>
         
         {isLoading ? (
           <div className="flex items-center justify-center py-12">

@@ -1,0 +1,143 @@
+{
+  "query": "SELECT id, title, userId, visibility, createdAt FROM albums ORDER BY createdAt DESC LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, title, userId, visibility, createdAt FROM albums ORDER BY createdAt DESC LIMIT 20;",
+  "rows": [
+    {
+      "id": "120021",
+      "title": "Still Out Tonight",
+      "userId": "722451",
+      "visibility": "private",
+      "createdAt": "2025-11-07 14:03:19"
+    },
+    {
+      "id": "120020",
+      "title": "The Concrete Garden Rhythms",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 12:32:22"
+    },
+    {
+      "id": "120019",
+      "title": "The Weight Of A Name",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 12:31:52"
+    },
+    {
+      "id": "120018",
+      "title": "The Latency Report",
+      "userId": "1",
+      "visibility": "private",
+      "createdAt": "2025-11-07 11:56:27"
+    },
+    {
+      "id": "120017",
+      "title": "Logfile: Deep State Traces",
+      "userId": "1",
+      "visibility": "private",
+      "createdAt": "2025-11-07 10:29:21"
+    },
+    {
+      "id": "120016",
+      "title": "The Living Verb",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 10:15:22"
+    },
+    {
+      "id": "120015",
+      "title": "Future Self's Inheritance",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 09:41:29"
+    },
+    {
+      "id": "120014",
+      "title": "The River's Constant Return",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 09:40:59"
+    },
+    {
+      "id": "120013",
+      "title": "Ashes and Honey",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 09:40:35"
+    },
+    {
+      "id": "120012",
+      "title": "The Weight of Grace",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 06:46:48"
+    },
+    {
+      "id": "120011",
+      "title": "The Borrowed Beat",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 06:46:17"
+    },
+    {
+      "id": "120010",
+      "title": "The Unsent Correspondence",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 06:45:36"
+    },
+    {
+      "id": "120009",
+      "title": "The Recess Revolution",
+      "userId": "60001",
+      "visibility": "private",
+      "createdAt": "2025-11-07 06:23:20"
+    },
+    {
+      "id": "120008",
+      "title": "Algorithm's Mirror",
+      "userId": "60001",
+      "visibility": "private",
+      "createdAt": "2025-11-07 06:15:26"
+    },
+    {
+      "id": "120007",
+      "title": "The Harder To Break",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 06:04:30"
+    },
+    {
+      "id": "120006",
+      "title": "The Portable Luxury",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 06:03:19"
+    },
+    {
+      "id": "120005",
+      "title": "The Certainty Collapse",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-07 05:48:21"
+    },
+    {
+      "id": "120004",
+      "title": "The Resonance Field",
+      "userId": "1",
+      "visibility": "private",
+      "createdAt": "2025-11-07 05:31:15"
+    },
+    {
+      "id": "90001",
+      "title": "The Architects of Division",
+      "userId": "60001",
+      "visibility": "public",
+      "createdAt": "2025-11-06 13:20:23"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tuserId\tvisibility\tcreatedAt\n120021\tStill Out Tonight\t722451\tprivate\t2025-11-07 14:03:19\n120020\tThe Concrete Garden Rhythms\t60001\tpublic\t2025-11-07 12:32:22\n120019\tThe Weight Of A Name\t60001\tpublic\t2025-11-07 12:31:52\n120018\tThe Latency Report\t1\tprivate\t2025-11-07 11:56:27\n120017\tLogfile: Deep State Traces\t1\tprivate\t2025-11-07 10:29:21\n120016\tThe Living Verb\t60001\tpublic\t2025-11-07 10:15:22\n120015\tFuture Self's Inheritance\t60001\tpublic\t2025-11-07 09:41:29\n120014\tThe River's Constant Return\t60001\tpublic\t2025-11-07 09:40:59\n120013\tAshes and Honey\t60001\tpublic\t2025-11-07 09:40:35\n120012\tThe Weight of Grace\t60001\tpublic\t2025-11-07 06:46:48\n120011\tThe Borrowed Beat\t60001\tpublic\t2025-11-07 06:46:17\n120010\tThe Unsent Correspondence\t60001\tpublic\t2025-11-07 06:45:36\n120009\tThe Recess Revolution\t60001\tprivate\t2025-11-07 06:23:20\n120008\tAlgorithm's Mirror\t60001\tprivate\t2025-11-07 06:15:26\n120007\tThe Harder To Break\t60001\tpublic\t2025-11-07 06:04:30\n120006\tThe Portable Luxury\t60001\tpublic\t2025-11-07 06:03:19\n120005\tThe Certainty Collapse\t60001\tpublic\t2025-11-07 05:48:21\n120004\tThe Resonance Field\t1\tprivate\t2025-11-07 05:31:15\n90001\tThe Architects of Division\t60001\tpublic\t2025-11-06 13:20:23\n",
+  "stderr": "",
+  "execution_time_ms": 1642
+}

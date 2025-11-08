@@ -316,21 +316,49 @@ export default function AlbumWorkspace() {
                 </Badge>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="visibility"
-                checked={album.visibility === "public"}
-                onCheckedChange={(checked) => {
-                  updateVisibility.mutate({
-                    albumId: album.id,
-                    visibility: checked ? "public" : "private"
-                  });
-                }}
-              />
-              <Label htmlFor="visibility" className="cursor-pointer">
-                {album.visibility === "public" ? "Public" : "Private"} - {album.visibility === "public" ? "Visible in Explore" : "Only visible to you"}
-              </Label>
-            </div>
+            {/* Visibility Toggle - Prominent Card */}
+            <Card className={`border-2 ${album.visibility === "public" ? "border-green-500 bg-green-50 dark:bg-green-950" : "border-yellow-500 bg-yellow-50 dark:bg-yellow-950"}`}>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      {album.visibility === "public" ? (
+                        <>
+                          <Eye className="w-5 h-5 text-green-600" />
+                          <h3 className="font-semibold text-green-900 dark:text-green-100">Album is Public</h3>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-5 h-5 text-yellow-600" />
+                          <h3 className="font-semibold text-yellow-900 dark:text-yellow-100">Album is Private</h3>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {album.visibility === "public" 
+                        ? "✓ Visible to everyone in the Explore gallery. Other users can discover and listen to your album." 
+                        : "⚠️ Only you can see this album. Toggle to Public to share it with the community."}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      id="visibility"
+                      checked={album.visibility === "public"}
+                      onCheckedChange={(checked) => {
+                        updateVisibility.mutate({
+                          albumId: album.id,
+                          visibility: checked ? "public" : "private"
+                        });
+                      }}
+                      className="data-[state=checked]:bg-green-500"
+                    />
+                    <Label htmlFor="visibility" className="cursor-pointer font-medium">
+                      {album.visibility === "public" ? "Public" : "Make Public"}
+                    </Label>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
             <div>
               <label className="text-sm font-medium mb-2 block">Optimize for Platform</label>
               <Select value={album.platform} onValueChange={handleOptimize}>

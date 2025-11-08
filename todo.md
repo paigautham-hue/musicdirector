@@ -892,3 +892,12 @@
 - [x] Check if there's a CSS conflict preventing scrolling - Fixed by removing Tailwind classes and using inline styles
 - [x] Test if menu items container has proper height constraints - Added explicit flex:1, overflowY:'auto'
 - [x] Fix mobile menu to make it scrollable and show all items including footer - Complete rewrite with inline styles ensures scrolling works
+
+## Public Album Visibility Bug (User Reported)
+- [x] Investigate why other users cannot see public albums in Explore/Gallery page - Root cause: Albums default to "private", users don't know to toggle to "public"
+- [x] Check database to verify albums are actually set to "public" visibility - Most/all albums are "private"
+- [x] Review Explore page query logic and visibility filtering - Query is correct, filters for visibility="public"
+- [x] Check if there's a mismatch between visibility field values (public/community/private) - No mismatch, only "public" and "private" exist
+- [x] Fix the visibility issue so public albums appear for all users - Made visibility toggle more prominent with highlighted card in Album Workspace
+- [x] Add bulk "Make All Albums Public" button in My Library page for easy batch update
+- [ ] Test with multiple user accounts to verify fix works

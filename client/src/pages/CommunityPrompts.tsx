@@ -5,19 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Lightbulb, ArrowLeft, TrendingUp, Users, Music } from "lucide-react";
+import { Lightbulb, ArrowLeft, TrendingUp, Users, Music, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppNav } from "@/components/AppNav";
 import { PageHeader } from "@/components/PageHeader";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function CommunityPrompts() {
   const [, setLocation] = useLocation();
   const { data: prompts, isLoading } = trpc.social.getPublicPrompts.useQuery({ limit: 50 });
+  const [selectedPrompt, setSelectedPrompt] = useState<any>(null);
+  const [showDuplicateDialog, setShowDuplicateDialog] = useState(false);
+  const [usageCheckData, setUsageCheckData] = useState<any>(null);
 
   const incrementUsage = trpc.social.incrementPromptUsage.useMutation();
 
-  const handleUsePrompt = (prompt: any) => {
+  const proceedWithPrompt = (prompt: any) => {
     // Increment usage count
     incrementUsage.mutate({ promptId: prompt.id });
 
@@ -45,6 +58,29 @@ export default function CommunityPrompts() {
 
     setLocation(`/new?${params.toString()}`);
     toast.success("Prompt loaded! Customize and create your album.");
+  };
+
+  const checkUsageMutation = trpc.albums.checkPromptUsage.useQuery(
+    { promptTemplateId: selectedPrompt?.id || 0 },
+    { enabled: false } // Disable auto-fetch
+  );
+
+  const handleUsePrompt = async (prompt: any) => {
+    setSelectedPrompt(prompt);
+    
+    // Check if user has already used this prompt
+    try {
+      const response = await checkUsageMutation.refetch();
+      if (response.data?.hasUsed) {
+        setUsageCheckData(response.data);
+        setShowDuplicateDialog(true);
+      } else {
+        proceedWithPrompt(prompt);
+      }
+    } catch (error) {
+      // If check fails, proceed anyway
+      proceedWithPrompt(prompt);
+    }
   };
 
   return (
@@ -211,6 +247,53 @@ export default function CommunityPrompts() {
           </Card>
         )}
       </div>
+
+      {/* Duplicate Prompt Warning Dialog */}
+      <AlertDialog open={showDuplicateDialog} onOpenChange={setShowDuplicateDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              You've Used This Prompt Before
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>
+                You've already created {usageCheckData?.existingAlbums?.length || 0} album{usageCheckData?.existingAlbums?.length > 1 ? 's' : ''} with this prompt:
+              </p>
+              {usageCheckData?.existingAlbums?.slice(0, 3).map((album: any) => (
+                <div key={album.id} className="flex items-center gap-2 p-2 bg-muted rounded">
+                  {album.coverUrl && (
+                    <img src={album.coverUrl} alt={album.title} className="w-10 h-10 rounded object-cover" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm truncate">{album.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(album.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <Link href={`/album/${album.id}`}>
+                    <Button variant="ghost" size="sm">View</Button>
+                  </Link>
+                </div>
+              ))}
+              <p className="text-sm">
+                Do you want to create another album with the same prompt?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (selectedPrompt) {
+                proceedWithPrompt(selectedPrompt);
+              }
+              setShowDuplicateDialog(false);
+            }}>
+              Create Anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

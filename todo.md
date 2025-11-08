@@ -1180,3 +1180,12 @@
 - [x] Add loading state while batch retry is in progress
 - [x] Show toast notification when batch retry completes
 - [ ] Test batch retry with multiple failed tracks
+
+## Duplicate Prompt Detection
+- [x] Create backend endpoint to check if user has already used a prompt
+- [x] Return existing album details if prompt was used before
+- [ ] Add "Already Used" badge to prompts in prompt selection UI (dialog shows existing albums instead)
+- [x] Show confirmation dialog when user tries to use a duplicate prompt
+- [x] Include link to existing album in confirmation dialog
+- [x] Allow user to proceed anyway if they want to create another album with same prompt
+- [ ] Test with both custom prompts and community prompts

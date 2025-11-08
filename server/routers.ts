@@ -5,7 +5,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
-import { tracks, musicJobs } from "../drizzle/schema";
+import { tracks, musicJobs, albums, promptTemplates } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { generateAlbum, improveTrack } from "./albumGenerator";
 import { generateJobId, setProgress, getProgress, clearProgress } from "./progressTracker";
@@ -492,6 +492,48 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return db.getPublicAlbums(input);
+      }),
+    
+    // Check if user has already used a prompt template
+    checkPromptUsage: protectedProcedure
+      .input(z.object({
+        promptTemplateId: z.number()
+      }))
+      .query(async ({ ctx, input }) => {
+        const dbInstance = await db.getDb();
+        if (!dbInstance) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database unavailable' });
+        }
+        
+        // Find albums created by this user using this prompt template
+        // Note: We check by theme since albums don't store promptTemplateId directly
+        const template = await dbInstance.select().from(promptTemplates).where(eq(promptTemplates.id, input.promptTemplateId)).limit(1);
+        if (!template || template.length === 0) {
+          return { hasUsed: false, existingAlbums: [] };
+        }
+        
+        const existingAlbums = await dbInstance
+          .select({
+            id: albums.id,
+            title: albums.title,
+            description: albums.description,
+            coverUrl: albums.coverUrl,
+            createdAt: albums.createdAt
+          })
+          .from(albums)
+          .where(
+            and(
+              eq(albums.userId, ctx.user.id),
+              eq(albums.theme, template[0].theme)
+            )
+          )
+          .orderBy(albums.createdAt)
+          .limit(5); // Show up to 5 existing albums
+        
+        return {
+          hasUsed: existingAlbums.length > 0,
+          existingAlbums
+        };
       }),
     
     // Add more tracks to existing album

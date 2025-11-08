@@ -1025,3 +1025,10 @@
 - [x] Ensure consistent access control across all endpoints
 - [x] Fixed 5 endpoints: albums.get, download.track, getMusicStatus, export, albumBooklet
 - [ ] Test with real user account (non-admin, non-owner)
+
+## Regenerate All Button Fix
+- [x] Investigate why "Regenerate All" button doesn't work on Audio Health Dashboard
+- [x] Found: Button is correctly disabled when there are 0 broken tracks
+- [x] Added tooltip explaining why button is disabled
+- [x] Added "Check for Broken Audio" refresh button
+- [x] Improved UX for disabled state

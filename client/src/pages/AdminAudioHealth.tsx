@@ -18,6 +18,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function AdminAudioHealth() {
   const [regeneratingTracks, setRegeneratingTracks] = useState<Set<number>>(new Set());
@@ -150,42 +155,75 @@ export default function AdminAudioHealth() {
                 Bulk Actions
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button 
-                    className="w-full"
-                    disabled={totalBrokenTracks === 0 || regeneratingAll}
-                  >
-                    {regeneratingAll ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Regenerating...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Regenerate All
-                      </>
-                    )}
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Regenerate All Broken Audio?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will start regeneration jobs for all {totalBrokenTracks} tracks with broken audio.
-                      This process may take several minutes to complete.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleRegenerateAll}>
-                      Confirm Regeneration
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+            <CardContent className="space-y-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          className="w-full"
+                          disabled={totalBrokenTracks === 0 || regeneratingAll}
+                        >
+                          {regeneratingAll ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Regenerating...
+                            </>
+                          ) : (
+                            <>
+                              <RefreshCw className="w-4 h-4 mr-2" />
+                              Regenerate All
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Regenerate All Broken Audio?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This will start regeneration jobs for all {totalBrokenTracks} tracks with broken audio.
+                            This process may take several minutes to complete.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={handleRegenerateAll}>
+                            Confirm Regeneration
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </TooltipTrigger>
+                {totalBrokenTracks === 0 && (
+                  <TooltipContent>
+                    <p>No broken tracks to regenerate</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => {
+                  refetchTracks();
+                  refetchAlbums();
+                  toast.info("Refreshing audio health data...");
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Check for Broken Audio
+                  </>
+                )}
+              </Button>
             </CardContent>
           </Card>
         </div>

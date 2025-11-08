@@ -1164,3 +1164,11 @@
 - [x] Check AlbumWorkspace component for issues causing runtime errors
 - [x] Test album page loads correctly after fix
 - [ ] Verify fix works on published production site
+
+## Music Generation Retry Failures
+- [x] Investigate why retry button fails to regenerate timed-out tracks
+- [x] Check if background job processor is running and processing retries
+- [x] Review Suno API timeout settings (currently 15 minutes)
+- [x] Check if retry creates new job or reuses failed job
+- [x] Add better error logging to identify root cause
+- [ ] Test retry functionality after fix and verify actual Suno API errors are displayed

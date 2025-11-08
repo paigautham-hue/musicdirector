@@ -1,0 +1,110 @@
+{
+  "query": "SELECT id, trackId, status, errorMessage, platformJobId, createdAt, startedAt, completedAt \nFROM musicJobs \nWHERE status = 'failed' \nORDER BY createdAt DESC \nLIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, status, errorMessage, platformJobId, createdAt, startedAt, completedAt \nFROM musicJobs \nWHERE status = 'failed' \nORDER BY createdAt DESC \nLIMIT 10",
+  "rows": [
+    {
+      "id": "120006",
+      "trackId": "120167",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "b8d5f987ac9cc455e4e1e01968cec71e",
+      "createdAt": "2025-11-08 11:43:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "120005",
+      "trackId": "120169",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "d26c94581af0dfb76c99ba9a956d2508",
+      "createdAt": "2025-11-08 11:42:57",
+      "startedAt": "2025-11-08 11:43:19",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60139",
+      "trackId": "120177",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "ae6ad2097b107c39cb46756301322868",
+      "createdAt": "2025-11-07 12:51:29",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60140",
+      "trackId": "120179",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "befbc4135e8e6f7b9681d8aed7db74fc",
+      "createdAt": "2025-11-07 12:51:29",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60145",
+      "trackId": "120174",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "NULL",
+      "createdAt": "2025-11-07 12:51:29",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60128",
+      "trackId": "120133",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "916effb112a5ccc1cb3edb2f5187d431",
+      "createdAt": "2025-11-07 12:51:12",
+      "startedAt": "2025-11-07 12:58:12",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60111",
+      "trackId": "120094",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "c5e567e6cf9233fc8a4f22272af07201",
+      "createdAt": "2025-11-07 10:07:36",
+      "startedAt": "2025-11-07 10:26:38",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60102",
+      "trackId": "120106",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "bb44cf02483134ee04a7fad44a767859",
+      "createdAt": "2025-11-07 10:07:21",
+      "startedAt": "2025-11-07 10:15:15",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60104",
+      "trackId": "120109",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "588b7a368ecc613e97940ddacea711ad",
+      "createdAt": "2025-11-07 10:07:21",
+      "startedAt": "2025-11-07 10:17:47",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "60045",
+      "trackId": "120060",
+      "status": "failed",
+      "errorMessage": "Generation timed out after 20 minutes. Please retry.",
+      "platformJobId": "a80f786e5d23c902c523763a0fe99f99",
+      "createdAt": "2025-11-07 06:40:13",
+      "startedAt": "2025-11-07 06:47:46",
+      "completedAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tstatus\terrorMessage\tplatformJobId\tcreatedAt\tstartedAt\tcompletedAt\n120006\t120167\tfailed\tGeneration timed out after 20 minutes. Please retry.\tb8d5f987ac9cc455e4e1e01968cec71e\t2025-11-08 11:43:02\tNULL\tNULL\n120005\t120169\tfailed\tGeneration timed out after 20 minutes. Please retry.\td26c94581af0dfb76c99ba9a956d2508\t2025-11-08 11:42:57\t2025-11-08 11:43:19\tNULL\n60139\t120177\tfailed\tGeneration timed out after 20 minutes. Please retry.\tae6ad2097b107c39cb46756301322868\t2025-11-07 12:51:29\tNULL\tNULL\n60140\t120179\tfailed\tGeneration timed out after 20 minutes. Please retry.\tbefbc4135e8e6f7b9681d8aed7db74fc\t2025-11-07 12:51:29\tNULL\tNULL\n60145\t120174\tfailed\tGeneration timed out after 20 minutes. Please retry.\tNULL\t2025-11-07 12:51:29\tNULL\tNULL\n60128\t120133\tfailed\tGeneration timed out after 20 minutes. Please retry.\t916effb112a5ccc1cb3edb2f5187d431\t2025-11-07 12:51:12\t2025-11-07 12:58:12\tNULL\n60111\t120094\tfailed\tGeneration timed out after 20 minutes. Please retry.\tc5e567e6cf9233fc8a4f22272af07201\t2025-11-07 10:07:36\t2025-11-07 10:26:38\tNULL\n60102\t120106\tfailed\tGeneration timed out after 20 minutes. Please retry.\tbb44cf02483134ee04a7fad44a767859\t2025-11-07 10:07:21\t2025-11-07 10:15:15\tNULL\n60104\t120109\tfailed\tGeneration timed out after 20 minutes. Please retry.\t588b7a368ecc613e97940ddacea711ad\t2025-11-07 10:07:21\t2025-11-07 10:17:47\tNULL\n60045\t120060\tfailed\tGeneration timed out after 20 minutes. Please retry.\ta80f786e5d23c902c523763a0fe99f99\t2025-11-07 06:40:13\t2025-11-07 06:47:46\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1546
+}

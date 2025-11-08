@@ -214,15 +214,24 @@ async function generateMusicForTrack(
   const prompt = promptAsset.content;
   const lyrics = lyricsAsset?.content || "";
   
-  const result = await sunoClient.generateMusic({
-    prompt: lyrics || prompt, // Use lyrics as prompt if available
-    style: prompt, // Style description
-    title: track.title,
-    customMode: !!lyrics, // Custom mode if we have lyrics
-    instrumental: !lyrics, // Instrumental if no lyrics
-    model: "V5",
-    callBackUrl: "https://webhook.site/suno-callback", // Required by Suno API
-  });
+  console.log(`[Background Jobs] Requesting music generation for track ${track.id}: "${track.title}"`);
+  
+  let result;
+  try {
+    result = await sunoClient.generateMusic({
+      prompt: lyrics || prompt, // Use lyrics as prompt if available
+      style: prompt, // Style description
+      title: track.title,
+      customMode: !!lyrics, // Custom mode if we have lyrics
+      instrumental: !lyrics, // Instrumental if no lyrics
+      model: "V5",
+      callBackUrl: "https://webhook.site/suno-callback", // Required by Suno API
+    });
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[Background Jobs] Suno API generateMusic failed for track ${track.id}:`, errorMsg);
+    throw new Error(`Failed to start music generation: ${errorMsg}`);
+  }
   
   // Update job with platform job ID
   await db
@@ -316,7 +325,14 @@ async function pollMusicGenerationStatus(
           throw new Error('Audio URL not found in response');
         }
       } else if (statusValue === "CREATE_TASK_FAILED" || statusValue === "GENERATE_AUDIO_FAILED" || statusValue === "CALLBACK_EXCEPTION" || statusValue === "SENSITIVE_WORD_ERROR") {
-        throw new Error(`Music generation failed: ${status.data.errorMessage || statusValue}`);
+        const errorDetail = status.data.errorMessage || statusValue;
+        console.error(`[Background Jobs] Suno API error for track ${trackId}:`, {
+          status: statusValue,
+          errorCode: status.data.errorCode,
+          errorMessage: status.data.errorMessage,
+          fullResponse: JSON.stringify(status.data)
+        });
+        throw new Error(`Music generation failed: ${errorDetail}`);
       }
       
       // Still processing, continue polling
@@ -340,7 +356,9 @@ async function pollMusicGenerationStatus(
     }
   }
   
-  throw new Error("Music generation timed out");
+  // Timeout after 15 minutes of polling
+  console.error(`[Background Jobs] Music generation timed out for track ${trackId} after ${maxAttempts * 5} seconds`);
+  throw new Error(`Generation timed out after ${Math.floor(maxAttempts * 5 / 60)} minutes. The Suno API is taking longer than expected. Please try again later or contact support if this persists.`);
 }
 
 /**

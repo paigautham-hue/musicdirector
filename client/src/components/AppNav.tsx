@@ -42,11 +42,11 @@ export function AppNav() {
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-yellow-500 opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500 rounded-full"></div>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto] group-hover:animate-pulse">
-                    AI ALBUM
+                  <span className="text-base sm:text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto] group-hover:animate-pulse">
+                    The Collective
                   </span>
-                  <span className="text-xs sm:text-sm font-bold tracking-widest bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-                    CREATOR
+                  <span className="text-base sm:text-lg md:text-xl font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                    Soul
                   </span>
                 </div>
               </a>
@@ -121,6 +121,19 @@ export function AppNav() {
                       </a>
                     </Link>
                   )}
+                  {/* Portfolio Link */}
+                  <a 
+                    href="https://soulapps.manus.space" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-foreground/60 hover:text-foreground transition-colors flex items-center gap-1"
+                    title="View more Soul Apps"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Soul Apps
+                  </a>
                   <Link href="/new">
                     <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90">
                       Create
@@ -200,6 +213,15 @@ export function AppNav() {
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
+          </div>
+          {/* Built by GP Credit */}
+          <div className="text-center py-1 border-t border-border/30">
+            <span className="text-xs text-muted-foreground/60">
+              Built by{' '}
+              <span className="font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                GP
+              </span>
+            </span>
           </div>
         </div>
       </nav>

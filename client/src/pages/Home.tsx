@@ -70,11 +70,11 @@ export default function Home() {
                 
                 {/* Premium Typography with Animated Gradients */}
                 <div className="flex flex-col leading-tight">
-                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-flow group-hover:scale-105 transition-transform duration-300">
-                    AI ALBUM
+                  <span className="text-base sm:text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-flow group-hover:scale-105 transition-transform duration-300">
+                    The Collective
                   </span>
-                  <span className="text-xs sm:text-sm font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient-flow-reverse">
-                    CREATOR
+                  <span className="text-base sm:text-lg md:text-xl font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient-flow-reverse">
+                    Soul
                   </span>
                 </div>
               </a>

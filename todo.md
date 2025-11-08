@@ -1098,3 +1098,11 @@
 - [x] Show visual feedback (button state change)
 - [x] Verify retry functionality triggers music regeneration
 - [x] Test retry button feedback across different scenarios
+
+## Branding & Navigation Updates
+- [x] Change branding from "AI ALBUM CREATOR" to "The Collective Soul"
+- [x] Update AppNav component with new branding
+- [x] Update Home page with new branding
+- [x] Add elegant link to https://soulapps.manus.space portfolio
+- [x] Add "Built by GP" credit in footer or navigation
+- [x] Test branding consistency across all pages

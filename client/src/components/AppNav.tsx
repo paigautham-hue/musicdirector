@@ -190,22 +190,23 @@ export function AppNav() {
             </Button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-
-        {/* Mobile Menu Slide-in */}
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
         <div
-          className={`fixed top-0 right-0 h-full w-[280px] border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
-            mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
-          }`}
-          style={{ zIndex: 9999, backgroundColor: '#0a0a0f' }}
-        >
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Menu Slide-in */}
+      <div
+        className={`fixed top-0 right-0 h-full w-[280px] border-l border-border shadow-2xl transform transition-transform duration-300 ease-in-out lg:hidden ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        style={{ zIndex: 9999, backgroundColor: '#0a0a0f' }}
+      >
           {/* Mobile Menu Container with proper overflow */}
           <div style={{ 
             display: 'flex', 
@@ -534,7 +535,6 @@ export function AppNav() {
             )}
           </div>
         </div>
-      </nav>
     </>
   );
 }

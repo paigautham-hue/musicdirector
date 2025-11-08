@@ -908,3 +908,10 @@
 - [x] Update all existing albums in database to "public" visibility - All albums now public
 - [x] Change NewAlbum form default visibility to "public" - Updated NewAlbum.tsx line 40
 - [x] Verify all changes work correctly - All new albums will default to public
+
+## Mobile Menu Not Showing Navigation on Internal Pages (User Reported)
+- [x] Investigate why mobile menu shows navigation items on homepage but not on internal pages (e.g., album detail page) - Root cause: mobile menu was inside <nav> with backdrop-blur which creates stacking context
+- [x] Check if there are multiple navigation components or conditional rendering issues - Only one AppNav component used across all pages
+- [x] Fix mobile menu to consistently show all navigation items across all pages - Moved mobile menu overlay and slide-in outside <nav> element
+- [ ] Test menu on homepage, album detail, library, explore, and other pages
+- [ ] Verify fix works on published website

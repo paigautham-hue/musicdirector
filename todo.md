@@ -1032,3 +1032,11 @@
 - [x] Added tooltip explaining why button is disabled
 - [x] Added "Check for Broken Audio" refresh button
 - [x] Improved UX for disabled state
+
+## Scheduled Audio Health Checks
+- [x] Create scheduled job to run audio health checks every 24 hours (3 AM daily)
+- [x] Implement audio URL validation logic (uses existing getBrokenAudioTracks)
+- [x] Add admin notification when broken audio is detected
+- [x] Added manual "Run Health Check" button in Audio Health Dashboard
+- [x] Health check results notify admin with album list and broken track counts
+- [ ] Test scheduled job execution

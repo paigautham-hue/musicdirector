@@ -77,6 +77,17 @@ export default function AdminAudioHealth() {
     }
   });
 
+  const runHealthCheckMutation = trpc.admin.runAudioHealthCheck.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.message);
+      refetchTracks();
+      refetchAlbums();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to run health check");
+    }
+  });
+
   const handleRegenerateTrack = (trackId: number) => {
     setRegeneratingTracks(prev => new Set(prev).add(trackId));
     regenerateTrackMutation.mutate({ trackId });
@@ -206,21 +217,19 @@ export default function AdminAudioHealth() {
                 variant="outline"
                 className="w-full"
                 onClick={() => {
-                  refetchTracks();
-                  refetchAlbums();
-                  toast.info("Refreshing audio health data...");
+                  runHealthCheckMutation.mutate();
                 }}
-                disabled={isLoading}
+                disabled={runHealthCheckMutation.isPending}
               >
-                {isLoading ? (
+                {runHealthCheckMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Checking...
+                    Running Check...
                   </>
                 ) : (
                   <>
                     <RefreshCw className="w-4 h-4 mr-2" />
-                    Check for Broken Audio
+                    Run Health Check
                   </>
                 )}
               </Button>

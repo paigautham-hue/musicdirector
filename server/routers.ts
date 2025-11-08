@@ -14,6 +14,7 @@ import { checkContentSafety } from "./contentSafety";
 import { exportAlbumBundle } from "./exportAlbum";
 import { socialRouter } from "./socialRouter";
 import { playlistRouter } from "./routers/playlistRouter";
+import { notifyOwner } from "./_core/notification";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
   if (ctx.user.role !== 'admin') {
@@ -1074,6 +1075,33 @@ export const appRouter = router({
         }
         
         return { success: true, message: `Started regeneration for ${regeneratedCount} tracks` };
+      }),
+
+    // Run audio health check and notify admin if broken audio found
+    runAudioHealthCheck: adminProcedure
+      .mutation(async () => {        const brokenTracks = await db.getBrokenAudioTracks();
+        const brokenAlbums = await db.getAlbumsWithBrokenAudio();
+        
+        if (brokenTracks.length > 0) {
+          // Notify admin about broken audio
+          const albumList = brokenAlbums
+            .map(a => `- ${a.albumTitle} (${a.brokenTrackCount} broken tracks)`)
+            .join('\n');
+          
+          await notifyOwner({
+            title: `⚠️ Broken Audio Detected`,
+            content: `Audio health check found ${brokenTracks.length} broken tracks across ${brokenAlbums.length} albums:\n\n${albumList}\n\nVisit the Audio Health Dashboard to regenerate broken audio.`
+          });
+        }
+        
+        return {
+          success: true,
+          brokenTracksCount: brokenTracks.length,
+          brokenAlbumsCount: brokenAlbums.length,
+          message: brokenTracks.length > 0 
+            ? `Found ${brokenTracks.length} broken tracks. Admin notified.`
+            : 'All audio files are healthy'
+        };
       })
   }),
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ export default function AlbumWorkspace() {
   const [copiedLyrics, setCopiedLyrics] = useState(false);
   const [showAddTracksDialog, setShowAddTracksDialog] = useState(false);
   const [additionalTrackCount, setAdditionalTrackCount] = useState(5);
+  const [addTracksJobId, setAddTracksJobId] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string, type: 'prompt' | 'lyrics') => {
     try {
@@ -153,15 +154,36 @@ export default function AlbumWorkspace() {
   });
 
   const addTracksMutation = trpc.albums.addTracks.useMutation({
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Generating additional tracks! This will take a few minutes.");
       setShowAddTracksDialog(false);
+      setAddTracksJobId(data.jobId);
       refetch();
     },
     onError: (error) => {
       toast.error(error.message || "Failed to add tracks");
     }
   });
+
+  // Poll for add tracks progress
+  const { data: addTracksProgress } = trpc.albums.getProgress.useQuery(
+    { jobId: addTracksJobId! },
+    {
+      enabled: !!addTracksJobId,
+      refetchInterval: 3000 // Poll every 3 seconds
+    }
+  );
+
+  // Handle progress completion
+  useEffect(() => {
+    if (addTracksProgress?.stage === "Complete" && addTracksJobId) {
+      const timer = setTimeout(() => {
+        setAddTracksJobId(null);
+        refetch();
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [addTracksProgress?.stage, addTracksJobId, refetch]);
 
   const handleExport = async () => {
     try {
@@ -309,6 +331,38 @@ export default function AlbumWorkspace() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
+        {/* Add Tracks Progress */}
+        {addTracksProgress && addTracksProgress.stage !== "Complete" && (
+          <Card className="mb-6 border-accent/30 bg-accent/5">
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Loader2 className="w-5 h-5 animate-spin text-accent" />
+                    <div>
+                      <p className="font-semibold text-lg">Adding Tracks to Album</p>
+                      <p className="text-sm text-muted-foreground">
+                        {addTracksProgress.message || "Generating additional tracks..."}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-bold text-accent">{addTracksProgress.progress}%</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">{addTracksProgress.stage}</p>
+                  </div>
+                </div>
+                {/* Progress Bar */}
+                <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-accent to-primary transition-all duration-500 ease-out"
+                    style={{ width: `${addTracksProgress.progress}%` }}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Queue Visibility */}
         {musicStatus?.hasActiveJobs && musicStatus?.queueInfo && (
           <Card className="mb-6 border-primary/20 bg-primary/5">

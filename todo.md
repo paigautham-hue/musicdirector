@@ -997,3 +997,12 @@
 - [ ] Add user feature to complete album (generate remaining tracks)
 - [ ] Add "Complete Album" button in album workspace for albums with missing tracks
 - [ ] Test album completion flow
+
+## Track Generation Progress Tracking
+- [x] Add progress indicator UI in AlbumWorkspace
+- [x] Show progress bar with percentage complete
+- [x] Display current stage (e.g., "Generating track 2 of 5...")
+- [x] Show status messages from background job
+- [x] Auto-refresh progress every 3 seconds
+- [x] Handle completion and error states
+- [ ] Test progress tracking with Add More Tracks feature

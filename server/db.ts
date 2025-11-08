@@ -710,6 +710,62 @@ export async function getMusicJobsByAlbumId(albumId: number): Promise<MusicJob[]
   return db.select().from(musicJobs).where(eq(musicJobs.albumId, albumId));
 }
 
+// Admin queue management functions
+export async function getAllMusicJobs(status?: string, limit: number = 100) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const baseQuery = db.select({
+    job: musicJobs,
+    album: albums,
+    track: tracks,
+    user: users
+  })
+  .from(musicJobs)
+  .leftJoin(albums, eq(musicJobs.albumId, albums.id))
+  .leftJoin(tracks, eq(musicJobs.trackId, tracks.id))
+  .leftJoin(users, eq(albums.userId, users.id));
+  
+  if (status) {
+    return baseQuery
+      .where(eq(musicJobs.status, status as any))
+      .orderBy(desc(musicJobs.createdAt))
+      .limit(limit);
+  }
+  
+  return baseQuery
+    .orderBy(desc(musicJobs.createdAt))
+    .limit(limit);
+}
+
+export async function updateMusicJobStatus(jobId: number, status: string, errorMessage?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const updates: any = { status };
+  if (errorMessage) {
+    updates.errorMessage = errorMessage;
+  }
+  if (status === "failed") {
+    updates.completedAt = new Date();
+  }
+  
+  await db.update(musicJobs).set(updates).where(eq(musicJobs.id, jobId));
+}
+
+export async function restartMusicJob(jobId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(musicJobs).set({
+    status: "pending",
+    progress: 0,
+    errorMessage: null,
+    retryCount: sql`${musicJobs.retryCount} + 1`,
+    lastRetryAt: new Date()
+  }).where(eq(musicJobs.id, jobId));
+}
+
 export async function getAudioFilesByAlbumId(albumId: number): Promise<AudioFile[]> {
   const db = await getDb();
   if (!db) return [];

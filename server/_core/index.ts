@@ -85,6 +85,13 @@ async function startServer() {
     }).catch(err => {
       console.error("Failed to start background job processor:", err);
     });
+    
+    // Start timeout handler for stuck music generation jobs
+    import("../timeoutHandler").then(({ startTimeoutHandler }) => {
+      startTimeoutHandler();
+    }).catch(err => {
+      console.error("Failed to start timeout handler:", err);
+    });
   });
 }
 

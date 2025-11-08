@@ -1102,7 +1102,36 @@ export const appRouter = router({
             ? `Found ${brokenTracks.length} broken tracks. Admin notified.`
             : 'All audio files are healthy'
         };
-      })
+      }),
+
+    // Get all music generation jobs for admin queue dashboard
+    getAllMusicJobs: adminProcedure
+      .input(z.object({
+        status: z.enum(["pending", "processing", "completed", "failed"]).optional(),
+        limit: z.number().optional().default(100)
+      }))
+      .query(async ({ input }) => {
+        return db.getAllMusicJobs(input.status, input.limit);
+      }),
+    
+    // Manually mark a job as failed
+    markJobFailed: adminProcedure
+      .input(z.object({
+        jobId: z.number(),
+        errorMessage: z.string().optional()
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateMusicJobStatus(input.jobId, "failed", input.errorMessage);
+        return { success: true };
+      }),
+    
+    // Restart a stuck job
+    restartJob: adminProcedure
+      .input(z.object({ jobId: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.restartMusicJob(input.jobId);
+        return { success: true };
+      }),
   }),
 
   knowledge: router({
@@ -1298,7 +1327,8 @@ export const appRouter = router({
         await db.deletePromptTemplate(input.id);
         return { success: true };
       }),
-  })
+  }),
+
 });
 
 export type AppRouter = typeof appRouter;

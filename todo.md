@@ -1123,3 +1123,25 @@
 - [x] Add creator name display to playlist cards
 - [x] Add creator name display to playlist detail page
 - [x] Test playlist visibility and creator display
+
+## Generation Queue Dashboard & Timeout Handling
+- [ ] Create backend procedure to fetch all music generation jobs
+- [ ] Add procedure to manually mark jobs as failed
+- [ ] Add procedure to restart stuck jobs
+- [ ] Build admin queue dashboard page
+- [ ] Display job status, user, album, track info
+- [ ] Add manual controls (mark failed, restart)
+- [ ] Implement 20-minute timeout check logic
+- [ ] Auto-mark timed-out jobs as failed
+- [ ] Send notification to users when jobs timeout
+- [ ] Test queue dashboard and timeout handling
+
+## Generation Queue Dashboard & Timeout Handling
+- [x] Create backend procedures for queue management
+- [x] Build admin queue dashboard UI
+- [x] Add ability to manually mark jobs as failed
+- [x] Add ability to restart stuck jobs
+- [x] Implement automatic timeout handling (20 minutes)
+- [x] Send notifications when tracks are marked as failed
+- [x] Add admin queue route to navigation
+- [x] Test queue dashboard and timeout handling

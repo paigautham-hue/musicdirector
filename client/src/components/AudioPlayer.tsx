@@ -147,9 +147,12 @@ export function AudioPlayer({
   };
 
   const handleDownload = () => {
-    if (!audioUrl) return;
+    if (!trackId) return;
+    
+    // Use server endpoint with proper Content-Disposition headers for mobile compatibility
+    const downloadUrl = `/api/download/track/${trackId}`;
     const a = document.createElement("a");
-    a.href = audioUrl;
+    a.href = downloadUrl;
     a.download = `${trackTitle}.mp3`;
     a.click();
     toast.success("Download started!");

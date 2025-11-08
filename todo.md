@@ -1231,3 +1231,9 @@
 - [ ] Verify retries create new Suno API requests
 - [ ] Monitor server logs during retry attempts
 - [ ] Confirm retry timeout is 15 minutes (not 1 minute)
+
+## Mobile Download Fix
+- [x] Fix download button to properly download MP3 files on mobile (currently opens in browser player)
+- [x] Add server-side download endpoint with Content-Disposition header
+- [x] Update frontend download button to use new endpoint
+- [ ] Test download on iOS Safari and Android Chrome

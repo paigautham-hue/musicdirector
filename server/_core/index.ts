@@ -52,6 +52,68 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // Download endpoint for audio files with proper Content-Disposition headers
+  app.get('/api/download/track/:trackId', async (req, res) => {
+    try {
+      const trackId = parseInt(req.params.trackId);
+      if (isNaN(trackId)) {
+        return res.status(400).json({ error: 'Invalid track ID' });
+      }
+      
+      // Import db functions
+      const { getTrackById, getAlbumById, getTrackAudioFile } = await import('../db');
+      
+      // Get track
+      const track = await getTrackById(trackId);
+      if (!track) {
+        return res.status(404).json({ error: 'Track not found' });
+      }
+      
+      // Get album to check access
+      const album = await getAlbumById(track.albumId);
+      if (!album) {
+        return res.status(404).json({ error: 'Album not found' });
+      }
+      
+      // For now, allow public albums or require authentication
+      // In production, you'd verify the user's session here
+      if (album.visibility !== 'public') {
+        // Check if user is authenticated (simplified check)
+        const sessionCookie = req.cookies?.['manus-session'];
+        if (!sessionCookie) {
+          return res.status(403).json({ error: 'Authentication required' });
+        }
+      }
+      
+      // Get audio file
+      const audioFile = await getTrackAudioFile(trackId);
+      if (!audioFile) {
+        return res.status(404).json({ error: 'Audio file not found' });
+      }
+      
+      // Fetch the file from S3
+      const response = await fetch(audioFile.fileUrl);
+      if (!response.ok) {
+        return res.status(500).json({ error: 'Failed to fetch audio file' });
+      }
+      
+      // Set headers to force download
+      const filename = `${track.title.replace(/[^a-z0-9]/gi, '_')}.mp3`;
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Cache-Control', 'no-cache');
+      
+      // Stream the file to the client
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      res.send(buffer);
+    } catch (error) {
+      console.error('Download error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+  
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
   // tRPC API

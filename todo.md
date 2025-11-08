@@ -1252,3 +1252,15 @@
 - [x] Show generated albums list after completion
 - [x] Add filter to show only prompts with 0 uses
 - [x] Add Bulk Generation link to Admin Dashboard
+
+## Audio Player UX Improvements
+- [x] Add elegant notification when users try to play multiple songs at once
+- [x] Show toast message: "Please pause the current track before playing another"
+- [x] Prevent multiple audio players from playing simultaneously
+- [x] Create AudioPlayerContext to manage global playback state
+
+## Default User Quota Update
+- [x] Increase default music generation quota from 1 to 30 tracks
+- [x] Allow new users to generate 3 full albums (10 tracks each)
+- [x] Update user creation logic to set musicGenerationQuota to 30
+- [x] Push database schema changes

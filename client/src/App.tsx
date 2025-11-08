@@ -4,6 +4,7 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AudioPlayerProvider } from "./contexts/AudioPlayerContext";
 import Home from "./pages/Home";
 import NewAlbum from "./pages/NewAlbum";
 import AlbumWorkspace from "./pages/AlbumWorkspace";
@@ -75,10 +76,12 @@ function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="dark">
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+        <AudioPlayerProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </AudioPlayerProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

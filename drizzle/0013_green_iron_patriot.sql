@@ -1,0 +1,1 @@
+ALTER TABLE `users` MODIFY COLUMN `musicGenerationQuota` int NOT NULL DEFAULT 30;

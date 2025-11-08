@@ -10,6 +10,7 @@ import {
 import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { trpc } from "@/lib/trpc";
+import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
 import {
   DropdownMenu,
@@ -48,6 +49,7 @@ export function AudioPlayer({
   totalTracks
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const { requestPlay, stopPlaying } = useAudioPlayer();
   const [isRetrying, setIsRetrying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -136,14 +138,25 @@ export function AudioPlayer({
     if (!audio) return;
 
     if (isPlaying) {
+      // Pause current track
       audio.pause();
+      stopPlaying(trackId);
+      setIsPlaying(false);
     } else {
+      // Request permission to play
+      const canPlay = requestPlay(trackId, trackTitle);
+      if (!canPlay) {
+        return; // Another track is playing, notification already shown
+      }
+      
+      // Play this track
       audio.play().catch(err => {
         console.error("Playback error:", err);
         toast.error("Failed to play audio");
+        stopPlaying(trackId);
       });
+      setIsPlaying(true);
     }
-    setIsPlaying(!isPlaying);
   };
 
   const handleDownload = () => {

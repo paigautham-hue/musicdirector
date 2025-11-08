@@ -13,7 +13,7 @@ export const users = mysqlTable("users", {
   avatarUrl: text("avatarUrl"),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   plan: varchar("plan", { length: 64 }).default("free").notNull(),
-  musicGenerationQuota: int("musicGenerationQuota").default(1).notNull(), // How many albums with music they can generate
+  musicGenerationQuota: int("musicGenerationQuota").default(30).notNull(), // How many tracks with music they can generate (3 albums x 10 tracks)
   musicGenerationsUsed: int("musicGenerationsUsed").default(0).notNull(), // How many they've used
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

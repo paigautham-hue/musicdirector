@@ -50,10 +50,9 @@ export default function AlbumWorkspace() {
     { albumId: parseInt(id!) },
     { 
       enabled: !!id,
-      refetchInterval: (data) => {
-        // Auto-refresh every 5 seconds if there are pending/processing jobs
-        const hasPendingJobs = data?.jobs?.some(j => j.status === "pending" || j.status === "processing");
-        return hasPendingJobs ? 5000 : false;
+      refetchInterval: (query) => {
+        // Auto-refresh every 5 seconds if there are active jobs
+        return query.state.data?.hasActiveJobs ? 5000 : false;
       }
     }
   );
@@ -284,6 +283,55 @@ export default function AlbumWorkspace() {
       </div>
 
       <div className="container mx-auto px-6 py-8">
+        {/* Queue Visibility */}
+        {musicStatus?.hasActiveJobs && musicStatus?.queueInfo && (
+          <Card className="mb-6 border-primary/20 bg-primary/5">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                    <div>
+                      <p className="font-semibold">Music Generation in Progress</p>
+                      <p className="text-sm text-muted-foreground">
+                        Position #{musicStatus.queueInfo.position} of {musicStatus.queueInfo.totalInQueue} in queue
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium">Estimated Wait Time</p>
+                  <p className="text-2xl font-bold text-primary">
+                    {musicStatus.queueInfo.estimatedWaitMinutes < 1 
+                      ? "< 1 min" 
+                      : `${musicStatus.queueInfo.estimatedWaitMinutes} min`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    ETA: {new Date(musicStatus.queueInfo.estimatedCompletionTime).toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 grid grid-cols-4 gap-4 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-yellow-500">{musicStatus.pendingCount}</p>
+                  <p className="text-xs text-muted-foreground">Pending</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-blue-500">{musicStatus.processingCount}</p>
+                  <p className="text-xs text-muted-foreground">Processing</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-green-500">{musicStatus.completedCount}</p>
+                  <p className="text-xs text-muted-foreground">Completed</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-red-500">{musicStatus.failedCount}</p>
+                  <p className="text-xs text-muted-foreground">Failed</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         {/* Album Header */}
         <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-8">
           <div>
@@ -401,7 +449,7 @@ export default function AlbumWorkspace() {
                   if (firstPendingJob && firstPendingJob.id === job.id) {
                     displayStatus = "processing";
                   } else {
-                    displayStatus = "queued";
+                    displayStatus = "pending";
                   }
                 }
                 

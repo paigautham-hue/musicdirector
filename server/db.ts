@@ -1,4 +1,4 @@
-import { eq, desc, and, or, like, sql, inArray, avg, count } from "drizzle-orm";
+import { eq, desc, and, or, like, sql, inArray, avg, count, gte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
@@ -1898,4 +1898,148 @@ export async function getAlbumsWithBrokenAudio() {
   }
 
   return Array.from(albumMap.values());
+}
+
+// Retry Limit & Cooldown Functions
+const MAX_RETRIES_PER_HOUR = 3;
+const COOLDOWN_HOURS = 1;
+
+export async function checkRetryLimit(albumId: number): Promise<{ allowed: boolean; message?: string; cooldownEndsAt?: Date }> {
+  const db = await getDb();
+  if (!db) return { allowed: true };
+
+  // Get recent jobs for this album in the last hour
+  const oneHourAgo = new Date(Date.now() - COOLDOWN_HOURS * 60 * 60 * 1000);
+  
+  const recentJobs = await db
+    .select()
+    .from(musicJobs)
+    .where(
+      and(
+        eq(musicJobs.albumId, albumId),
+        gte(musicJobs.createdAt, oneHourAgo)
+      )
+    )
+    .orderBy(desc(musicJobs.createdAt));
+
+  if (recentJobs.length >= MAX_RETRIES_PER_HOUR) {
+    const oldestJob = recentJobs[recentJobs.length - 1];
+    const cooldownEndsAt = new Date(oldestJob.createdAt.getTime() + COOLDOWN_HOURS * 60 * 60 * 1000);
+    const minutesLeft = Math.ceil((cooldownEndsAt.getTime() - Date.now()) / (60 * 1000));
+    
+    return {
+      allowed: false,
+      message: `Retry limit reached. You can try again in ${minutesLeft} minutes.`,
+      cooldownEndsAt
+    };
+  }
+
+  return { allowed: true };
+}
+
+export async function incrementRetryCount(jobId: number) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(musicJobs)
+    .set({
+      retryCount: sql`${musicJobs.retryCount} + 1`,
+      lastRetryAt: new Date()
+    })
+    .where(eq(musicJobs.id, jobId));
+}
+
+// Queue Position & ETA Functions
+const AVERAGE_GENERATION_TIME_MINUTES = 5; // Average time per track
+
+export async function getQueuePosition(albumId: number): Promise<{
+  position: number;
+  totalInQueue: number;
+  estimatedWaitMinutes: number;
+  estimatedCompletionTime: Date;
+}> {
+  const db = await getDb();
+  if (!db) {
+    return { position: 0, totalInQueue: 0, estimatedWaitMinutes: 0, estimatedCompletionTime: new Date() };
+  }
+
+  // Get all pending/processing jobs ordered by creation time
+  const allJobs = await db
+    .select()
+    .from(musicJobs)
+    .where(
+      or(
+        eq(musicJobs.status, 'pending'),
+        eq(musicJobs.status, 'processing')
+      )
+    )
+    .orderBy(musicJobs.createdAt);
+
+  // Find jobs for this album
+  const albumJobs = allJobs.filter(job => job.albumId === albumId);
+  if (albumJobs.length === 0) {
+    return { position: 0, totalInQueue: 0, estimatedWaitMinutes: 0, estimatedCompletionTime: new Date() };
+  }
+
+  // Get the earliest job for this album
+  const earliestAlbumJob = albumJobs[0];
+  const position = allJobs.findIndex(job => job.id === earliestAlbumJob.id) + 1;
+
+  // Calculate estimated wait time
+  const jobsAhead = position - 1;
+  const estimatedWaitMinutes = jobsAhead * AVERAGE_GENERATION_TIME_MINUTES;
+  const estimatedCompletionTime = new Date(Date.now() + estimatedWaitMinutes * 60 * 1000);
+
+  return {
+    position,
+    totalInQueue: allJobs.length,
+    estimatedWaitMinutes,
+    estimatedCompletionTime
+  };
+}
+
+export async function getAlbumGenerationStatus(albumId: number): Promise<{
+  hasActiveJobs: boolean;
+  pendingCount: number;
+  processingCount: number;
+  completedCount: number;
+  failedCount: number;
+  queueInfo?: {
+    position: number;
+    totalInQueue: number;
+    estimatedWaitMinutes: number;
+    estimatedCompletionTime: Date;
+  };
+}> {
+  const db = await getDb();
+  if (!db) {
+    return { hasActiveJobs: false, pendingCount: 0, processingCount: 0, completedCount: 0, failedCount: 0 };
+  }
+
+  const jobs = await db
+    .select()
+    .from(musicJobs)
+    .where(eq(musicJobs.albumId, albumId))
+    .orderBy(desc(musicJobs.createdAt));
+
+  const pendingCount = jobs.filter(j => j.status === 'pending').length;
+  const processingCount = jobs.filter(j => j.status === 'processing').length;
+  const completedCount = jobs.filter(j => j.status === 'completed').length;
+  const failedCount = jobs.filter(j => j.status === 'failed').length;
+  const hasActiveJobs = pendingCount > 0 || processingCount > 0;
+
+  let queueInfo;
+  if (hasActiveJobs) {
+    queueInfo = await getQueuePosition(albumId);
+  }
+
+  return {
+    hasActiveJobs,
+    pendingCount,
+    processingCount,
+    completedCount,
+    failedCount,
+    queueInfo
+  };
 }

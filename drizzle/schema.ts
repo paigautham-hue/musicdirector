@@ -231,6 +231,7 @@ export const musicJobs = mysqlTable("musicJobs", {
   platformJobId: varchar("platformJobId", { length: 255 }), // External API job ID
   errorMessage: text("errorMessage"),
   retryCount: int("retryCount").default(0),
+  lastRetryAt: timestamp("lastRetryAt"), // Last retry timestamp for cooldown
   startedAt: timestamp("startedAt"),
   completedAt: timestamp("completedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

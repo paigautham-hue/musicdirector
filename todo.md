@@ -954,3 +954,15 @@
 - [x] Add system-wide bulk regeneration button with confirmation - Added Regenerate All button with confirmation dialog
 - [ ] Test regeneration functionality works correctly
 - [x] Add progress indicators for regeneration jobs - Loading states with spinners for all regeneration actions
+
+## Generation Queue Visibility & Retry Limits (User Requested)
+- [x] Add retry tracking fields to musicJobs table (retryCount, lastRetryAt) - Added lastRetryAt timestamp field
+- [x] Implement retry limit validation (max 3 retries per hour per album) - Added checkRetryLimit function in db.ts
+- [x] Add backend endpoint to get queue position and estimated completion time - Enhanced getMusicStatus to include queue info
+- [x] Calculate queue position based on pending/processing jobs - getQueuePosition calculates position in queue
+- [x] Estimate completion time based on average generation time - 5 min average per track, calculates ETA
+- [x] Display queue position and ETA on AlbumWorkspace page - Added prominent queue visibility card
+- [x] Show clear error messages when retry limit is exceeded - TOO_MANY_REQUESTS error with cooldown message
+- [x] Add cooldown timer display showing when next retry is available - Error message shows minutes until next retry
+- [ ] Test retry limits work correctly across multiple albums
+- [ ] Test queue position updates in real-time (auto-refreshes every 5 seconds)

@@ -387,6 +387,15 @@ export const appRouter = router({
           throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
         }
         
+        // Check retry limit
+        const retryCheck = await db.checkRetryLimit(input.albumId);
+        if (!retryCheck.allowed) {
+          throw new TRPCError({ 
+            code: 'TOO_MANY_REQUESTS', 
+            message: retryCheck.message || 'Retry limit exceeded'
+          });
+        }
+        
         const albumTracks = await db.getTracksByAlbumId(input.albumId);
         if (albumTracks.length === 0) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'No tracks found in album' });
@@ -412,7 +421,7 @@ export const appRouter = router({
         return { success: true, jobCount: albumTracks.length };
       }),
     
-    // Get music generation status for album
+    // Get music generation status for album with queue info
     getMusicStatus: protectedProcedure
       .input(z.object({ albumId: z.number() }))
       .query(async ({ ctx, input }) => {
@@ -428,8 +437,13 @@ export const appRouter = router({
         
         const jobs = await db.getMusicJobsByAlbumId(input.albumId);
         const audioFiles = await db.getAudioFilesByAlbumId(input.albumId);
+        const generationStatus = await db.getAlbumGenerationStatus(input.albumId);
         
-        return { jobs, audioFiles };
+        return { 
+          jobs, 
+          audioFiles,
+          ...generationStatus
+        };
       }),
     
     // Get music status for multiple albums (for library view)

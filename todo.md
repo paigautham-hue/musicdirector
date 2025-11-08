@@ -1145,3 +1145,9 @@
 - [x] Send notifications when tracks are marked as failed
 - [x] Add admin queue route to navigation
 - [x] Test queue dashboard and timeout handling
+
+## Navigation & Routing Fixes
+- [x] Add "My Playlists" and "Discover Playlists" to homepage mobile menu
+- [x] Fix 404 error when viewing playlists (broken route)
+- [x] Add Soul Apps link to homepage navigation
+- [x] Test all navigation links work correctly

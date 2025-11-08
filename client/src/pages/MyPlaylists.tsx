@@ -283,7 +283,7 @@ export default function MyPlaylists() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2">
-                    <Link href={`/playlist/${playlist.id}`}>
+                    <Link href={`/playlists/${playlist.id}`}>
                       <Button variant="default" size="sm" className="flex-1">
                         <Play className="w-4 h-4 mr-2" />
                         View

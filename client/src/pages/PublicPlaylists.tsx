@@ -150,7 +150,7 @@ export default function PublicPlaylists() {
                         </div>
                       </div>
                     </div>
-                    <Link href={`/playlist/${playlist.id}`}>
+                    <Link href={`/playlists/${playlist.id}`}>
                       <Button className="w-full group-hover:bg-primary/90 transition-colors">
                         <Play className="w-4 h-4 mr-2" />
                         Play Playlist

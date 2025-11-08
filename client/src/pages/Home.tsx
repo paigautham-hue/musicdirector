@@ -88,6 +88,7 @@ export default function Home() {
                   <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
                   <Link href="/community-prompts"><a style={{ color: '#fff', fontSize: '14px' }}>Prompts</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <a href="https://soulapps.manus.space" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '14px' }}>Soul Apps ↗</a>
                   {user?.role === 'admin' && (
                     <Link href="/admin"><a style={{ color: '#fff', fontSize: '14px' }}>Admin</a></Link>
                   )}
@@ -105,6 +106,7 @@ export default function Home() {
                 <>
                   <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <a href="https://soulapps.manus.space" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '14px' }}>Soul Apps ↗</a>
                   <Button size="sm" asChild style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
                     <a href={getLoginUrl()}>Get Started</a>
                   </Button>
@@ -206,6 +208,22 @@ export default function Home() {
                   My Prompts
                 </a>
               </Link>
+              <Link href="/my-playlists">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Playlists
+                </a>
+              </Link>
+              <Link href="/playlists">
+                <a
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Discover Playlists
+                </a>
+              </Link>
               <Link href="/knowledge">
                 <a
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
@@ -222,6 +240,15 @@ export default function Home() {
                   Impact Stories
                 </a>
               </Link>
+              <a
+                href="https://soulapps.manus.space"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Soul Apps ↗
+              </a>
               <Link href="/pricing">
                 <a
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}

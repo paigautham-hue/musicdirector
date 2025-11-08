@@ -37,7 +37,7 @@ export default function NewAlbum() {
   const [influences, setInfluences] = useState<string[]>([]);
   const [platform, setPlatform] = useState<string>("suno");
   const [trackCount, setTrackCount] = useState(10);
-  const [visibility, setVisibility] = useState<"public" | "private">("private");
+  const [visibility, setVisibility] = useState<"public" | "private">("public");
   
   // Parse URL parameters to pre-fill form from saved prompts
   useEffect(() => {

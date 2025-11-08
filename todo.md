@@ -901,3 +901,10 @@
 - [x] Fix the visibility issue so public albums appear for all users - Made visibility toggle more prominent with highlighted card in Album Workspace
 - [x] Add bulk "Make All Albums Public" button in My Library page for easy batch update
 - [ ] Test with multiple user accounts to verify fix works
+
+## Change Default Album Visibility to Public
+- [x] Update database schema to set default visibility to "public" instead of "private" - Changed in drizzle/schema.ts (albums, promptTemplates, playlists)
+- [x] Run migration to push schema changes - Migration 0011_square_malice.sql applied successfully
+- [x] Update all existing albums in database to "public" visibility - All albums now public
+- [x] Change NewAlbum form default visibility to "public" - Updated NewAlbum.tsx line 40
+- [x] Verify all changes work correctly - All new albums will default to public

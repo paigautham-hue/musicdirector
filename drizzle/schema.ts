@@ -41,7 +41,7 @@ export const albums = mysqlTable("albums", {
   audience: text("audience"),
   influences: text("influences"), // JSON array of artist/era descriptions
   trackCount: int("trackCount").default(10).notNull(),
-  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("public").notNull(),
   playCount: int("playCount").default(0).notNull(),
   viewCount: int("viewCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -410,7 +410,7 @@ export const promptTemplates = mysqlTable("promptTemplates", {
   audience: text("audience"),
   influences: text("influences"), // JSON array
   trackCount: int("trackCount").default(10).notNull(),
-  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("public").notNull(),
   usageCount: int("usageCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -485,7 +485,7 @@ export const playlists = mysqlTable("playlists", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   coverImage: text("coverImage"), // URL to cover image
-  visibility: mysqlEnum("visibility", ["private", "public"]).default("private").notNull(),
+  visibility: mysqlEnum("visibility", ["private", "public"]).default("public").notNull(),
   playCount: int("playCount").default(0).notNull(),
   likeCount: int("likeCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

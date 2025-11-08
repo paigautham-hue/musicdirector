@@ -78,6 +78,13 @@
       "when": 1762533053238,
       "tag": "0010_wet_leo",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1762570756970,
+      "tag": "0011_square_malice",
+      "breakpoints": true
     }
   ]
 }

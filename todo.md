@@ -1077,3 +1077,11 @@
 - [x] Apply premium animated branding to homepage navigation
 - [x] Ensure logo and typography match AppNav component
 - [x] Test branding consistency across all pages
+
+## Add to Playlist & Retry Features
+- [x] Add "Add to Playlist" button to AudioPlayer component
+- [x] Show retry button for pending tracks (stuck in generation)
+- [x] Show retry button for failed tracks
+- [x] Implement retry functionality for stuck tracks
+- [x] Test playlist addition from audio player
+- [x] Test retry for stuck/failed tracks

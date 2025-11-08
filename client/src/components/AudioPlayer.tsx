@@ -5,11 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { 
   Play, Pause, Download, Loader2, Music2, AlertCircle, RefreshCw,
-  SkipForward, SkipBack, Volume2, VolumeX, Repeat, Repeat1
+  SkipForward, SkipBack, Volume2, VolumeX, Repeat, Repeat1, ListPlus
 } from "lucide-react";
 import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { trpc } from "@/lib/trpc";
+import { AddToPlaylist } from "@/components/AddToPlaylist";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -393,12 +394,15 @@ export function AudioPlayer({
                     </DropdownMenuContent>
                   </DropdownMenu>
 
+                  {/* Add to Playlist Button */}
+                  <AddToPlaylist trackId={trackId} trackTitle={trackTitle} />
+                  
                   {/* Download Button */}
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={handleDownload}
-                    className="w-8 h-8 p-0 ml-auto"
+                    className="w-8 h-8 p-0"
                     title="Download"
                   >
                     <Download className="w-4 h-4" />
@@ -423,6 +427,31 @@ export function AudioPlayer({
                     variant="outline"
                     onClick={onRetry}
                     className="gap-1"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Retry
+                  </Button>
+                )}
+              </div>
+            ) : status === "pending" ? (
+              <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-1 flex-1">
+                  <div className="text-xs text-muted-foreground font-medium">
+                    Waiting to generate
+                  </div>
+                  {statusMessage && (
+                    <div className="text-xs text-muted-foreground/70 line-clamp-2">
+                      {statusMessage}
+                    </div>
+                  )}
+                </div>
+                {onRetry && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={onRetry}
+                    className="gap-1"
+                    title="Retry generation"
                   >
                     <RefreshCw className="w-3 h-3" />
                     Retry

@@ -2051,3 +2051,229 @@ export async function getAlbumGenerationStatus(albumId: number): Promise<{
     queueInfo
   };
 }
+
+/**
+ * Audio Analytics Functions
+ */
+
+export async function getAudioAnalytics() {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Total audio files
+  const totalFiles = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(audioFiles);
+
+  // Total storage used (in bytes)
+  const totalStorage = await db
+    .select({ total: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)` })
+    .from(audioFiles);
+
+  // Format distribution
+  const formatDist = await db
+    .select({
+      format: audioFiles.format,
+      count: sql<number>`COUNT(*)`,
+      totalSize: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)`
+    })
+    .from(audioFiles)
+    .groupBy(audioFiles.format);
+
+  // Platform distribution (via albums)
+  const platformDist = await db
+    .select({
+      platform: albums.platform,
+      count: sql<number>`COUNT(DISTINCT ${audioFiles.id})`,
+      totalSize: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)`
+    })
+    .from(audioFiles)
+    .innerJoin(tracks, eq(audioFiles.trackId, tracks.id))
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .groupBy(albums.platform);
+
+  // Average file size and duration
+  const avgStats = await db
+    .select({
+      avgSize: sql<number>`COALESCE(AVG(${audioFiles.fileSize}), 0)`,
+      avgDuration: sql<number>`COALESCE(AVG(${audioFiles.duration}), 0)`
+    })
+    .from(audioFiles);
+
+  // Files created in last 24h, 7d, 30d
+  const now = new Date();
+  const day24Ago = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const days7Ago = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const days30Ago = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+  const recent24h = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(audioFiles)
+    .where(sql`${audioFiles.createdAt} >= ${day24Ago}`);
+
+  const recent7d = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(audioFiles)
+    .where(sql`${audioFiles.createdAt} >= ${days7Ago}`);
+
+  const recent30d = await db
+    .select({ count: sql<number>`COUNT(*)` })
+    .from(audioFiles)
+    .where(sql`${audioFiles.createdAt} >= ${days30Ago}`);
+
+  return {
+    totalFiles: Number(totalFiles[0]?.count || 0),
+    totalStorageBytes: Number(totalStorage[0]?.total || 0),
+    totalStorageMB: Number((Number(totalStorage[0]?.total || 0) / (1024 * 1024)).toFixed(2)),
+    totalStorageGB: Number((Number(totalStorage[0]?.total || 0) / (1024 * 1024 * 1024)).toFixed(2)),
+    formatDistribution: formatDist.map(f => ({
+      format: f.format || 'unknown',
+      count: Number(f.count),
+      totalSizeMB: Number((Number(f.totalSize) / (1024 * 1024)).toFixed(2))
+    })),
+    platformDistribution: platformDist.map(p => ({
+      platform: p.platform,
+      count: Number(p.count),
+      totalSizeMB: Number((Number(p.totalSize) / (1024 * 1024)).toFixed(2))
+    })),
+    averageFileSizeMB: Number((Number(avgStats[0]?.avgSize || 0) / (1024 * 1024)).toFixed(2)),
+    averageDurationSeconds: Number(avgStats[0]?.avgDuration || 0),
+    recentActivity: {
+      last24h: Number(recent24h[0]?.count || 0),
+      last7d: Number(recent7d[0]?.count || 0),
+      last30d: Number(recent30d[0]?.count || 0)
+    }
+  };
+}
+
+export async function getAllAudioFiles(filters: {
+  format?: string;
+  platform?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  let query = db
+    .select({
+      audioFile: audioFiles,
+      track: tracks,
+      album: albums,
+      user: users
+    })
+    .from(audioFiles)
+    .innerJoin(tracks, eq(audioFiles.trackId, tracks.id))
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(users, eq(albums.userId, users.id))
+    .orderBy(desc(audioFiles.createdAt))
+    .limit(filters.limit || 100)
+    .offset(filters.offset || 0);
+
+  const results = await query;
+
+  // Filter by format if specified
+  let filteredResults = results;
+  if (filters.format) {
+    filteredResults = results.filter(r => r.audioFile.format === filters.format);
+  }
+  if (filters.platform) {
+    filteredResults = results.filter(r => r.album.platform === filters.platform);
+  }
+
+  return filteredResults.map(r => ({
+    id: r.audioFile.id,
+    trackId: r.audioFile.trackId,
+    trackTitle: r.track.title,
+    albumId: r.album.id,
+    albumTitle: r.album.title,
+    platform: r.album.platform,
+    userId: r.user.id,
+    userName: r.user.name,
+    fileName: r.audioFile.fileName,
+    fileUrl: r.audioFile.fileUrl,
+    format: r.audioFile.format,
+    fileSize: r.audioFile.fileSize,
+    fileSizeMB: r.audioFile.fileSize ? Number((r.audioFile.fileSize / (1024 * 1024)).toFixed(2)) : null,
+    duration: r.audioFile.duration,
+    isActive: r.audioFile.isActive,
+    createdAt: r.audioFile.createdAt
+  }));
+}
+
+export async function getAudioFormatDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const results = await db
+    .select({
+      format: audioFiles.format,
+      count: sql<number>`COUNT(*)`,
+      totalSize: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)`,
+      avgSize: sql<number>`COALESCE(AVG(${audioFiles.fileSize}), 0)`,
+      avgDuration: sql<number>`COALESCE(AVG(${audioFiles.duration}), 0)`
+    })
+    .from(audioFiles)
+    .groupBy(audioFiles.format)
+    .orderBy(desc(sql`COUNT(*)`));
+
+  return results.map(r => ({
+    format: r.format || 'unknown',
+    count: Number(r.count),
+    totalSizeMB: Number((Number(r.totalSize) / (1024 * 1024)).toFixed(2)),
+    avgSizeMB: Number((Number(r.avgSize) / (1024 * 1024)).toFixed(2)),
+    avgDurationSeconds: Number(r.avgDuration || 0)
+  }));
+}
+
+export async function getStorageStats() {
+  const db = await getDb();
+  if (!db) return null;
+
+  // Total storage by user
+  const storageByUser = await db
+    .select({
+      userId: users.id,
+      userName: users.name,
+      userEmail: users.email,
+      totalFiles: sql<number>`COUNT(DISTINCT ${audioFiles.id})`,
+      totalSize: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)`
+    })
+    .from(users)
+    .leftJoin(albums, eq(users.id, albums.userId))
+    .leftJoin(tracks, eq(albums.id, tracks.albumId))
+    .leftJoin(audioFiles, eq(tracks.id, audioFiles.trackId))
+    .groupBy(users.id, users.name, users.email)
+    .orderBy(desc(sql`COALESCE(SUM(${audioFiles.fileSize}), 0)`))
+    .limit(20);
+
+  // Total storage by platform
+  const storageByPlatform = await db
+    .select({
+      platform: albums.platform,
+      totalFiles: sql<number>`COUNT(DISTINCT ${audioFiles.id})`,
+      totalSize: sql<number>`COALESCE(SUM(${audioFiles.fileSize}), 0)`
+    })
+    .from(audioFiles)
+    .innerJoin(tracks, eq(audioFiles.trackId, tracks.id))
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .groupBy(albums.platform)
+    .orderBy(desc(sql`COALESCE(SUM(${audioFiles.fileSize}), 0)`));
+
+  return {
+    topUsersByStorage: storageByUser.map(u => ({
+      userId: u.userId,
+      userName: u.userName || 'Unknown',
+      userEmail: u.userEmail || '',
+      totalFiles: Number(u.totalFiles),
+      totalSizeMB: Number((Number(u.totalSize) / (1024 * 1024)).toFixed(2)),
+      totalSizeGB: Number((Number(u.totalSize) / (1024 * 1024 * 1024)).toFixed(3))
+    })),
+    storageByPlatform: storageByPlatform.map(p => ({
+      platform: p.platform,
+      totalFiles: Number(p.totalFiles),
+      totalSizeMB: Number((Number(p.totalSize) / (1024 * 1024)).toFixed(2)),
+      totalSizeGB: Number((Number(p.totalSize) / (1024 * 1024 * 1024)).toFixed(3))
+    }))
+  };
+}

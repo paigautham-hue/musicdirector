@@ -15,6 +15,7 @@ import AdminAudioHealth from "./pages/AdminAudioHealth";
 import AdminSettings from "./pages/AdminSettings";
 import AdminUserQuotas from "./pages/AdminUserQuotas";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminAudioManagement from "./pages/AdminAudioManagement";
 import Gallery from "./pages/Gallery";
 import ImpactStories from "./pages/ImpactStories";
 import Pricing from "./pages/Pricing";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/quotas" component={AdminUserQuotas} />
       <Route path="/admin/analytics" component={AdminAnalytics} />
+      <Route path="/admin/audio" component={AdminAudioManagement} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/impact-stories" component={ImpactStories} />
       <Route path="/pricing" component={Pricing} />

@@ -896,6 +896,33 @@ export const appRouter = router({
         return { success: true, message: `Started regeneration for ${albumTracks.length} tracks` };
       }),
     
+    // Audio Analytics
+    getAudioAnalytics: adminProcedure.query(async () => {
+      return db.getAudioAnalytics();
+    }),
+    
+    // Get all audio files with filtering
+    getAllAudioFiles: adminProcedure
+      .input(z.object({
+        format: z.string().optional(),
+        platform: z.string().optional(),
+        limit: z.number().default(100),
+        offset: z.number().default(0)
+      }))
+      .query(async ({ input }) => {
+        return db.getAllAudioFiles(input);
+      }),
+    
+    // Get audio format distribution
+    getAudioFormatDistribution: adminProcedure.query(async () => {
+      return db.getAudioFormatDistribution();
+    }),
+    
+    // Get storage statistics
+    getStorageStats: adminProcedure.query(async () => {
+      return db.getStorageStats();
+    }),
+    
     // Bulk regenerate all broken audio
     regenerateAllBrokenAudio: adminProcedure
       .mutation(async () => {

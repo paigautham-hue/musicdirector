@@ -32,11 +32,23 @@ export function AppNav() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/">
-              <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
-                <Music className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
-                <span className="bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
-                  {APP_TITLE}
-                </span>
+              <a className="flex items-center gap-3 group">
+                <div className="relative">
+                  <img 
+                    src="/logo-custom.png" 
+                    alt="AI Album Creator" 
+                    className="w-10 h-10 sm:w-12 sm:h-12 transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]" 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-blue-500 to-yellow-500 opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500 rounded-full"></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient bg-[length:200%_auto] group-hover:animate-pulse">
+                    AI ALBUM
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold tracking-widest bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                    CREATOR
+                  </span>
+                </div>
               </a>
             </Link>
 

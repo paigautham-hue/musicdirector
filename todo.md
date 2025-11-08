@@ -1151,9 +1151,3 @@
 - [x] Fix 404 error when viewing playlists (broken route)
 - [x] Add Soul Apps link to homepage navigation
 - [x] Test all navigation links work correctly
-
-## Playlist Access Issue
-- [x] Fix "Playlist Not Found" error when users view their own playlists
-- [x] Check playlist detail endpoint permissions
-- [x] Ensure users can access their own playlists regardless of visibility setting
-- [x] Test playlist access for owner, public playlists, and private playlists

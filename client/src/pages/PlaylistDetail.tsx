@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { APP_TITLE, getLoginUrl } from "@/const";
 
 export default function PlaylistDetail() {
-  const [, params] = useRoute("/playlists/:id");
+  const [, params] = useRoute("/playlist/:id");
   const playlistId = params?.id ? parseInt(params.id) : null;
   const { user, isAuthenticated } = useAuth();
 

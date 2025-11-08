@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Settings, Users, BarChart3 } from "lucide-react";
+import { ArrowLeft, Loader2, Settings, Users, BarChart3, AlertCircle } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 
@@ -49,6 +49,12 @@ export default function AdminDashboard() {
               <Button className="bg-purple-500 hover:bg-purple-600">
                 <Users className="w-4 h-4 mr-2" />
                 Users
+              </Button>
+            </Link>
+            <Link href="/admin/audio-health">
+              <Button className="bg-red-500 hover:bg-red-600">
+                <AlertCircle className="w-4 h-4 mr-2" />
+                Audio Health
               </Button>
             </Link>
             <Link href="/admin/analytics">

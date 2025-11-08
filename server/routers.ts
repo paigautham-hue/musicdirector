@@ -824,6 +824,85 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await db.updateUserQuota(input.userId, input.quota);
         return { success: true };
+      }),
+    
+    // Audio Health Check
+    getBrokenAudioTracks: adminProcedure.query(async () => {
+      return db.getBrokenAudioTracks();
+    }),
+    
+    getAlbumsWithBrokenAudio: adminProcedure.query(async () => {
+      return db.getAlbumsWithBrokenAudio();
+    }),
+    
+    // Regenerate audio for a single track
+    regenerateTrackAudio: adminProcedure
+      .input(z.object({ trackId: z.number() }))
+      .mutation(async ({ input }) => {
+        const track = await db.getTrackById(input.trackId);
+        if (!track) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Track not found' });
+        }
+        
+        // Create new music generation job
+        const album = await db.getAlbumById(track.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        await db.createMusicJob({
+          albumId: album.id,
+          trackId: track.id,
+          platform: album.platform || 'suno'
+        });
+        
+        return { success: true, message: 'Audio regeneration started' };
+      }),
+    
+    // Regenerate audio for all tracks in an album
+    regenerateAlbumAudio: adminProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        const albumTracks = await db.getTracksByAlbumId(input.albumId);
+        
+        // Create jobs for all tracks
+        for (const track of albumTracks) {
+          await db.createMusicJob({
+            albumId: album.id,
+            trackId: track.id,
+            platform: album.platform || 'suno'
+          });
+        }
+        
+        return { success: true, message: `Started regeneration for ${albumTracks.length} tracks` };
+      }),
+    
+    // Bulk regenerate all broken audio
+    regenerateAllBrokenAudio: adminProcedure
+      .mutation(async () => {
+        const brokenTracks = await db.getBrokenAudioTracks();
+        
+        let regeneratedCount = 0;
+        for (const track of brokenTracks) {
+          if (!track.albumId) continue;
+          
+          const album = await db.getAlbumById(track.albumId);
+          if (album) {
+            await db.createMusicJob({
+              albumId: album.id,
+              trackId: track.trackId,
+              platform: album.platform || 'suno'
+            });
+            regeneratedCount++;
+          }
+        }
+        
+        return { success: true, message: `Started regeneration for ${regeneratedCount} tracks` };
       })
   }),
 

@@ -1836,3 +1836,66 @@ export async function updateUserRole(userId: number, role: "user" | "admin") {
 
   await db.update(users).set({ role }).where(eq(users.id, userId));
 }
+
+// Audio Health Check Functions
+export async function getBrokenAudioTracks() {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get all tracks with completed jobs but no active audio files
+  const tracksWithJobs = await db
+    .select({
+      trackId: tracks.id,
+      trackTitle: tracks.title,
+      trackIndex: tracks.index,
+      albumId: albums.id,
+      albumTitle: albums.title,
+      userId: albums.userId,
+      userName: users.name,
+      jobStatus: musicJobs.status,
+      audioFileId: audioFiles.id,
+      audioFileUrl: audioFiles.fileUrl,
+    })
+    .from(tracks)
+    .leftJoin(albums, eq(tracks.albumId, albums.id))
+    .leftJoin(users, eq(albums.userId, users.id))
+    .leftJoin(musicJobs, eq(musicJobs.trackId, tracks.id))
+    .leftJoin(audioFiles, and(eq(audioFiles.trackId, tracks.id), eq(audioFiles.isActive, true)))
+    .where(eq(musicJobs.status, 'completed'));
+
+  // Filter to only tracks with completed jobs but no audio file
+  const brokenTracks = tracksWithJobs.filter(t => !t.audioFileId);
+
+  return brokenTracks;
+}
+
+export async function getAlbumsWithBrokenAudio() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const brokenTracks = await getBrokenAudioTracks();
+  
+  // Group by album
+  const albumMap = new Map();
+  for (const track of brokenTracks) {
+    if (!albumMap.has(track.albumId)) {
+      albumMap.set(track.albumId, {
+        albumId: track.albumId,
+        albumTitle: track.albumTitle,
+        userId: track.userId,
+        userName: track.userName,
+        brokenTrackCount: 0,
+        brokenTracks: []
+      });
+    }
+    const album = albumMap.get(track.albumId);
+    album.brokenTrackCount++;
+    album.brokenTracks.push({
+      trackId: track.trackId,
+      trackTitle: track.trackTitle,
+      trackIndex: track.trackIndex
+    });
+  }
+
+  return Array.from(albumMap.values());
+}

@@ -942,3 +942,15 @@
 - [x] Fix audio player to properly load and play generated music files - Updated backgroundJobs.ts to download audio and upload to S3 for permanent storage
 - [ ] Test audio playback on both dev and published sites - New music generation will work, existing albums need regeneration
 - [ ] Note: Existing albums with expired URLs will need music regeneration to work
+
+## Admin Audio Regeneration Tool (User Requested)
+- [x] Create backend endpoint to detect albums/tracks with broken or expired audio URLs - Added getBrokenAudioTracks and getAlbumsWithBrokenAudio to db.ts
+- [x] Add endpoint to regenerate audio for individual tracks - Added regenerateTrackAudio mutation
+- [x] Add endpoint to regenerate all tracks in an album - Added regenerateAlbumAudio mutation
+- [x] Add endpoint to bulk regenerate all broken audio across system - Added regenerateAllBrokenAudio mutation
+- [x] Build admin Audio Health Dashboard page showing broken audio status - Created AdminAudioHealth.tsx with summary cards and album list
+- [x] Add individual track regeneration buttons - Each track has Regenerate button
+- [x] Add bulk album regeneration buttons - Each album has Regenerate Album button
+- [x] Add system-wide bulk regeneration button with confirmation - Added Regenerate All button with confirmation dialog
+- [ ] Test regeneration functionality works correctly
+- [x] Add progress indicators for regeneration jobs - Loading states with spinners for all regeneration actions

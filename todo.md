@@ -966,3 +966,12 @@
 - [x] Add cooldown timer display showing when next retry is available - Error message shows minutes until next retry
 - [ ] Test retry limits work correctly across multiple albums
 - [ ] Test queue position updates in real-time (auto-refreshes every 5 seconds)
+
+## Library Page Loading Bug & Navigation Issues (User Reported - Critical)
+- [ ] Investigate why Library page shows infinite spinner and albums never load
+- [ ] Check MyLibrary query for errors or missing data
+- [ ] Fix Library page loading to show albums properly
+- [ ] Add back navigation button to all pages (Admin, Playlists, Community, etc.)
+- [ ] Add home navigation link/button on pages without it
+- [ ] Test all pages have proper navigation escape routes
+- [ ] Verify audio files are being stored in S3 (already implemented in checkpoint 6c702010)

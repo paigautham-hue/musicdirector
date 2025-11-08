@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, Plus, Loader2, Trash2, Music2 } from "lucide-react";
 import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -72,27 +73,31 @@ export default function MyLibrary() {
   return (
     <div className="min-h-screen bg-background">
       <AppNav />
+      <PageHeader 
+        title="My Albums" 
+        description="Manage your AI-generated music albums"
+        showBack
+        showHome
+      >
+        {albums && albums.length > 0 && (
+          <Button 
+            onClick={makeAllPublic}
+            disabled={makingPublic || !albums.some(a => a.visibility === 'private')}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {makingPublic ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Making Public...
+              </>
+            ) : (
+              'Make All Albums Public'
+            )}
+          </Button>
+        )}
+      </PageHeader>
 
       <div className="container mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold">My Albums</h1>
-          {albums && albums.length > 0 && (
-            <Button 
-              onClick={makeAllPublic}
-              disabled={makingPublic || !albums.some(a => a.visibility === 'private')}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              {makingPublic ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Making Public...
-                </>
-              ) : (
-                'Make All Albums Public'
-              )}
-            </Button>
-          )}
-        </div>
         
         {isLoading ? (
           <div className="flex items-center justify-center py-12">

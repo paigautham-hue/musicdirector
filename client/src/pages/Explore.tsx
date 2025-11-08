@@ -9,6 +9,7 @@ import { Music, Search, TrendingUp, Star, Play, Eye, Heart } from "lucide-react"
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppNav } from "@/components/AppNav";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function Explore() {
   const [search, setSearch] = useState("");
@@ -28,18 +29,16 @@ export default function Explore() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
       <AppNav />
+      <PageHeader 
+        title="Explore Albums" 
+        description="Discover amazing AI-generated music from creators around the world"
+        showBack
+        showHome
+      />
       
-      {/* Header */}
+      {/* Filters */}
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b">
         <div className="container mx-auto px-4 py-6">
-          <div className="mb-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Explore Albums
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              Discover amazing AI-generated music from creators around the world
-            </p>
-          </div>
 
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

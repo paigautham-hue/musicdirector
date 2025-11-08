@@ -1,6 +1,7 @@
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, ListMusic, Play, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BarChart3, ListMusic, Play, TrendingUp, ArrowLeft } from "lucide-react";
 import { Link } from "wouter";
 import { AppNav } from "@/components/AppNav";
 import { PageHeader } from "@/components/PageHeader";
@@ -42,9 +43,16 @@ export default function PlaylistStats() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80">
+      <AppNav />
       {/* Header */}
       <div className="border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto px-4 py-6">
+          <Link href="/my-playlists">
+            <Button variant="ghost" size="sm" className="mb-4">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to My Playlists
+            </Button>
+          </Link>
           <div className="flex items-center gap-3">
             <BarChart3 className="w-8 h-8 text-primary" />
             <div>

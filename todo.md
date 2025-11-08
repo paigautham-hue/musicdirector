@@ -1189,3 +1189,21 @@
 - [x] Include link to existing album in confirmation dialog
 - [x] Allow user to proceed anyway if they want to create another album with same prompt
 - [ ] Test with both custom prompts and community prompts
+
+## Navigation Audit & Fixes (Apple HIG Standards)
+- [x] AlbumWorkspace - Add back button to return to My Library
+- [x] PlaylistDetail - Verify back button exists (already has one)
+- [x] AlbumDetail (public) - Add back button to return to Discover
+- [x] UserProfile - Add back button to return to Discover
+- [x] PlaylistStats - Add back button to return to My Playlists
+- [x] CommunityPrompts - Verify back button exists (uses PageHeader)
+- [x] MyPrompts - Verify back button exists (uses PageHeader)
+- [x] PublicPlaylists - Verify back button exists (uses PageHeader)
+- [x] MyPlaylists - Verify back button exists (uses PageHeader)
+- [x] NewAlbum - Verify back button/cancel option exists (already has one)
+- [x] Ensure consistent back button placement (top-left on mobile)
+- [x] Ensure consistent back button styling across all pages
+- [ ] Test navigation flow: Home → Library → Album → Back → Library
+- [ ] Test navigation flow: Home → Discover → Album → Back → Discover
+- [ ] Test navigation flow: Home → Prompts → Use Prompt → Back → Prompts
+- [ ] Verify no navigation dead ends exist

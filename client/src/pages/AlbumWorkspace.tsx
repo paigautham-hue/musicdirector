@@ -366,7 +366,13 @@ export default function AlbumWorkspace() {
       <div className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-[73px] z-40">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex gap-2 flex-wrap items-center">
+              <Link href="/my-library">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back
+                </Button>
+              </Link>
               <Button 
                 onClick={() => generateMusicMutation.mutate({ albumId: album.id })}
                 disabled={generateMusicMutation.isPending}

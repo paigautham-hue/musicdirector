@@ -87,6 +87,12 @@ export default function UserProfile() {
       <AppNav />
 
       <div className="container mx-auto px-4 py-8">
+        <Link href="/explore">
+          <Button variant="ghost" size="sm" className="mb-4">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Explore
+          </Button>
+        </Link>
         {/* Profile Header */}
         <Card className="mb-8">
           <CardContent className="p-8">

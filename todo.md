@@ -1157,3 +1157,10 @@
 - [x] Check playlist detail endpoint permissions
 - [x] Ensure users can access their own playlists regardless of visibility setting
 - [x] Test playlist access for owner, public playlists, and private playlists
+
+## Album Page Critical Error (Published Site)
+- [x] Fix "An unexpected error occurred" when clicking into an album from My Library
+- [x] Investigate JavaScript error in production build (map[native code] error at DdrJkmw6.js:48-49)
+- [x] Check AlbumWorkspace component for issues causing runtime errors
+- [x] Test album page loads correctly after fix
+- [ ] Verify fix works on published production site

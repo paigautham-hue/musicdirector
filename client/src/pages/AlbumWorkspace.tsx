@@ -590,12 +590,12 @@ export default function AlbumWorkspace() {
               {/* Audio Players */}
               <div className="space-y-3">
               {album.tracks.map((track: any, idx: number) => {
-                const job = musicStatus.jobs.find((j: any) => j.trackId === track.id);
-                const audioFile = musicStatus.audioFiles.find((a: any) => a.trackId === track.id && a.isActive);
+                const job = musicStatus?.jobs?.find((j: any) => j.trackId === track.id);
+                const audioFile = musicStatus?.audioFiles?.find((a: any) => a.trackId === track.id && a.isActive);
                 
                 // Determine if this track is queued or processing
                 // Since we process one at a time, only the first pending/processing job is actually "processing"
-                const pendingJobs = musicStatus.jobs.filter((j: any) => j.status === "pending" || j.status === "processing");
+                const pendingJobs = musicStatus?.jobs?.filter((j: any) => j.status === "pending" || j.status === "processing") || [];
                 const firstPendingJob = pendingJobs.length > 0 ? pendingJobs[0] : null;
                 
                 let displayStatus = job?.status || "pending";

@@ -975,3 +975,17 @@
 - [ ] Add home navigation link/button on pages without it
 - [ ] Test all pages have proper navigation escape routes
 - [ ] Verify audio files are being stored in S3 (already implemented in checkpoint 6c702010)
+
+## Admin Credit Management
+- [x] Verify admin can add free album generation credits to users
+- [x] Ensure credit system tracks album generations (not individual songs)
+- [x] Test credit addition and usage tracking
+
+## Enhanced Music Player
+- [x] Add playback speed control (0.5x, 0.75x, 1x, 1.25x, 1.5x, 2x)
+- [x] Add loop/repeat options (no loop, loop one, loop all)
+- [x] Add volume control slider
+- [x] Add skip forward/backward buttons (15s)
+- [x] Improve player UI with all new controls
+- [x] Clickable progress bar for seeking
+- [ ] Test all player controls on mobile and desktop

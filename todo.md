@@ -1072,3 +1072,8 @@
 - [x] Show queue position (e.g., "Track 3 of 10")
 - [x] Integrate queue with shuffle and loop modes
 - [x] Test shuffle and queue across different scenarios
+
+## Homepage Branding Consistency
+- [x] Apply premium animated branding to homepage navigation
+- [x] Ensure logo and typography match AppNav component
+- [x] Test branding consistency across all pages

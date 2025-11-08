@@ -56,13 +56,27 @@ export default function Home() {
       <nav style={{ backgroundColor: '#0a0a0f', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo */}
+            {/* Logo - Premium Animated Branding */}
             <Link href="/">
-              <a className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
-                <Music className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#d4af37' }} />
-                <span style={{ background: 'linear-gradient(to right, #d4af37, #d4af37, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  The Collective Soul
-                </span>
+              <a className="flex items-center gap-3 group">
+                {/* Custom AI-Generated Logo */}
+                <div className="relative transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+                  <img 
+                    src="/logo-custom.png" 
+                    alt="AI Album Creator Logo" 
+                    className="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)] group-hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] transition-all duration-300"
+                  />
+                </div>
+                
+                {/* Premium Typography with Animated Gradients */}
+                <div className="flex flex-col leading-tight">
+                  <span className="text-lg sm:text-xl md:text-2xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-flow group-hover:scale-105 transition-transform duration-300">
+                    AI ALBUM
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient-flow-reverse">
+                    CREATOR
+                  </span>
+                </div>
               </a>
             </Link>
 

@@ -813,6 +813,14 @@ export async function getAlbumWithSocialStats(albumId: number, userId?: number) 
 
   const album = await getAlbumById(albumId);
   if (!album) return null;
+  
+  // SECURITY: Check visibility - only allow public albums OR owner/admin access
+  if (album.visibility === 'private') {
+    // Private albums can only be accessed by owner
+    if (!userId || album.userId !== userId) {
+      return null; // Access denied
+    }
+  }
 
   const user = await db.select().from(users).where(eq(users.id, album.userId)).limit(1);
   

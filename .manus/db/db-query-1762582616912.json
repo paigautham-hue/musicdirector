@@ -1,0 +1,9 @@
+{
+  "query": "SELECT mj.id, mj.trackId, mj.status, mj.platform, mj.platformJobId, mj.completedAt,\n       t.title as track_title, a.id as album_id, a.title as album_title,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = mj.trackId) as audio_file_count\nFROM musicJobs mj\nJOIN tracks t ON t.id = mj.trackId\nJOIN albums a ON a.id = t.albumId\nWHERE mj.status = 'completed'\nHAVING audio_file_count = 0\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT mj.id, mj.trackId, mj.status, mj.platform, mj.platformJobId, mj.completedAt,\n       t.title as track_title, a.id as album_id, a.title as album_title,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = mj.trackId) as audio_file_count\nFROM musicJobs mj\nJOIN tracks t ON t.id = mj.trackId\nJOIN albums a ON a.id = t.albumId\nWHERE mj.status = 'completed'\nHAVING audio_file_count = 0\nLIMIT 20;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1503
+}

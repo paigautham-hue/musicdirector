@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, trackId, fileName, format, fileSize, duration, \n       SUBSTRING(fileUrl, 1, 100) as fileUrl_preview\nFROM audioFiles \nORDER BY createdAt DESC \nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, fileName, format, fileSize, duration, \n       SUBSTRING(fileUrl, 1, 100) as fileUrl_preview\nFROM audioFiles \nORDER BY createdAt DESC \nLIMIT 5;",
+  "rows": [
+    {
+      "id": "60001",
+      "trackId": "120180",
+      "fileName": "track-120180.mp3",
+      "format": "mp3",
+      "fileSize": "NULL",
+      "duration": "282",
+      "fileUrl_preview": "https://musicfile.api.box/NWE1Y2YwMTMtNjlmOS00MWI2LThiN2QtYzFkNzI2MmNjNGM5.mp3"
+    },
+    {
+      "id": "30131",
+      "trackId": "120176",
+      "fileName": "track-120176.mp3",
+      "format": "mp3",
+      "fileSize": "NULL",
+      "duration": "278",
+      "fileUrl_preview": "https://musicfile.api.box/ZDVlZWQ5YTQtMmQ3Yy00ZjRjLWFmM2QtMTY3ZDcwNWU1MmQ3.mp3"
+    },
+    {
+      "id": "30130",
+      "trackId": "120170",
+      "fileName": "track-120170.mp3",
+      "format": "mp3",
+      "fileSize": "NULL",
+      "duration": "284",
+      "fileUrl_preview": "https://musicfile.api.box/NWMwOTZlNzAtNGY4Mi00ZGE3LWEyNDgtZTIzNGNkMWE4ZDcx.mp3"
+    },
+    {
+      "id": "30129",
+      "trackId": "120173",
+      "fileName": "track-120173.mp3",
+      "format": "mp3",
+      "fileSize": "NULL",
+      "duration": "288",
+      "fileUrl_preview": "https://musicfile.api.box/NGVkY2Y4OTUtYjViZS00ZDY3LTg1MWQtMWVmZTJhMWYxZDE0.mp3"
+    },
+    {
+      "id": "30128",
+      "trackId": "120172",
+      "fileName": "track-120172.mp3",
+      "format": "mp3",
+      "fileSize": "NULL",
+      "duration": "251",
+      "fileUrl_preview": "https://musicfile.api.box/Zjg5YjYzODgtNWJjMi00ZWRmLWIzYWQtNTRjOGI2YjczZmRm.mp3"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tfileName\tformat\tfileSize\tduration\tfileUrl_preview\n60001\t120180\ttrack-120180.mp3\tmp3\tNULL\t282\thttps://musicfile.api.box/NWE1Y2YwMTMtNjlmOS00MWI2LThiN2QtYzFkNzI2MmNjNGM5.mp3\n30131\t120176\ttrack-120176.mp3\tmp3\tNULL\t278\thttps://musicfile.api.box/ZDVlZWQ5YTQtMmQ3Yy00ZjRjLWFmM2QtMTY3ZDcwNWU1MmQ3.mp3\n30130\t120170\ttrack-120170.mp3\tmp3\tNULL\t284\thttps://musicfile.api.box/NWMwOTZlNzAtNGY4Mi00ZGE3LWEyNDgtZTIzNGNkMWE4ZDcx.mp3\n30129\t120173\ttrack-120173.mp3\tmp3\tNULL\t288\thttps://musicfile.api.box/NGVkY2Y4OTUtYjViZS00ZDY3LTg1MWQtMWVmZTJhMWYxZDE0.mp3\n30128\t120172\ttrack-120172.mp3\tmp3\tNULL\t251\thttps://musicfile.api.box/Zjg5YjYzODgtNWJjMi00ZWRmLWIzYWQtNTRjOGI2YjczZmRm.mp3\n",
+  "stderr": "",
+  "execution_time_ms": 1555
+}

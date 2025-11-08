@@ -1,0 +1,60 @@
+{
+  "query": "SELECT format, fileName, fileUrl FROM audioFiles LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT format, fileName, fileUrl FROM audioFiles LIMIT 10;",
+  "rows": [
+    {
+      "format": "mp3",
+      "fileName": "track-60006.mp3",
+      "fileUrl": "https://musicfile.api.box/NTQ1NWRmY2EtZmQyOC00NDA1LTliNjAtMjk0MTllZTZlNDhj.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60008.mp3",
+      "fileUrl": "https://musicfile.api.box/NTk5MjIzMTQtOTg2Zi00ZDNiLTgxYWEtMDM4ZjdjMTY3MDBj.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60011.mp3",
+      "fileUrl": "https://musicfile.api.box/YzQwMzcyZjAtOGY0MC00NmU2LWIwNDQtY2IzNWIwMWQ4ZTAz.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60014.mp3",
+      "fileUrl": "https://musicfile.api.box/ZDVkZTM2YTctYWQxMS00YjlhLWEzNDAtZjQ2NjAyMWNkZmJl.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60007.mp3",
+      "fileUrl": "https://musicfile.api.box/MmVmM2MzZDctNWJlNC00MjBmLTlmYmUtYmRhMzRhNGM4YzRl.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60007.mp3",
+      "fileUrl": "https://musicfile.api.box/Yjk3NTFjMzQtNTAwZi00NWMyLThhODMtNzI2ZWZlOWIwMWIz.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60007.mp3",
+      "fileUrl": "https://musicfile.api.box/N2QxNjk4NTItNzc4OC00MDNkLTkxY2MtNjJkNGQwMmM5NDRh.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60009.mp3",
+      "fileUrl": "https://musicfile.api.box/ZGNlNDBjMzktZDdhYy00MzQ2LThjOTQtY2UyYTIyZTcxMThk.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60012.mp3",
+      "fileUrl": "https://musicfile.api.box/NmJlZWZiZWQtODc2ZS00ZmZiLTg0OGEtNDIzZDI3ZWU2YmI5.mp3"
+    },
+    {
+      "format": "mp3",
+      "fileName": "track-60009.mp3",
+      "fileUrl": "https://musicfile.api.box/ZTJhNDQzOTktMDE2Zi00OThhLWFjYzYtMWNjZGYyZmY3ODc5.mp3"
+    }
+  ],
+  "messages": [],
+  "stdout": "format\tfileName\tfileUrl\nmp3\ttrack-60006.mp3\thttps://musicfile.api.box/NTQ1NWRmY2EtZmQyOC00NDA1LTliNjAtMjk0MTllZTZlNDhj.mp3\nmp3\ttrack-60008.mp3\thttps://musicfile.api.box/NTk5MjIzMTQtOTg2Zi00ZDNiLTgxYWEtMDM4ZjdjMTY3MDBj.mp3\nmp3\ttrack-60011.mp3\thttps://musicfile.api.box/YzQwMzcyZjAtOGY0MC00NmU2LWIwNDQtY2IzNWIwMWQ4ZTAz.mp3\nmp3\ttrack-60014.mp3\thttps://musicfile.api.box/ZDVkZTM2YTctYWQxMS00YjlhLWEzNDAtZjQ2NjAyMWNkZmJl.mp3\nmp3\ttrack-60007.mp3\thttps://musicfile.api.box/MmVmM2MzZDctNWJlNC00MjBmLTlmYmUtYmRhMzRhNGM4YzRl.mp3\nmp3\ttrack-60007.mp3\thttps://musicfile.api.box/Yjk3NTFjMzQtNTAwZi00NWMyLThhODMtNzI2ZWZlOWIwMWIz.mp3\nmp3\ttrack-60007.mp3\thttps://musicfile.api.box/N2QxNjk4NTItNzc4OC00MDNkLTkxY2MtNjJkNGQwMmM5NDRh.mp3\nmp3\ttrack-60009.mp3\thttps://musicfile.api.box/ZGNlNDBjMzktZDdhYy00MzQ2LThjOTQtY2UyYTIyZTcxMThk.mp3\nmp3\ttrack-60012.mp3\thttps://musicfile.api.box/NmJlZWZiZWQtODc2ZS00ZmZiLTg0OGEtNDIzZDI3ZWU2YmI5.mp3\nmp3\ttrack-60009.mp3\thttps://musicfile.api.box/ZTJhNDQzOTktMDE2Zi00OThhLWFjYzYtMWNjZGYyZmY3ODc5.mp3\n",
+  "stderr": "",
+  "execution_time_ms": 1549
+}

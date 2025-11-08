@@ -1,0 +1,118 @@
+{
+  "query": "SELECT a.id, a.title, a.userId, a.platform, a.createdAt, \n       (SELECT COUNT(*) FROM tracks t WHERE t.albumId = a.id) as track_count,\n       (SELECT COUNT(*) FROM tracks t \n        LEFT JOIN audioFiles af ON af.trackId = t.id \n        WHERE t.albumId = a.id AND af.id IS NOT NULL) as audio_count\nFROM albums a\nHAVING audio_count < track_count OR audio_count = 0\nORDER BY a.createdAt DESC\nLIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT a.id, a.title, a.userId, a.platform, a.createdAt, \n       (SELECT COUNT(*) FROM tracks t WHERE t.albumId = a.id) as track_count,\n       (SELECT COUNT(*) FROM tracks t \n        LEFT JOIN audioFiles af ON af.trackId = t.id \n        WHERE t.albumId = a.id AND af.id IS NOT NULL) as audio_count\nFROM albums a\nHAVING audio_count < track_count OR audio_count = 0\nORDER BY a.createdAt DESC\nLIMIT 20;",
+  "rows": [
+    {
+      "id": "120020",
+      "title": "The Concrete Garden Rhythms",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 12:32:22",
+      "track_count": "10",
+      "audio_count": "7"
+    },
+    {
+      "id": "120019",
+      "title": "The Weight Of A Name",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 12:31:52",
+      "track_count": "10",
+      "audio_count": "9"
+    },
+    {
+      "id": "120018",
+      "title": "The Latency Report",
+      "userId": "1",
+      "platform": "suno",
+      "createdAt": "2025-11-07 11:56:27",
+      "track_count": "13",
+      "audio_count": "0"
+    },
+    {
+      "id": "120017",
+      "title": "Logfile: Deep State Traces",
+      "userId": "1",
+      "platform": "suno",
+      "createdAt": "2025-11-07 10:29:21",
+      "track_count": "13",
+      "audio_count": "0"
+    },
+    {
+      "id": "120016",
+      "title": "The Living Verb",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 10:15:22",
+      "track_count": "10",
+      "audio_count": "9"
+    },
+    {
+      "id": "120014",
+      "title": "The River's Constant Return",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 09:40:59",
+      "track_count": "10",
+      "audio_count": "7"
+    },
+    {
+      "id": "120013",
+      "title": "Ashes and Honey",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 09:40:35",
+      "track_count": "10",
+      "audio_count": "9"
+    },
+    {
+      "id": "120009",
+      "title": "The Recess Revolution",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 06:23:20",
+      "track_count": "10",
+      "audio_count": "8"
+    },
+    {
+      "id": "120008",
+      "title": "Algorithm's Mirror",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 06:15:26",
+      "track_count": "10",
+      "audio_count": "7"
+    },
+    {
+      "id": "120007",
+      "title": "The Harder To Break",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 06:04:30",
+      "track_count": "10",
+      "audio_count": "9"
+    },
+    {
+      "id": "120006",
+      "title": "The Portable Luxury",
+      "userId": "60001",
+      "platform": "suno",
+      "createdAt": "2025-11-07 06:03:19",
+      "track_count": "10",
+      "audio_count": "7"
+    },
+    {
+      "id": "120004",
+      "title": "The Resonance Field",
+      "userId": "1",
+      "platform": "suno",
+      "createdAt": "2025-11-07 05:31:15",
+      "track_count": "10",
+      "audio_count": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tuserId\tplatform\tcreatedAt\ttrack_count\taudio_count\n120020\tThe Concrete Garden Rhythms\t60001\tsuno\t2025-11-07 12:32:22\t10\t7\n120019\tThe Weight Of A Name\t60001\tsuno\t2025-11-07 12:31:52\t10\t9\n120018\tThe Latency Report\t1\tsuno\t2025-11-07 11:56:27\t13\t0\n120017\tLogfile: Deep State Traces\t1\tsuno\t2025-11-07 10:29:21\t13\t0\n120016\tThe Living Verb\t60001\tsuno\t2025-11-07 10:15:22\t10\t9\n120014\tThe River's Constant Return\t60001\tsuno\t2025-11-07 09:40:59\t10\t7\n120013\tAshes and Honey\t60001\tsuno\t2025-11-07 09:40:35\t10\t9\n120009\tThe Recess Revolution\t60001\tsuno\t2025-11-07 06:23:20\t10\t8\n120008\tAlgorithm's Mirror\t60001\tsuno\t2025-11-07 06:15:26\t10\t7\n120007\tThe Harder To Break\t60001\tsuno\t2025-11-07 06:04:30\t10\t9\n120006\tThe Portable Luxury\t60001\tsuno\t2025-11-07 06:03:19\t10\t7\n120004\tThe Resonance Field\t1\tsuno\t2025-11-07 05:31:15\t10\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1520
+}

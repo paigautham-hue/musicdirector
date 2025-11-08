@@ -1,0 +1,8 @@
+{
+  "query": "SELECT mj.id, mj.trackId, mj.status, mj.platform, mj.externalJobId, mj.audioUrl, mj.createdAt,\n       t.title as track_title, a.id as album_id, a.title as album_title\nFROM musicJobs mj\nJOIN tracks t ON t.id = mj.trackId\nJOIN albums a ON a.id = t.albumId\nWHERE a.id IN (\n  SELECT a2.id FROM albums a2\n  WHERE (SELECT COUNT(*) FROM tracks t2 LEFT JOIN audioFiles af ON af.trackId = t2.id \n         WHERE t2.albumId = a2.id AND af.id IS NOT NULL) = 0\n)\nORDER BY mj.createdAt DESC\nLIMIT 30;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT mj.id, mj.trackId, mj.status, mj.platform, mj.externalJobId, mj.audioUrl, mj.createdAt,\n       t.title as track_title, a.id as album_id, a.title as album_title\nFROM musicJobs mj\nJOIN tracks t ON t.id = mj.trackId\nJOIN albums a ON a.id = t.albumId\nWHERE a.id IN (\n  SELECT a2.id FROM albums a2\n  WHERE (SELECT COUNT(*) FROM tracks t2 LEFT JOIN audioFiles af ON af.trackId = t2.id \n         WHERE t2.albumId = a2.id AND af.id IS NOT NULL) = 0\n)\nORDER BY mj.createdAt DESC\nLIMIT 30;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 'mj.externaljobid' in 'field list'"
+  ]
+}

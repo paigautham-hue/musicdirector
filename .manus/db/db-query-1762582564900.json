@@ -1,0 +1,15 @@
+{
+  "query": "SELECT \n  (SELECT COUNT(DISTINCT a.id) FROM albums a \n   JOIN tracks t ON t.albumId = a.id \n   JOIN audioFiles af ON af.trackId = t.id) as albums_with_audio,\n  (SELECT COUNT(*) FROM albums) as total_albums,\n  (SELECT COUNT(*) FROM audioFiles) as total_audio_files;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT \n  (SELECT COUNT(DISTINCT a.id) FROM albums a \n   JOIN tracks t ON t.albumId = a.id \n   JOIN audioFiles af ON af.trackId = t.id) as albums_with_audio,\n  (SELECT COUNT(*) FROM albums) as total_albums,\n  (SELECT COUNT(*) FROM audioFiles) as total_audio_files;",
+  "rows": [
+    {
+      "albums_with_audio": "16",
+      "total_albums": "19",
+      "total_audio_files": "164"
+    }
+  ],
+  "messages": [],
+  "stdout": "albums_with_audio\ttotal_albums\ttotal_audio_files\n16\t19\t164\n",
+  "stderr": "",
+  "execution_time_ms": 1544
+}

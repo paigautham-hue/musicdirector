@@ -1,0 +1,14 @@
+{
+  "query": "SELECT format, COUNT(*) as count FROM audioFiles GROUP BY format;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT format, COUNT(*) as count FROM audioFiles GROUP BY format;",
+  "rows": [
+    {
+      "format": "mp3",
+      "count": "164"
+    }
+  ],
+  "messages": [],
+  "stdout": "format\tcount\nmp3\t164\n",
+  "stderr": "",
+  "execution_time_ms": 1643
+}

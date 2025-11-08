@@ -1,0 +1,8 @@
+{
+  "query": "SELECT t.id, t.title, t.albumId, t.trackNumber,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = t.id) as has_audio\nFROM tracks t\nWHERE t.albumId = (SELECT id FROM albums WHERE title LIKE '%Still Out Tonight%' LIMIT 1)\nORDER BY t.trackNumber;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT t.id, t.title, t.albumId, t.trackNumber,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = t.id) as has_audio\nFROM tracks t\nWHERE t.albumId = (SELECT id FROM albums WHERE title LIKE '%Still Out Tonight%' LIMIT 1)\nORDER BY t.trackNumber;",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 1: Unknown column 't.trackNumber' in 'order clause'"
+  ]
+}

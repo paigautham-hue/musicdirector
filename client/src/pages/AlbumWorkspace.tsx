@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check, Volume2, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Share2, Sparkles, Music2, RefreshCw, Copy, Check, Volume2, Eye, EyeOff, Plus } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc";
@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 export default function AlbumWorkspace() {
   const { id } = useParams();
@@ -24,6 +26,8 @@ export default function AlbumWorkspace() {
   const [improvements, setImprovements] = useState<string[]>([]);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [copiedLyrics, setCopiedLyrics] = useState(false);
+  const [showAddTracksDialog, setShowAddTracksDialog] = useState(false);
+  const [additionalTrackCount, setAdditionalTrackCount] = useState(5);
 
   const copyToClipboard = async (text: string, type: 'prompt' | 'lyrics') => {
     try {
@@ -148,6 +152,17 @@ export default function AlbumWorkspace() {
     }
   });
 
+  const addTracksMutation = trpc.albums.addTracks.useMutation({
+    onSuccess: () => {
+      toast.success("Generating additional tracks! This will take a few minutes.");
+      setShowAddTracksDialog(false);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to add tracks");
+    }
+  });
+
   const handleExport = async () => {
     try {
       const data = await exportQuery.refetch();
@@ -233,6 +248,7 @@ export default function AlbumWorkspace() {
   const alt2Asset = activeTrack?.assets?.find((a: any) => a.type === "alternate_2");
 
   return (
+    <>
     <div className="min-h-screen bg-background">
       <AppNav />
       
@@ -253,6 +269,16 @@ export default function AlbumWorkspace() {
                 )}
                 Generate Music
               </Button>
+              {album.tracks && album.tracks.length < 20 && (
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAddTracksDialog(true)}
+                  className="border-primary text-primary hover:bg-primary/10"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add More Tracks
+                </Button>
+              )}
               <Button 
                 variant="outline" 
                 onClick={() => bookletMutation.mutate({ albumId: album.id })}
@@ -690,5 +716,59 @@ export default function AlbumWorkspace() {
         </div>
       </div>
     </div>
+
+    {/* Add More Tracks Dialog */}
+    <Dialog open={showAddTracksDialog} onOpenChange={setShowAddTracksDialog}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add More Tracks</DialogTitle>
+          <DialogDescription>
+            Generate additional tracks for this album using the same theme and style.
+            Current tracks: {album?.tracks?.length || 0} | Max: 20
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="trackCount">Number of tracks to add</Label>
+            <Input
+              id="trackCount"
+              type="number"
+              min={1}
+              max={Math.min(11, 20 - (album?.tracks?.length || 0))}
+              value={additionalTrackCount}
+              onChange={(e) => setAdditionalTrackCount(parseInt(e.target.value) || 1)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Album will have {(album?.tracks?.length || 0) + additionalTrackCount} tracks total
+            </p>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setShowAddTracksDialog(false)}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => addTracksMutation.mutate({
+              albumId: album!.id,
+              additionalTrackCount
+            })}
+            disabled={addTracksMutation.isPending}
+          >
+            {addTracksMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Tracks
+              </>
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

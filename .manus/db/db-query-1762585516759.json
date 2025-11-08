@@ -1,0 +1,17 @@
+{
+  "query": "SELECT t.id, t.title, t.albumId, t.index as trackIndex,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = t.id) as has_audio\nFROM tracks t\nWHERE t.albumId = (SELECT id FROM albums WHERE title LIKE '%Still Out Tonight%' LIMIT 1)\nORDER BY t.index;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT t.id, t.title, t.albumId, t.index as trackIndex,\n       (SELECT COUNT(*) FROM audioFiles af WHERE af.trackId = t.id) as has_audio\nFROM tracks t\nWHERE t.albumId = (SELECT id FROM albums WHERE title LIKE '%Still Out Tonight%' LIMIT 1)\nORDER BY t.index;",
+  "rows": [
+    {
+      "id": "120180",
+      "title": "Neon Constellations",
+      "albumId": "120021",
+      "trackIndex": "1",
+      "has_audio": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\talbumId\ttrackIndex\thas_audio\n120180\tNeon Constellations\t120021\t1\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1520
+}

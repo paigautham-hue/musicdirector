@@ -477,6 +477,122 @@ export const appRouter = router({
       }))
       .query(async ({ input }) => {
         return db.getPublicAlbums(input);
+      }),
+    
+    // Add more tracks to existing album
+    addTracks: protectedProcedure
+      .input(z.object({
+        albumId: z.number(),
+        additionalTrackCount: z.number().min(1).max(11)
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Only album owner or admin can add tracks
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        // Get current tracks
+        const currentTracks = await db.getAlbumTracks(input.albumId);
+        const currentTrackCount = currentTracks.length;
+        const newTrackCount = currentTrackCount + input.additionalTrackCount;
+        
+        // Validate total doesn't exceed 20
+        if (newTrackCount > 20) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: `Cannot add ${input.additionalTrackCount} tracks. Album would have ${newTrackCount} tracks (max: 20)`
+          });
+        }
+        
+        // Start background job for generating additional tracks
+        const jobId = generateJobId();
+        
+        (async () => {
+          try {
+            setProgress(jobId, {
+              stage: "Generating",
+              progress: 0,
+              message: `Generating ${input.additionalTrackCount} additional tracks...`
+            });
+            
+            // Generate new tracks using album's existing theme/style
+            const albumInput = {
+              theme: album.theme,
+              vibe: album.vibe ? JSON.parse(album.vibe) : ["General"],
+              language: album.language || "en",
+              audience: album.audience || undefined,
+              influences: album.influences ? JSON.parse(album.influences) : undefined,
+              trackCount: input.additionalTrackCount,
+              platform: album.platform as any,
+              visibility: album.visibility
+            };
+            
+            const generated = await generateAlbum(albumInput, (update) => {
+              setProgress(jobId, update);
+            });
+            
+            setProgress(jobId, {
+              stage: "Saving",
+              progress: 90,
+              message: "Adding tracks to album..."
+            });
+            
+            // Add new tracks to existing album
+            for (const trackData of generated.tracks) {
+              const track = await db.createTrack({
+                albumId: album.id,
+                index: currentTrackCount + trackData.index,
+                title: trackData.title,
+                tempoBpm: trackData.tempoBpm,
+                key: trackData.key,
+                moodTags: JSON.stringify(trackData.moodTags),
+                score: trackData.score,
+                scoreBreakdown: JSON.stringify(trackData.scoreBreakdown)
+              });
+              
+              await db.createTrackAsset({ trackId: track.id, type: "prompt", content: trackData.prompt });
+              await db.createTrackAsset({ trackId: track.id, type: "lyrics", content: trackData.lyrics });
+              await db.createTrackAsset({ trackId: track.id, type: "structure", content: trackData.structure });
+              await db.createTrackAsset({ trackId: track.id, type: "production_notes", content: trackData.productionNotes });
+              
+              if (trackData.artUrl) {
+                await db.createTrackAsset({ trackId: track.id, type: "art_url", content: trackData.artUrl });
+              }
+            }
+            
+            // Update album trackCount
+            await db.updateAlbum(input.albumId, { trackCount: newTrackCount });
+            
+            setProgress(jobId, {
+              stage: "Complete",
+              progress: 100,
+              message: `Successfully added ${input.additionalTrackCount} tracks!`
+            });
+            
+            await db.createAuditLog({
+              userId: ctx.user.id,
+              action: "tracks_added",
+              payload: JSON.stringify({ albumId: input.albumId, tracksAdded: input.additionalTrackCount })
+            });
+            
+            setTimeout(() => clearProgress(jobId), 5 * 60 * 1000);
+          } catch (error: any) {
+            console.error(`[Add Tracks] Job ${jobId} failed:`, error);
+            setProgress(jobId, {
+              stage: "Error",
+              progress: 0,
+              message: error.message || "Failed to add tracks"
+            });
+            setTimeout(() => clearProgress(jobId), 5 * 60 * 1000);
+          }
+        })();
+        
+        return { jobId };
       })
   }),
 

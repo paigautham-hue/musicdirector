@@ -1,0 +1,18 @@
+{
+  "query": "SELECT a.id, a.title, a.trackCount, a.userId, a.createdAt,\n       (SELECT COUNT(*) FROM tracks t WHERE t.albumId = a.id) as actual_track_count\nFROM albums a\nWHERE a.title LIKE '%Still Out Tonight%'\nLIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT a.id, a.title, a.trackCount, a.userId, a.createdAt,\n       (SELECT COUNT(*) FROM tracks t WHERE t.albumId = a.id) as actual_track_count\nFROM albums a\nWHERE a.title LIKE '%Still Out Tonight%'\nLIMIT 5;",
+  "rows": [
+    {
+      "id": "120021",
+      "title": "Still Out Tonight",
+      "trackCount": "1",
+      "userId": "722451",
+      "createdAt": "2025-11-07 14:03:19",
+      "actual_track_count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\ttrackCount\tuserId\tcreatedAt\tactual_track_count\n120021\tStill Out Tonight\t1\t722451\t2025-11-07 14:03:19\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1499
+}

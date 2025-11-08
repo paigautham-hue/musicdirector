@@ -989,3 +989,11 @@
 - [x] Improve player UI with all new controls
 - [x] Clickable progress bar for seeking
 - [ ] Test all player controls on mobile and desktop
+
+## Album Completion Issue
+- [ ] Investigate why album "Still Out Tonight" has only 1 track
+- [ ] Check if album was created with trackCount=1 or if tracks failed to generate
+- [ ] Add admin feature to regenerate missing tracks for incomplete albums
+- [ ] Add user feature to complete album (generate remaining tracks)
+- [ ] Add "Complete Album" button in album workspace for albums with missing tracks
+- [ ] Test album completion flow

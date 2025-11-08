@@ -580,7 +580,7 @@ export default function AlbumWorkspace() {
         </div>
 
         {/* Music Player Section */}
-        {musicStatus && musicStatus.jobs && musicStatus.jobs.length > 0 && (
+        {musicStatus && musicStatus.jobs && musicStatus.jobs.length > 0 ? (
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
               <Volume2 className="w-5 h-5 text-primary" />
@@ -693,7 +693,7 @@ export default function AlbumWorkspace() {
               </div>
             </div>
           </div>
-        )}
+        ) : null}
 
         {/* Workspace */}
         <div className="grid md:grid-cols-[300px_1fr] gap-6">

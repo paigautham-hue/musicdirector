@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "./db";
 import { musicJobs, albums, tracks, trackAssets, audioFiles } from "../drizzle/schema";
 import { getSunoClient } from "./sunoApiClient";
+import { storagePut } from "./storage";
 
 let isProcessing = false;
 let processingInterval: NodeJS.Timeout | null = null;
@@ -283,19 +284,33 @@ async function pollMusicGenerationStatus(
         const audioUrl = audioData?.audioUrl || audioData?.audio_url;
         
         if (audioData && audioUrl) {
-          // Save audio file to database
+          // Download audio from Suno and upload to S3 for permanent storage
+          console.log(`[Background Jobs] Downloading audio for track ${trackId} from ${audioUrl}`);
+          const audioResponse = await fetch(audioUrl);
+          if (!audioResponse.ok) {
+            throw new Error(`Failed to download audio: ${audioResponse.statusText}`);
+          }
+          const audioBuffer = Buffer.from(await audioResponse.arrayBuffer());
+          
+          // Upload to S3
+          const fileKey = `music/${job.albumId}/${trackId}/${Date.now()}.mp3`;
+          const { url: s3Url } = await storagePut(fileKey, audioBuffer, "audio/mpeg");
+          console.log(`[Background Jobs] Uploaded audio to S3: ${s3Url}`);
+          
+          // Save audio file to database with S3 URL
           await db.insert(audioFiles).values({
             trackId,
             jobId: job.id,
-            fileUrl: audioUrl,
-            fileKey: `suno/${platformJobId}`,
+            fileUrl: s3Url,
+            fileKey,
             fileName: `track-${trackId}.mp3`,
+            fileSize: audioBuffer.length,
             duration: Math.floor(audioData.duration || 0),
             format: "mp3",
             isActive: true,
           });
           
-          console.log(`[Background Jobs] Music generated for track ${trackId}`);
+          console.log(`[Background Jobs] Music generated and stored for track ${trackId}`);
           return;
         } else {
           throw new Error('Audio URL not found in response');

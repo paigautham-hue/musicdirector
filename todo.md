@@ -933,3 +933,12 @@
 - [x] Show user's album list with status (draft, generating, completed, failed) - Album list with play counts, visibility, and platform badges
 - [x] Display average ratings and total plays for user's content - Showing avgRating, totalPlays, totalViews in table
 - [ ] Test all user management features work correctly
+
+## Audio Playback Not Working (User Reported - Critical)
+- [x] Investigate why audio doesn't play when clicking play button on published website - Root cause: backgroundJobs.ts was saving temporary Suno URLs that expire
+- [x] Check if audio file URLs are valid and accessible - Suno URLs expire after some time
+- [x] Verify audio player component is correctly loading audio sources - AudioPlayer component is correct
+- [x] Check for CORS or browser permission issues blocking playback - No CORS issues, problem is expired URLs
+- [x] Fix audio player to properly load and play generated music files - Updated backgroundJobs.ts to download audio and upload to S3 for permanent storage
+- [ ] Test audio playback on both dev and published sites - New music generation will work, existing albums need regeneration
+- [ ] Note: Existing albums with expired URLs will need music regeneration to work

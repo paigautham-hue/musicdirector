@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, trackId, fileUrl, isActive, createdAt FROM audioFiles ORDER BY createdAt DESC LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, trackId, fileUrl, isActive, createdAt FROM audioFiles ORDER BY createdAt DESC LIMIT 10;",
+  "rows": [
+    {
+      "id": "60001",
+      "trackId": "120180",
+      "fileUrl": "https://musicfile.api.box/NWE1Y2YwMTMtNjlmOS00MWI2LThiN2QtYzFkNzI2MmNjNGM5.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-08 03:27:05"
+    },
+    {
+      "id": "30131",
+      "trackId": "120176",
+      "fileUrl": "https://musicfile.api.box/ZDVlZWQ5YTQtMmQ3Yy00ZjRjLWFmM2QtMTY3ZDcwNWU1MmQ3.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:10:00"
+    },
+    {
+      "id": "30130",
+      "trackId": "120170",
+      "fileUrl": "https://musicfile.api.box/NWMwOTZlNzAtNGY4Mi00ZGE3LWEyNDgtZTIzNGNkMWE4ZDcx.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:09:35"
+    },
+    {
+      "id": "30129",
+      "trackId": "120173",
+      "fileUrl": "https://musicfile.api.box/NGVkY2Y4OTUtYjViZS00ZDY3LTg1MWQtMWVmZTJhMWYxZDE0.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:08:12"
+    },
+    {
+      "id": "30128",
+      "trackId": "120172",
+      "fileUrl": "https://musicfile.api.box/Zjg5YjYzODgtNWJjMi00ZWRmLWIzYWQtNTRjOGI2YjczZmRm.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:07:36"
+    },
+    {
+      "id": "30127",
+      "trackId": "120175",
+      "fileUrl": "https://musicfile.api.box/YzY0MDRmODQtODg4YS00ODdkLWIzNjctZTJlOTcxMWM3MDkx.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:07:09"
+    },
+    {
+      "id": "30126",
+      "trackId": "120171",
+      "fileUrl": "https://musicfile.api.box/ZDU3ODJmNzUtMDU4ZS00YjA4LWJjNmItNGFiZjBhMzc2NWFi.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:06:00"
+    },
+    {
+      "id": "30125",
+      "trackId": "120178",
+      "fileUrl": "https://musicfile.api.box/N2M4MDQzZWUtNjRiNS00MzI5LWI2ZDAtYmVkMGMzOTZmNGFm.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:05:59"
+    },
+    {
+      "id": "30124",
+      "trackId": "120132",
+      "fileUrl": "https://musicfile.api.box/MmYwNDdjYzctMGYzNS00MWUxLTllYWEtZTYzM2NhZGNiOTMx.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:05:07"
+    },
+    {
+      "id": "30123",
+      "trackId": "120128",
+      "fileUrl": "https://musicfile.api.box/M2I1OTA2YjktNzNkYy00YTBlLTk4OTctNjg0NjM2N2Q3MDg2.mp3",
+      "isActive": "1",
+      "createdAt": "2025-11-07 13:05:06"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttrackId\tfileUrl\tisActive\tcreatedAt\n60001\t120180\thttps://musicfile.api.box/NWE1Y2YwMTMtNjlmOS00MWI2LThiN2QtYzFkNzI2MmNjNGM5.mp3\t1\t2025-11-08 03:27:05\n30131\t120176\thttps://musicfile.api.box/ZDVlZWQ5YTQtMmQ3Yy00ZjRjLWFmM2QtMTY3ZDcwNWU1MmQ3.mp3\t1\t2025-11-07 13:10:00\n30130\t120170\thttps://musicfile.api.box/NWMwOTZlNzAtNGY4Mi00ZGE3LWEyNDgtZTIzNGNkMWE4ZDcx.mp3\t1\t2025-11-07 13:09:35\n30129\t120173\thttps://musicfile.api.box/NGVkY2Y4OTUtYjViZS00ZDY3LTg1MWQtMWVmZTJhMWYxZDE0.mp3\t1\t2025-11-07 13:08:12\n30128\t120172\thttps://musicfile.api.box/Zjg5YjYzODgtNWJjMi00ZWRmLWIzYWQtNTRjOGI2YjczZmRm.mp3\t1\t2025-11-07 13:07:36\n30127\t120175\thttps://musicfile.api.box/YzY0MDRmODQtODg4YS00ODdkLWIzNjctZTJlOTcxMWM3MDkx.mp3\t1\t2025-11-07 13:07:09\n30126\t120171\thttps://musicfile.api.box/ZDU3ODJmNzUtMDU4ZS00YjA4LWJjNmItNGFiZjBhMzc2NWFi.mp3\t1\t2025-11-07 13:06:00\n30125\t120178\thttps://musicfile.api.box/N2M4MDQzZWUtNjRiNS00MzI5LWI2ZDAtYmVkMGMzOTZmNGFm.mp3\t1\t2025-11-07 13:05:59\n30124\t120132\thttps://musicfile.api.box/MmYwNDdjYzctMGYzNS00MWUxLTllYWEtZTYzM2NhZGNiOTMx.mp3\t1\t2025-11-07 13:05:07\n30123\t120128\thttps://musicfile.api.box/M2I1OTA2YjktNzNkYy00YTBlLTk4OTctNjg0NjM2N2Q3MDg2.mp3\t1\t2025-11-07 13:05:06\n",
+  "stderr": "",
+  "execution_time_ms": 1574
+}

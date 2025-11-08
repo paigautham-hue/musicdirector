@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { trpc } from "@/lib/trpc";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
+import { useAudioContext } from "@/contexts/AudioContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -57,6 +58,8 @@ export function AudioPlayer({
   const [loopMode, setLoopMode] = useState<LoopMode>("none");
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioContext = useAudioContext();
+  const playerId = `track-${trackId}`;
   
   // Fetch user's rating and all ratings for this track
   const { data: userRating, refetch: refetchUserRating } = trpc.tracks.getRating.useQuery(
@@ -92,6 +95,17 @@ export function AudioPlayer({
   
   const ratingCount = allRatings?.length || 0;
 
+  // Register/unregister player with global audio context
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audioContext.registerPlayer(playerId, audio);
+    return () => {
+      audioContext.unregisterPlayer(playerId);
+    };
+  }, [playerId, audioContext]);
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -110,15 +124,25 @@ export function AudioPlayer({
         setIsPlaying(false);
       }
     };
+    const handlePause = () => {
+      setIsPlaying(false);
+    };
+    const handlePlay = () => {
+      setIsPlaying(true);
+    };
 
     audio.addEventListener("timeupdate", updateTime);
     audio.addEventListener("loadedmetadata", updateDuration);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("play", handlePlay);
 
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
       audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("play", handlePlay);
     };
   }, [audioUrl, loopMode]);
 
@@ -137,10 +161,14 @@ export function AudioPlayer({
 
     if (isPlaying) {
       audio.pause();
+      audioContext.setPaused(playerId);
     } else {
+      // Notify audio context that this player is starting
+      audioContext.setPlaying(playerId);
       audio.play().catch(err => {
         console.error("Playback error:", err);
         toast.error("Failed to play audio");
+        audioContext.setPaused(playerId);
       });
     }
     setIsPlaying(!isPlaying);

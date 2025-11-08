@@ -1062,3 +1062,13 @@
 - [x] Auto-play next track when current track finishes
 - [x] Handle end of album gracefully
 - [x] Test sequential playback across multiple tracks
+
+## Shuffle Mode & Queue Visualization
+- [x] Add shuffle button to audio player controls
+- [x] Implement shuffle logic for random track order
+- [x] Create queue visualization component showing upcoming tracks
+- [x] Add current track indicator in queue
+- [x] Implement click-to-skip functionality in queue
+- [x] Show queue position (e.g., "Track 3 of 10")
+- [x] Integrate queue with shuffle and loop modes
+- [x] Test shuffle and queue across different scenarios

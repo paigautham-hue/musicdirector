@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
+import { AlbumQueue } from "@/components/AlbumQueue";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -31,6 +32,9 @@ export default function AlbumWorkspace() {
   const [addTracksJobId, setAddTracksJobId] = useState<string | null>(null);
   const [currentPlayingTrackId, setCurrentPlayingTrackId] = useState<number | null>(null);
   const audioRefs = useRef<Map<number, HTMLAudioElement>>(new Map());
+  const [isShuffleEnabled, setIsShuffleEnabled] = useState(false);
+  const [shuffledTrackIds, setShuffledTrackIds] = useState<number[]>([]);
+  const [currentQueueIndex, setCurrentQueueIndex] = useState(0);
 
   const copyToClipboard = async (text: string, type: 'prompt' | 'lyrics') => {
     try {
@@ -52,6 +56,21 @@ export default function AlbumWorkspace() {
     { id: parseInt(id!) },
     { enabled: !!id }
   );
+  
+  // Initialize track queue when album loads
+  useEffect(() => {
+    if (album?.tracks) {
+      const trackIds = album.tracks.map((t: any) => t.id);
+      if (isShuffleEnabled) {
+        // Shuffle the track IDs
+        const shuffled = [...trackIds].sort(() => Math.random() - 0.5);
+        setShuffledTrackIds(shuffled);
+      } else {
+        setShuffledTrackIds(trackIds);
+      }
+      setCurrentQueueIndex(0);
+    }
+  }, [album, isShuffleEnabled]);
   
   const { data: musicStatus, refetch: refetchMusicStatus } = trpc.albums.getMusicStatus.useQuery(
     { albumId: parseInt(id!) },
@@ -567,7 +586,9 @@ export default function AlbumWorkspace() {
               <Volume2 className="w-5 h-5 text-primary" />
               <h2 className="text-2xl font-bold">Generated Music</h2>
             </div>
-            <div className="space-y-3">
+            <div className="grid lg:grid-cols-[1fr_350px] gap-6">
+              {/* Audio Players */}
+              <div className="space-y-3">
               {album.tracks.map((track: any, idx: number) => {
                 const job = musicStatus.jobs.find((j: any) => j.trackId === track.id);
                 const audioFile = musicStatus.audioFiles.find((a: any) => a.trackId === track.id && a.isActive);
@@ -590,29 +611,36 @@ export default function AlbumWorkspace() {
                 
                 // Auto-play handler: play next track when current finishes
                 const handleTrackEnd = () => {
-                  const currentIndex = album.tracks.findIndex((t: any) => t.id === track.id);
-                  const nextTrack = album.tracks[currentIndex + 1];
+                  // Find current track in queue
+                  const queueIndex = shuffledTrackIds.indexOf(track.id);
+                  const nextQueueIndex = queueIndex + 1;
                   
-                  if (nextTrack) {
-                    // Find the next track's audio file
-                    const nextAudioFile = musicStatus.audioFiles.find(
-                      (a: any) => a.trackId === nextTrack.id && a.isActive
-                    );
+                  if (nextQueueIndex < shuffledTrackIds.length) {
+                    const nextTrackId = shuffledTrackIds[nextQueueIndex];
+                    const nextTrack = album.tracks.find((t: any) => t.id === nextTrackId);
                     
-                    // Only auto-play if next track has audio available
-                    if (nextAudioFile?.fileUrl) {
-                      setCurrentPlayingTrackId(nextTrack.id);
-                      // Small delay to ensure UI updates
-                      setTimeout(() => {
-                        const nextAudioElement = document.querySelector(
-                          `audio[data-track-id="${nextTrack.id}"]`
-                        ) as HTMLAudioElement;
-                        if (nextAudioElement) {
-                          nextAudioElement.play().catch(err => {
-                            console.error("Auto-play failed:", err);
-                          });
-                        }
-                      }, 100);
+                    if (nextTrack) {
+                      // Find the next track's audio file
+                      const nextAudioFile = musicStatus.audioFiles.find(
+                        (a: any) => a.trackId === nextTrack.id && a.isActive
+                      );
+                      
+                      // Only auto-play if next track has audio available
+                      if (nextAudioFile?.fileUrl) {
+                        setCurrentPlayingTrackId(nextTrack.id);
+                        setCurrentQueueIndex(nextQueueIndex);
+                        // Small delay to ensure UI updates
+                        setTimeout(() => {
+                          const nextAudioElement = document.querySelector(
+                            `audio[data-track-id="${nextTrack.id}"]`
+                          ) as HTMLAudioElement;
+                          if (nextAudioElement) {
+                            nextAudioElement.play().catch(err => {
+                              console.error("Auto-play failed:", err);
+                            });
+                          }
+                        }, 100);
+                      }
                     }
                   }
                 };
@@ -633,6 +661,36 @@ export default function AlbumWorkspace() {
                   />
                 );
               })}
+              </div>
+              
+              {/* Queue Visualization */}
+              <div className="lg:sticky lg:top-24 lg:self-start">
+                <AlbumQueue
+                  tracks={album.tracks}
+                  queueOrder={shuffledTrackIds}
+                  currentTrackId={currentPlayingTrackId}
+                  isShuffleEnabled={isShuffleEnabled}
+                  onToggleShuffle={() => {
+                    setIsShuffleEnabled(!isShuffleEnabled);
+                    toast.success(isShuffleEnabled ? "Shuffle disabled" : "Shuffle enabled");
+                  }}
+                  onTrackClick={(trackId) => {
+                    // Find and play the clicked track
+                    const audioElement = document.querySelector(
+                      `audio[data-track-id="${trackId}"]`
+                    ) as HTMLAudioElement;
+                    if (audioElement) {
+                      setCurrentPlayingTrackId(trackId);
+                      setCurrentQueueIndex(shuffledTrackIds.indexOf(trackId));
+                      audioElement.play().catch(err => {
+                        console.error("Playback failed:", err);
+                        toast.error("Failed to play track");
+                      });
+                    }
+                  }}
+                  audioFiles={musicStatus.audioFiles}
+                />
+              </div>
             </div>
           </div>
         )}

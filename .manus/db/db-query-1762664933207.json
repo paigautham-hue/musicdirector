@@ -1,0 +1,80 @@
+{
+  "query": "SELECT id, title, coverUrl, createdAt, userId FROM albums ORDER BY createdAt DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, title, coverUrl, createdAt, userId FROM albums ORDER BY createdAt DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "150007",
+      "title": "The Decency Anthem",
+      "coverUrl": "NULL",
+      "createdAt": "2025-11-08 18:47:57",
+      "userId": "60001"
+    },
+    {
+      "id": "150006",
+      "title": "Mercy Louder Than Megaphones",
+      "coverUrl": "NULL",
+      "createdAt": "2025-11-08 18:43:01",
+      "userId": "60001"
+    },
+    {
+      "id": "150005",
+      "title": "The Gentle Uprising",
+      "coverUrl": "NULL",
+      "createdAt": "2025-11-08 18:37:52",
+      "userId": "60001"
+    },
+    {
+      "id": "150004",
+      "title": "The Cartography of Mercy",
+      "coverUrl": "NULL",
+      "createdAt": "2025-11-08 18:33:02",
+      "userId": "60001"
+    },
+    {
+      "id": "150003",
+      "title": "The Open Sky Liturgy",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/n2JV2mjHDTQuWeHwmwiCUz/generated/1762612946904.png",
+      "createdAt": "2025-11-08 14:47:18",
+      "userId": "60001"
+    },
+    {
+      "id": "150002",
+      "title": "The Dignity Protocol",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/ZUo6VQRNQbxzN4msc9TEkK/generated/1762612922999.png",
+      "createdAt": "2025-11-08 14:46:57",
+      "userId": "60001"
+    },
+    {
+      "id": "150001",
+      "title": "Echoes of the Baobab",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/isET6aXXunEbsQjR5gP7ZH/generated/1762609001368.png",
+      "createdAt": "2025-11-08 13:41:36",
+      "userId": "60001"
+    },
+    {
+      "id": "120021",
+      "title": "Still Out Tonight",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/ZVCpRSGvJABQsMximRsvhK/generated/1762524169095.png",
+      "createdAt": "2025-11-07 14:03:19",
+      "userId": "722451"
+    },
+    {
+      "id": "120020",
+      "title": "The Concrete Garden Rhythms",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/9mcLLUgT3EYjyzhdBmjWgF/generated/1762518458995.png",
+      "createdAt": "2025-11-07 12:32:22",
+      "userId": "60001"
+    },
+    {
+      "id": "120019",
+      "title": "The Weight Of A Name",
+      "coverUrl": "https://forge.manus.ai/v1/storage/download/ibnJjXxhk69kg8PJJQkLVu/generated/1762518427071.png",
+      "createdAt": "2025-11-07 12:31:52",
+      "userId": "60001"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tcoverUrl\tcreatedAt\tuserId\n150007\tThe Decency Anthem\tNULL\t2025-11-08 18:47:57\t60001\n150006\tMercy Louder Than Megaphones\tNULL\t2025-11-08 18:43:01\t60001\n150005\tThe Gentle Uprising\tNULL\t2025-11-08 18:37:52\t60001\n150004\tThe Cartography of Mercy\tNULL\t2025-11-08 18:33:02\t60001\n150003\tThe Open Sky Liturgy\thttps://forge.manus.ai/v1/storage/download/n2JV2mjHDTQuWeHwmwiCUz/generated/1762612946904.png\t2025-11-08 14:47:18\t60001\n150002\tThe Dignity Protocol\thttps://forge.manus.ai/v1/storage/download/ZUo6VQRNQbxzN4msc9TEkK/generated/1762612922999.png\t2025-11-08 14:46:57\t60001\n150001\tEchoes of the Baobab\thttps://forge.manus.ai/v1/storage/download/isET6aXXunEbsQjR5gP7ZH/generated/1762609001368.png\t2025-11-08 13:41:36\t60001\n120021\tStill Out Tonight\thttps://forge.manus.ai/v1/storage/download/ZVCpRSGvJABQsMximRsvhK/generated/1762524169095.png\t2025-11-07 14:03:19\t722451\n120020\tThe Concrete Garden Rhythms\thttps://forge.manus.ai/v1/storage/download/9mcLLUgT3EYjyzhdBmjWgF/generated/1762518458995.png\t2025-11-07 12:32:22\t60001\n120019\tThe Weight Of A Name\thttps://forge.manus.ai/v1/storage/download/ibnJjXxhk69kg8PJJQkLVu/generated/1762518427071.png\t2025-11-07 12:31:52\t60001\n",
+  "stderr": "",
+  "execution_time_ms": 1606
+}

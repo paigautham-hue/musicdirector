@@ -121,11 +121,17 @@ export default function Explore() {
                     <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group">
                       <CardHeader className="p-0">
                         <div className="relative overflow-hidden rounded-t-lg">
-                          <img
-                            src={album.coverUrl || "/placeholder-album.png"}
-                            alt={album.title}
-                            className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
+                          {album.coverUrl ? (
+                            <img
+                              src={album.coverUrl}
+                              alt={album.title}
+                              className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                              <Music className="h-16 w-16 text-primary/40" />
+                            </div>
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
                       </CardHeader>
@@ -142,20 +148,26 @@ export default function Explore() {
                           <Badge variant="outline">{album.trackCount} tracks</Badge>
                         </div>
 
-                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <div className="flex items-center gap-3">
-                            <div className="flex items-center gap-1">
-                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                              <span>{album.score?.toFixed(1) || "N/A"}</span>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1">
+                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                <span>{album.score?.toFixed(1) || "N/A"}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Eye className="h-4 w-4" />
+                                <span>{album.viewCount || 0}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Play className="h-4 w-4" />
+                                <span>{album.playCount || 0}</span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Eye className="h-4 w-4" />
-                              <span>{album.viewCount || 0}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Play className="h-4 w-4" />
-                              <span>{album.playCount || 0}</span>
-                            </div>
+                          </div>
+                          <div className="flex justify-between text-xs text-muted-foreground pt-2 border-t border-border/50">
+                            <span>By {album.userName || 'Unknown'}</span>
+                            <span>{new Date(album.createdAt).toLocaleDateString()}</span>
                           </div>
                         </div>
 

@@ -109,26 +109,36 @@ export default function MyLibrary() {
               <div key={album.id} className="relative group">
                 <Link href={`/album/${album.id}`}>
                   <Card className="cursor-pointer hover:border-primary/50 transition-all h-full">
-                    {album.coverUrl && (
-                      <div className="relative">
+                    <div className="relative">
+                      {album.coverUrl ? (
                         <img src={album.coverUrl} alt={album.title} className="w-full h-48 object-cover rounded-t-lg" />
-                        {/* Music Generated Indicator */}
-                        {musicStatus?.[album.id]?.hasMusic && (
-                          <div className="absolute bottom-2 right-2 bg-green-500/90 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
-                            <Music2 className="h-3 w-3" />
-                            Music Ready
-                          </div>
-                        )}
-                      </div>
-                    )}
+                      ) : (
+                        <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-primary/5 rounded-t-lg flex items-center justify-center">
+                          <Music className="h-16 w-16 text-primary/40" />
+                        </div>
+                      )}
+                      {/* Music Generated Indicator */}
+                      {musicStatus?.[album.id]?.hasMusic && (
+                        <div className="absolute bottom-2 right-2 bg-green-500/90 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+                          <Music2 className="h-3 w-3" />
+                          Music Ready
+                        </div>
+                      )}
+                    </div>
                     <CardHeader>
                       <CardTitle>{album.title}</CardTitle>
                       <CardDescription>{album.theme}</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex justify-between text-sm text-muted-foreground">
-                        <span>{album.platform}</span>
-                        <span>Score: {album.score}/100</span>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>{album.platform}</span>
+                          <span>Score: {album.score}/100</span>
+                        </div>
+                        <div className="flex justify-between text-xs text-muted-foreground pt-2 border-t border-border/50">
+                          <span>By {user?.name || 'You'}</span>
+                          <span>{new Date(album.createdAt).toLocaleDateString()}</span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

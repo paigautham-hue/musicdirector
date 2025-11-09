@@ -1279,3 +1279,12 @@
 - [x] Simplified audio event handling with native HTML5 audio
 - [ ] Test basic play/pause functionality on live site
 - [ ] Verify audio plays on mobile and desktop
+
+## Album Display Fixes
+- [x] Fix missing album covers on some recently created albums
+- [x] Add creation date to album cards
+- [x] Add creator name to album cards
+- [x] Investigate why some albums don't have cover images (some albums have NULL coverUrl)
+- [x] Ensure all album cards show consistent metadata
+- [x] Added fallback gradient with music icon for albums without covers
+- [x] Added metadata footer showing creator and date on both Library and Explore pages

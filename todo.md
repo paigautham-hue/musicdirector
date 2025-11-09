@@ -1271,3 +1271,11 @@
 - [x] Verify AudioPlayerContext logic is not blocking legitimate play attempts
 - [x] Add stopPlaying() call in handleEnded to clear global state
 - [x] Add stopPlaying() call in useEffect cleanup to prevent stale state
+
+## Audio Player Complete Rebuild
+- [x] Remove AudioPlayerContext complexity that's blocking playback
+- [x] Create new simplified AudioPlayer with native HTML5 audio
+- [x] Removed AudioPlayerContext from App.tsx
+- [x] Simplified audio event handling with native HTML5 audio
+- [ ] Test basic play/pause functionality on live site
+- [ ] Verify audio plays on mobile and desktop

@@ -10,7 +10,6 @@ import {
 import { toast } from "sonner";
 import { StarRating } from "@/components/StarRating";
 import { trpc } from "@/lib/trpc";
-import { useAudioPlayer } from "@/contexts/AudioPlayerContext";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
 import {
   DropdownMenu,
@@ -29,8 +28,8 @@ interface AudioPlayerProps {
   statusMessage?: string;
   onRatingChange?: () => void;
   onRetry?: () => void;
-  onTrackEnd?: () => void; // Callback when track finishes
-  totalTracks?: number; // Total number of tracks in album
+  onTrackEnd?: () => void;
+  totalTracks?: number;
 }
 
 type LoopMode = "none" | "one" | "all";
@@ -49,88 +48,72 @@ export function AudioPlayer({
   totalTracks
 }: AudioPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const { requestPlay, stopPlaying } = useAudioPlayer();
   const [isRetrying, setIsRetrying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [loopMode, setLoopMode] = useState<LoopMode>("none");
-  const [showAdvancedControls, setShowAdvancedControls] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const audioRef = useRef<HTMLAudioElement>(null);
-  
-  // Fetch user's rating and all ratings for this track
-  const { data: userRating, refetch: refetchUserRating } = trpc.tracks.getRating.useQuery(
-    { trackId },
-    { enabled: status === "completed" }
-  );
-  
-  const { data: allRatings } = trpc.tracks.getAllRatings.useQuery(
-    { trackId },
-    { enabled: status === "completed" }
-  );
-  
-  const rateMutation = trpc.tracks.rate.useMutation({
-    onSuccess: () => {
-      toast.success("Rating saved!");
-      refetchUserRating();
-      if (onRatingChange) {
-        onRatingChange();
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to save rating");
-    }
-  });
-  
-  const handleRate = (rating: number) => {
-    rateMutation.mutate({ trackId, rating });
-  };
-  
-  const averageRating = allRatings && allRatings.length > 0
-    ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
-    : 0;
-  
-  const ratingCount = allRatings?.length || 0;
 
+  // Rating feature temporarily disabled - focus on playback first
+
+  // Set up audio element and event listeners
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !audioUrl) return;
 
-    const updateTime = () => setCurrentTime(audio.currentTime);
-    const updateDuration = () => setDuration(audio.duration);
+    // Reset state when audio URL changes
+    setIsPlaying(false);
+    setCurrentTime(0);
+    
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration);
+    };
+
     const handleEnded = () => {
       if (loopMode === "one") {
         audio.currentTime = 0;
-        audio.play();
+        audio.play().catch(console.error);
       } else if (loopMode === "all" && onTrackEnd) {
-        // Auto-play next track when loop mode is "all"
         setIsPlaying(false);
-        stopPlaying(trackId);
         onTrackEnd();
       } else {
         setIsPlaying(false);
-        stopPlaying(trackId);
       }
     };
 
-    audio.addEventListener("timeupdate", updateTime);
-    audio.addEventListener("loadedmetadata", updateDuration);
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleError = (e: Event) => {
+      console.error("Audio error:", e);
+      setIsPlaying(false);
+      toast.error("Failed to load audio");
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("error", handleError);
 
     return () => {
-      audio.removeEventListener("timeupdate", updateTime);
-      audio.removeEventListener("loadedmetadata", updateDuration);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
-      // Clean up global playback state when component unmounts or audio changes
-      if (isPlaying) {
-        stopPlaying(trackId);
-      }
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("error", handleError);
     };
-  }, [audioUrl, loopMode, isPlaying, trackId, stopPlaying, onTrackEnd]);
+  }, [audioUrl, loopMode, onTrackEnd]);
 
-  // Update audio element properties when state changes
+  // Update audio properties
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -139,36 +122,29 @@ export function AudioPlayer({
     audio.playbackRate = playbackSpeed;
   }, [volume, isMuted, playbackSpeed]);
 
-  const togglePlay = () => {
+  const togglePlay = async () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !audioUrl) {
+      toast.error("No audio available");
+      return;
+    }
 
-    if (isPlaying) {
-      // Pause current track
-      audio.pause();
-      stopPlaying(trackId);
-      setIsPlaying(false);
-    } else {
-      // Request permission to play
-      const canPlay = requestPlay(trackId, trackTitle);
-      if (!canPlay) {
-        return; // Another track is playing, notification already shown
+    try {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        await audio.play();
       }
-      
-      // Play this track
-      audio.play().catch(err => {
-        console.error("Playback error:", err);
-        toast.error("Failed to play audio");
-        stopPlaying(trackId);
-      });
-      setIsPlaying(true);
+    } catch (error) {
+      console.error("Playback error:", error);
+      toast.error("Failed to play audio");
+      setIsPlaying(false);
     }
   };
 
   const handleDownload = () => {
     if (!trackId) return;
     
-    // Use server endpoint with proper Content-Disposition headers for mobile compatibility
     const downloadUrl = `/api/download/track/${trackId}`;
     const a = document.createElement("a");
     a.href = downloadUrl;
@@ -195,14 +171,14 @@ export function AudioPlayer({
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0]);
-    if (value[0] > 0 && isMuted) {
-      setIsMuted(false);
-    }
+    if (value[0] > 0) setIsMuted(false);
   };
 
-  const handleSpeedChange = (speed: number) => {
-    setPlaybackSpeed(speed);
-    toast.success(`Playback speed: ${speed}x`);
+  const handleSeek = (value: number[]) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.currentTime = value[0];
+    setCurrentTime(value[0]);
   };
 
   const cycleLoopMode = () => {
@@ -210,18 +186,20 @@ export function AudioPlayer({
     const currentIndex = modes.indexOf(loopMode);
     const nextMode = modes[(currentIndex + 1) % modes.length];
     setLoopMode(nextMode);
-    
-    const messages = {
-      none: "Loop disabled",
-      one: "Loop current track",
-      all: "Loop all tracks"
-    };
-    toast.success(messages[nextMode]);
+    toast.success(`Loop: ${nextMode === "none" ? "Off" : nextMode === "one" ? "One" : "All"}`);
   };
 
-  const getLoopIcon = () => {
-    if (loopMode === "one") return <Repeat1 className="w-4 h-4" />;
-    return <Repeat className="w-4 h-4" />;
+  const handleRetry = async () => {
+    if (!onRetry) return;
+    setIsRetrying(true);
+    try {
+      await onRetry();
+      toast.success("Retry started");
+    } catch (error) {
+      toast.error("Failed to retry");
+    } finally {
+      setIsRetrying(false);
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -231,290 +209,262 @@ export function AudioPlayer({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percentage = x / rect.width;
-    audio.currentTime = percentage * duration;
-  };
-
-  const getStatusBadge = () => {
-    switch (status) {
-      case "pending":
-        return <Badge variant="secondary" className="gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Pending</Badge>;
-      case "queued":
-        return <Badge variant="outline" className="gap-1 text-muted-foreground"><Music2 className="w-3 h-3" /> In Queue</Badge>;
-      case "processing":
-        return <Badge variant="secondary" className="gap-1"><Loader2 className="w-3 h-3 animate-spin" /> Generating {progress}%</Badge>;
-      case "completed":
-        return <Badge variant="default" className="bg-green-600">Ready</Badge>;
-      case "failed":
-        return <Badge variant="destructive" className="gap-1"><AlertCircle className="w-3 h-3" /> Failed</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <Card className="hover:border-primary/50 transition-all">
-      <CardContent className="p-4">
-        <div className="flex items-start gap-4">
-          {/* Track Number */}
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold">
-            {trackIndex}
-          </div>
-
-          {/* Track Info & Controls */}
-          <div className="flex-1 min-w-0 space-y-3">
-            {/* Track Title & Status */}
-            <div>
-              <h4 className="font-medium truncate">{trackTitle}</h4>
-              <div className="flex items-center gap-2 mt-1">
-                {getStatusBadge()}
-                {statusMessage && status === "processing" && (
-                  <span className="text-xs text-muted-foreground truncate">{statusMessage}</span>
-                )}
+  // Render different states
+  if (status === "pending" || status === "queued") {
+    return (
+      <Card className="bg-card/50 border-border/50">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-lg font-bold text-primary">{trackIndex}</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-2">{trackTitle}</h3>
+              <div className="flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">
+                  {status === "queued" ? "Queued for generation..." : "Waiting to start..."}
+                </span>
               </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-            {/* Rating Section */}
-            {status === "completed" && (
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-1">
-                  <span className="text-xs text-muted-foreground">Your rating:</span>
-                  <StarRating
-                    rating={userRating?.rating || 0}
-                    onRate={handleRate}
-                    size="sm"
-                  />
+  if (status === "processing") {
+    return (
+      <Card className="bg-card/50 border-border/50">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-lg font-bold text-primary">{trackIndex}</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-2">{trackTitle}</h3>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  <span className="text-sm text-muted-foreground">
+                    {statusMessage || "Generating music..."}
+                  </span>
                 </div>
-                {ratingCount > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-muted-foreground">Average:</span>
-                    <StarRating
-                      rating={averageRating}
-                      readonly
-                      size="sm"
-                      showCount
-                      count={ratingCount}
+                {progress > 0 && (
+                  <div className="w-full bg-secondary rounded-full h-2">
+                    <div 
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
                     />
                   </div>
                 )}
               </div>
-            )}
-
-            {/* Player Controls */}
-            {status === "completed" && audioUrl ? (
-              <div className="space-y-3">
-                {/* Progress Bar */}
-                <div 
-                  className="w-full h-2 bg-muted rounded-full overflow-hidden cursor-pointer hover:h-3 transition-all"
-                  onClick={handleProgressClick}
-                >
-                  <div
-                    className="h-full bg-primary transition-all"
-                    style={{ width: `${(currentTime / duration) * 100}%` }}
-                  />
-                </div>
-
-                {/* Main Controls Row */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  {/* Time Display */}
-                  <div className="text-xs text-muted-foreground min-w-[80px]">
-                    {formatTime(currentTime)} / {formatTime(duration)}
-                  </div>
-
-                  {/* Playback Controls */}
-                  <div className="flex items-center gap-1">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={skipBackward}
-                      className="w-8 h-8 p-0"
-                      title="Skip back 15s"
-                    >
-                      <SkipBack className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={togglePlay}
-                      className="w-10 h-10 p-0"
-                    >
-                      {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={skipForward}
-                      className="w-8 h-8 p-0"
-                      title="Skip forward 15s"
-                    >
-                      <SkipForward className="w-4 h-4" />
-                    </Button>
-                  </div>
-
-                  {/* Loop Control */}
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={cycleLoopMode}
-                    className={`w-8 h-8 p-0 ${loopMode !== "none" ? "text-primary" : ""}`}
-                    title={`Loop: ${loopMode}`}
-                  >
-                    {getLoopIcon()}
-                  </Button>
-
-                  {/* Volume Control */}
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={toggleMute}
-                      className="w-8 h-8 p-0"
-                    >
-                      {isMuted || volume === 0 ? (
-                        <VolumeX className="w-4 h-4" />
-                      ) : (
-                        <Volume2 className="w-4 h-4" />
-                      )}
-                    </Button>
-                    <div className="w-20 hidden sm:block">
-                      <Slider
-                        value={[isMuted ? 0 : volume]}
-                        onValueChange={handleVolumeChange}
-                        max={1}
-                        step={0.01}
-                        className="cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Speed Control */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="w-auto h-8 px-2 text-xs"
-                      >
-                        {playbackSpeed}x
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
-                        <DropdownMenuItem
-                          key={speed}
-                          onClick={() => handleSpeedChange(speed)}
-                          className={playbackSpeed === speed ? "bg-accent" : ""}
-                        >
-                          {speed}x {speed === 1 && "(Normal)"}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  {/* Add to Playlist Button */}
-                  <AddToPlaylist trackId={trackId} trackTitle={trackTitle} />
-                  
-                  {/* Download Button */}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleDownload}
-                    className="w-8 h-8 p-0"
-                    title="Download"
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            ) : status === "failed" ? (
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col gap-1 flex-1">
-                  <div className="text-xs text-destructive font-medium">
-                    Generation failed
-                  </div>
-                  {statusMessage && (
-                    <div className="text-xs text-muted-foreground line-clamp-2">
-                      {statusMessage}
-                    </div>
-                  )}
-                </div>
-                {onRetry && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setIsRetrying(true);
-                      onRetry();
-                      // Reset after 3 seconds to allow user to retry again if needed
-                      setTimeout(() => setIsRetrying(false), 3000);
-                    }}
-                    disabled={isRetrying}
-                    className="gap-1"
-                  >
-                    <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} />
-                    {isRetrying ? 'Retrying...' : 'Retry'}
-                  </Button>
-                )}
-              </div>
-            ) : status === "pending" ? (
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col gap-1 flex-1">
-                  <div className="text-xs text-muted-foreground font-medium">
-                    Waiting to generate
-                  </div>
-                  {statusMessage && (
-                    <div className="text-xs text-muted-foreground/70 line-clamp-2">
-                      {statusMessage}
-                    </div>
-                  )}
-                </div>
-                {onRetry && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => {
-                      setIsRetrying(true);
-                      onRetry();
-                      // Reset after 3 seconds to allow user to retry again if needed
-                      setTimeout(() => setIsRetrying(false), 3000);
-                    }}
-                    disabled={isRetrying}
-                    className="gap-1"
-                    title="Retry generation"
-                  >
-                    <RefreshCw className={`w-3 h-3 ${isRetrying ? 'animate-spin' : ''}`} />
-                    {isRetrying ? 'Retrying...' : 'Retry'}
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Music2 className="w-5 h-5" />
-                <span className="text-xs">Not generated</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Progress Bar for Generation */}
-        {status === "processing" && (
-          <div className="mt-3">
-            <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-primary transition-all"
-                style={{ width: `${progress}%` }}
-              />
             </div>
           </div>
-        )}
+        </CardContent>
+      </Card>
+    );
+  }
 
-        <audio ref={audioRef} src={audioUrl} data-track-id={trackId} />
+  if (status === "failed") {
+    return (
+      <Card className="bg-destructive/10 border-destructive/50">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-destructive/20 flex items-center justify-center">
+              <AlertCircle className="w-6 h-6 text-destructive" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-lg mb-2">{trackTitle}</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                {statusMessage || "Generation failed"}
+              </p>
+              <Button
+                onClick={handleRetry}
+                disabled={isRetrying}
+                size="sm"
+                variant="outline"
+                className="border-destructive/50 hover:bg-destructive/10"
+              >
+                {isRetrying ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Retrying...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Retry Generation
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Completed status - show full player
+  return (
+    <Card className="bg-gradient-to-br from-card/80 to-card/40 border-primary/20">
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          {/* Header */}
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                <span className="text-lg font-bold text-primary">{trackIndex}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-lg truncate">{trackTitle}</h3>
+                <Badge variant="secondary" className="mt-1">
+                  <Music2 className="w-3 h-3 mr-1" />
+                  Ready
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* Rating feature temporarily removed - focus on playback */}
+
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <Slider
+              value={[currentTime]}
+              max={duration || 100}
+              step={0.1}
+              onValueChange={handleSeek}
+              className="cursor-pointer"
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>{formatTime(currentTime)}</span>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              {/* Skip Back */}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={skipBackward}
+                className="w-8 h-8 p-0"
+                title="Skip back 15s"
+              >
+                <SkipBack className="w-4 h-4" />
+              </Button>
+
+              {/* Play/Pause */}
+              <Button
+                size="sm"
+                variant="default"
+                onClick={togglePlay}
+                className="w-10 h-10 p-0"
+                disabled={!audioUrl}
+              >
+                {isPlaying ? (
+                  <Pause className="w-5 h-5" />
+                ) : (
+                  <Play className="w-5 h-5" />
+                )}
+              </Button>
+
+              {/* Skip Forward */}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={skipForward}
+                className="w-8 h-8 p-0"
+                title="Skip forward 15s"
+              >
+                <SkipForward className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* Loop Control */}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={cycleLoopMode}
+              className="w-8 h-8 p-0"
+              title={`Loop: ${loopMode}`}
+            >
+              {loopMode === "one" ? (
+                <Repeat1 className="w-4 h-4 text-primary" />
+              ) : (
+                <Repeat className={`w-4 h-4 ${loopMode === "all" ? "text-primary" : ""}`} />
+              )}
+            </Button>
+
+            {/* Volume */}
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={toggleMute}
+                className="w-8 h-8 p-0"
+              >
+                {isMuted ? (
+                  <VolumeX className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </Button>
+              <Slider
+                value={[isMuted ? 0 : volume]}
+                max={1}
+                step={0.01}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+              />
+            </div>
+
+            {/* Speed */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="sm" variant="ghost" className="text-xs">
+                  {playbackSpeed}x
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {[0.5, 0.75, 1, 1.25, 1.5, 2].map((speed) => (
+                  <DropdownMenuItem
+                    key={speed}
+                    onClick={() => setPlaybackSpeed(speed)}
+                  >
+                    {speed}x
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Add to Playlist */}
+            <AddToPlaylist trackId={trackId} trackTitle={trackTitle} />
+
+            {/* Download */}
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleDownload}
+              className="w-8 h-8 p-0"
+              title="Download"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+          </div>
+
+          {/* Hidden audio element */}
+          {audioUrl && (
+            <audio
+              ref={audioRef}
+              src={audioUrl}
+              preload="metadata"
+            />
+          )}
+        </div>
       </CardContent>
     </Card>
   );

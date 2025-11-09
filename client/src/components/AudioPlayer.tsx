@@ -107,9 +107,11 @@ export function AudioPlayer({
       } else if (loopMode === "all" && onTrackEnd) {
         // Auto-play next track when loop mode is "all"
         setIsPlaying(false);
+        stopPlaying(trackId);
         onTrackEnd();
       } else {
         setIsPlaying(false);
+        stopPlaying(trackId);
       }
     };
 
@@ -121,8 +123,12 @@ export function AudioPlayer({
       audio.removeEventListener("timeupdate", updateTime);
       audio.removeEventListener("loadedmetadata", updateDuration);
       audio.removeEventListener("ended", handleEnded);
+      // Clean up global playback state when component unmounts or audio changes
+      if (isPlaying) {
+        stopPlaying(trackId);
+      }
     };
-  }, [audioUrl, loopMode]);
+  }, [audioUrl, loopMode, isPlaying, trackId, stopPlaying, onTrackEnd]);
 
   // Update audio element properties when state changes
   useEffect(() => {

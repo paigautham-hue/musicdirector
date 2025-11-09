@@ -1264,3 +1264,10 @@
 - [x] Allow new users to generate 3 full albums (10 tracks each)
 - [x] Update user creation logic to set musicGenerationQuota to 30
 - [x] Push database schema changes
+
+## Audio Playback Bug
+- [x] Fix audio player not playing tracks after AudioPlayerContext implementation
+- [x] Debug why play button doesn't trigger playback
+- [x] Verify AudioPlayerContext logic is not blocking legitimate play attempts
+- [x] Add stopPlaying() call in handleEnded to clear global state
+- [x] Add stopPlaying() call in useEffect cleanup to prevent stale state

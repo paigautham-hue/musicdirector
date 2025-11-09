@@ -1295,3 +1295,13 @@
 - [x] Upload generated covers to CDN
 - [x] Update database with new cover URLs
 - [x] Verify all albums now have covers (0 albums without covers)
+
+## PDF Booklet White Space Fix
+- [x] Locate PDF generation code
+- [x] Reduce page margins from 40px to 30px
+- [x] Reduce top margins from 50-100px to 30-60px
+- [x] Fit more content per page (lyrics, track info)
+- [x] Remove excessive vertical spacing between sections (reduced by 30-50%)
+- [x] Smaller font sizes for better space utilization
+- [x] Smarter page breaks to avoid wasting space
+- [ ] Test PDF generation with compact layout

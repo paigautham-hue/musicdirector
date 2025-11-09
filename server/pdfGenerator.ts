@@ -64,7 +64,7 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',
-      margins: { top: 30, bottom: 30, left: 40, right: 40 },
+      margins: { top: 20, bottom: 20, left: 30, right: 30 },
     });
 
     const chunks: Buffer[] = [];
@@ -171,101 +171,101 @@ function addAlbumInfoPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
   const { album } = data;
 
   // Page title
-  doc.fontSize(24)
+  doc.fontSize(20)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('About This Album', 50, 50);
+     .text('About This Album', 30, 30);
 
-  let y = 100;
+  let y = 60;
 
   // Album description
   if (album.description) {
-    doc.fontSize(12)
+    doc.fontSize(11)
        .fillColor('#333')
        .font('Helvetica')
-       .text(album.description, 50, y, {
-         width: doc.page.width - 100,
+       .text(album.description, 30, y, {
+         width: doc.page.width - 60,
          align: 'justify',
           lineGap: 2,
        });
-     y += doc.heightOfString(album.description, { width: doc.page.width - 100 }) + 15;
+     y += doc.heightOfString(album.description, { width: doc.page.width - 60 }) + 10;
   }
 
   // Theme
-  doc.fontSize(14)
+  doc.fontSize(13)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('Theme', 50, y);
+     .text('Theme', 30, y);
   
-  y += 25;
+  y += 18;
   
   doc.fontSize(11)
      .fillColor('#333')
      .font('Helvetica')
-     .text(album.theme, 50, y, {
-       width: doc.page.width - 100,
+     .text(album.theme, 30, y, {
+       width: doc.page.width - 60,
        align: 'justify',
        lineGap: 3,
      });
 
-   y += doc.heightOfString(album.theme, { width: doc.page.width - 100 }) + 15;
+   y += doc.heightOfString(album.theme, { width: doc.page.width - 60 }) + 12;
 
   // Vibe/Genre
   if (album.vibe) {
-    doc.fontSize(14)
+    doc.fontSize(13)
        .fillColor('#D4AF37')
        .font('Helvetica-Bold')
-       .text('Vibe & Genre', 50, y);
+       .text('Vibe & Genre', 30, y);
     
-    y += 15;
+    y += 12;
     
     const vibes = Array.isArray(album.vibe) ? album.vibe : JSON.parse(album.vibe || '[]');
-    doc.fontSize(11)
+    doc.fontSize(10)
        .fillColor('#333')
        .font('Helvetica')
-       .text(vibes.join(', '), 50, y, {
-         width: doc.page.width - 100,
+       .text(vibes.join(', '), 30, y, {
+         width: doc.page.width - 60,
        });
     
-    y += 20;
+    y += 15;
   }
 
   // Target Audience
   if (album.audience) {
-    doc.fontSize(14)
+    doc.fontSize(13)
        .fillColor('#D4AF37')
        .font('Helvetica-Bold')
-       .text('Target Audience', 50, y);
+       .text('Target Audience', 30, y);
     
-    y += 15;
+    y += 12;
     
-    doc.fontSize(11)
+    doc.fontSize(10)
        .fillColor('#333')
        .font('Helvetica')
-       .text(album.audience, 50, y, {
-         width: doc.page.width - 100,
+       .text(album.audience, 30, y, {
+         width: doc.page.width - 60,
        });
     
-    y += 20;
+    y += 15;
   }
 
   // Musical Influences
   if (album.influences) {
-    doc.fontSize(14)
+    doc.fontSize(13)
        .fillColor('#D4AF37')
        .font('Helvetica-Bold')
-       .text('Musical Influences', 50, y);
+       .text('Musical Influences', 30, y);
     
-    y += 15;
+    y += 12;
     
     const influences = Array.isArray(album.influences) 
       ? album.influences 
       : JSON.parse(album.influences || '[]');
-    doc.fontSize(11)
+    doc.fontSize(10)
        .fillColor('#333')
        .font('Helvetica')
-       .text(influences.join(', '), 50, y, {
-         width: doc.page.width - 100,
+       .text(influences.join(', '), 30, y, {
+         width: doc.page.width - 60,
        });
   }
 }
@@ -277,27 +277,27 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
   const { tracks: albumTracks, trackAssets } = data;
 
   // Page title
-  doc.fontSize(24)
+  doc.fontSize(20)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('Track Listing', 50, 50);
+     .text('Track Listing', 30, 30);
 
-  let y = 100;
+  let y = 60;
 
   albumTracks.forEach((track, index) => {
     // Check if we need a new page
-    if (y > doc.page.height - 150) {
+    if (y > doc.page.height - 80) {
       doc.addPage();
-      y = 50;
+      y = 30;
     }
 
     // Track number and title
-    doc.fontSize(14)
+    doc.fontSize(13)
        .fillColor('#D4AF37')
        .font('Helvetica-Bold')
-       .text(`${index + 1}. ${track.title}`, 50, y);
+       .text(`${index + 1}. ${track.title}`, 30, y);
 
-    y += 15;
+    y += 12;
 
     // Track details
     const details: string[] = [];
@@ -306,11 +306,11 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
     if (track.score) details.push(`Hit Score: ${track.score}/100`);
 
     if (details.length > 0) {
-      doc.fontSize(10)
+      doc.fontSize(9)
          .fillColor('#666')
          .font('Helvetica')
-         .text(details.join(' • '), 70, y);
-      y += 10;
+         .text(details.join(' • '), 45, y);
+      y += 8;
     }
 
     // Mood tags
@@ -319,51 +319,57 @@ function addTrackListings(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
         ? track.moodTags 
         : JSON.parse(track.moodTags || '[]');
       if (moods.length > 0) {
-        doc.fontSize(9)
+        doc.fontSize(8)
            .fillColor('#888')
            .font('Helvetica-Oblique')
-           .text(`Mood: ${moods.join(', ')}`, 70, y);
-        y += 10;
+           .text(`Mood: ${moods.join(', ')}`, 45, y);
+        y += 8;
       }
     }
 
     // Add lyrics if available
     const lyricsAsset = trackAssets.find(a => a.trackId === track.id && a.type === 'lyrics');
     if (lyricsAsset && lyricsAsset.content) {
-      y += 10;
+      y += 6;
       
       // Check if we need a new page for lyrics
       const lyricsHeight = doc.heightOfString(lyricsAsset.content, { 
-        width: doc.page.width - 140,
-        lineGap: 3
+        width: doc.page.width - 90,
+        lineGap: 1
       });
       
-      if (y + lyricsHeight > doc.page.height - 100) {
+      if (y + lyricsHeight > doc.page.height - 50) {
         doc.addPage();
-        y = 50;
+        y = 30;
+        // Repeat track title on new page
+        doc.fontSize(13)
+           .fillColor('#D4AF37')
+           .font('Helvetica-Bold')
+           .text(`${index + 1}. ${track.title} (continued)`, 30, y);
+        y += 15;
       }
       
-      doc.fontSize(9)
+      doc.fontSize(8)
          .fillColor('#555')
          .font('Helvetica')
-         .text(lyricsAsset.content, 70, y, {
-           width: doc.page.width - 140,
+         .text(lyricsAsset.content, 45, y, {
+           width: doc.page.width - 75,
            align: 'left',
-           lineGap: 2,
+           lineGap: 1,
          });
       
-       y += lyricsHeight + 10;
+       y += lyricsHeight + 8;
     }
 
-    y += 15; // Space between tracks
+    y += 10; // Space between tracks
   });
 
   // Total tracks summary
-  y += 20;
-  doc.fontSize(12)
+  y += 15;
+  doc.fontSize(11)
      .fillColor('#333')
      .font('Helvetica-Bold')
-     .text(`Total Tracks: ${albumTracks.length}`, 50, y);
+     .text(`Total Tracks: ${albumTracks.length}`, 30, y);
 }
 
 /**
@@ -373,46 +379,46 @@ function addCreditsPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
   const { album } = data;
 
   // Page title
-  doc.fontSize(24)
+  doc.fontSize(20)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('Credits & Information', 50, 50);
+     .text('Credits & Information', 30, 30);
 
-  let y = 120;
+  let y = 70;
 
   // Platform
-  doc.fontSize(14)
+  doc.fontSize(13)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('Music Generation Platform', 50, y);
+     .text('Music Generation Platform', 30, y);
   
-  y += 25;
+  y += 18;
   
-  doc.fontSize(11)
+  doc.fontSize(10)
      .fillColor('#333')
      .font('Helvetica')
-     .text(album.platform.toUpperCase(), 50, y);
+     .text(album.platform.toUpperCase(), 30, y);
   
-  y += 40;
+  y += 30;
 
   // Creation date
-  doc.fontSize(14)
+  doc.fontSize(13)
      .fillColor('#D4AF37')
      .font('Helvetica-Bold')
-     .text('Created', 50, y);
+     .text('Created', 30, y);
   
-  y += 25;
+  y += 18;
   
-  doc.fontSize(11)
+  doc.fontSize(10)
      .fillColor('#333')
      .font('Helvetica')
      .text(new Date(album.createdAt).toLocaleDateString('en-US', {
        year: 'numeric',
        month: 'long',
        day: 'numeric',
-     }), 50, y);
+     }), 30, y);
   
-   y += 30;
+   y += 25;
 
   // Powered by section
   doc.fontSize(12)

@@ -1305,3 +1305,15 @@
 - [x] Smaller font sizes for better space utilization
 - [x] Smarter page breaks to avoid wasting space
 - [ ] Test PDF generation with compact layout
+
+## PDF Booklet Complete Redesign
+- [x] Implement two-column layout for lyrics (magazine style)
+- [x] Remove forced page breaks between tracks
+- [x] Add visual separators between tracks (decorative lines, boxes)
+- [x] Add subtle background colors/gradients for visual interest
+- [x] Implement continuous content flow to eliminate blank pages
+- [x] Add borders and frames for professional look
+- [x] Styled track headers with rounded rectangles and gold accents
+- [x] Compact metadata display with inline labels
+- [x] Professional typography with font hierarchy
+- [ ] Test PDF generation and verify page count reduction

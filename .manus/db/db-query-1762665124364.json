@@ -1,0 +1,38 @@
+{
+  "query": "SELECT id, title, theme, description, coverPrompt FROM albums WHERE coverUrl IS NULL ORDER BY createdAt DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, title, theme, description, coverPrompt FROM albums WHERE coverUrl IS NULL ORDER BY createdAt DESC LIMIT 20",
+  "rows": [
+    {
+      "id": "150007",
+      "title": "The Decency Anthem",
+      "theme": "Small honest acts as revolution—pocket change becoming policy change; decency as the national anthem.",
+      "description": "NULL",
+      "coverPrompt": "NULL"
+    },
+    {
+      "id": "150006",
+      "title": "Mercy Louder Than Megaphones",
+      "theme": "Micro-uprisings of empathy—groceries at the doorstep, forgiveness on the bridge, mercy louder than megaphones.",
+      "description": "NULL",
+      "coverPrompt": "NULL"
+    },
+    {
+      "id": "150005",
+      "title": "The Gentle Uprising",
+      "theme": "Revolution through compassion—small daily acts as the real uprising: feed, forgive, stand tall.",
+      "description": "NULL",
+      "coverPrompt": "NULL"
+    },
+    {
+      "id": "150004",
+      "title": "The Cartography of Mercy",
+      "theme": "A blueprint for mercy in a hard world—songs that hack the heart toward empathy, truth, and repair.",
+      "description": "NULL",
+      "coverPrompt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\ttheme\tdescription\tcoverPrompt\n150007\tThe Decency Anthem\tSmall honest acts as revolution—pocket change becoming policy change; decency as the national anthem.\tNULL\tNULL\n150006\tMercy Louder Than Megaphones\tMicro-uprisings of empathy—groceries at the doorstep, forgiveness on the bridge, mercy louder than megaphones.\tNULL\tNULL\n150005\tThe Gentle Uprising\tRevolution through compassion—small daily acts as the real uprising: feed, forgive, stand tall.\tNULL\tNULL\n150004\tThe Cartography of Mercy\tA blueprint for mercy in a hard world—songs that hack the heart toward empathy, truth, and repair.\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1568
+}

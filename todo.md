@@ -1288,3 +1288,10 @@
 - [x] Ensure all album cards show consistent metadata
 - [x] Added fallback gradient with music icon for albums without covers
 - [x] Added metadata footer showing creator and date on both Library and Explore pages
+
+## Generate Missing Album Covers
+- [x] Query all albums with NULL coverUrl (found 4 albums)
+- [x] Generate AI album covers based on theme and description
+- [x] Upload generated covers to CDN
+- [x] Update database with new cover URLs
+- [x] Verify all albums now have covers (0 albums without covers)

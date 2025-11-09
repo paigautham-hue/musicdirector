@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE albums SET coverUrl = 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663026689444/FOspDUpdreXIeTWD.png' WHERE title = 'Mercy Louder Than Megaphones'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute UPDATE albums SET coverUrl = 'https://files.manuscdn.com/user_upload_by_module/session_file/310419663026689444/FOspDUpdreXIeTWD.png' WHERE title = 'Mercy Louder Than Megaphones'",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1589
+}

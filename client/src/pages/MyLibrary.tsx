@@ -3,17 +3,20 @@ import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Plus, Loader2, Trash2, Music2 } from "lucide-react";
+import { Music, Plus, Loader2, Trash2, Music2, ArrowUpDown } from "lucide-react";
+import { AlbumCardSkeletonGrid } from "@/components/AlbumCardSkeleton";
 import { AppNav } from "@/components/AppNav";
 import { PageHeader } from "@/components/PageHeader";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 
 export default function MyLibrary() {
   const { user } = useAuth();
   const [makingPublic, setMakingPublic] = useState(false);
+  const [sortBy, setSortBy] = useState<'date' | 'title' | 'score'>('date');
   const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ limit: 50 });
   const { data: musicStatus } = trpc.albums.getBulkMusicStatus.useQuery(
     { albumIds: albums?.map(a => a.id) || [] },
@@ -98,14 +101,37 @@ export default function MyLibrary() {
       </PageHeader>
 
       <div className="container mx-auto px-6 py-12">
+        {/* Sorting Controls */}
+        {albums && albums.length > 0 && (
+          <div className="mb-6 flex items-center gap-3">
+            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Sort by:</span>
+            <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Date Created</SelectItem>
+                <SelectItem value="title">Title (A-Z)</SelectItem>
+                <SelectItem value="score">Quality Score</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
         
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
+          <AlbumCardSkeletonGrid count={6} />
         ) : albums && albums.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {albums.map((album) => (
+            {[...albums].sort((a, b) => {
+              if (sortBy === 'date') {
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+              } else if (sortBy === 'title') {
+                return a.title.localeCompare(b.title);
+              } else { // score
+                return (b.score || 0) - (a.score || 0);
+              }
+            }).map((album) => (
               <div key={album.id} className="relative group">
                 <Link href={`/album/${album.id}`}>
                   <Card className="cursor-pointer hover:border-primary/50 transition-all h-full">

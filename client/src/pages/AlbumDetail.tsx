@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TrackListSkeleton } from "@/components/TrackListSkeleton";
 
 export default function AlbumDetail() {
   const params = useParams();
@@ -77,9 +78,20 @@ export default function AlbumDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
+        <AppNav />
         <div className="container mx-auto px-4 py-8">
-          <Skeleton className="h-96 w-full rounded-lg mb-8" />
-          <Skeleton className="h-64 w-full rounded-lg" />
+          {/* Album Header Skeleton */}
+          <div className="mb-8 space-y-4">
+            <Skeleton className="h-12 w-3/4" />
+            <Skeleton className="h-6 w-1/2" />
+            <div className="flex gap-4">
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-32" />
+              <Skeleton className="h-10 w-32" />
+            </div>
+          </div>
+          {/* Track List Skeleton */}
+          <TrackListSkeleton count={5} />
         </div>
       </div>
     );

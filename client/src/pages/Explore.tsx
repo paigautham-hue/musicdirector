@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Music, Search, TrendingUp, Star, Play, Eye, Heart } from "lucide-react";
 import { Link } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlbumCardSkeletonGrid } from "@/components/AlbumCardSkeleton";
 import { AppNav } from "@/components/AppNav";
 import { PageHeader } from "@/components/PageHeader";
 
@@ -103,17 +104,7 @@ export default function Explore() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i}>
-                    <CardHeader>
-                      <Skeleton className="h-48 w-full rounded-lg mb-4" />
-                      <Skeleton className="h-6 w-3/4" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </CardHeader>
-                  </Card>
-                ))}
-              </div>
+              <AlbumCardSkeletonGrid count={6} />
             ) : albums && albums.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {albums.map((album) => (

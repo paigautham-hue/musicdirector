@@ -1330,3 +1330,26 @@
 - [x] Ensure mobile header matches desktop layout
 - [x] Remove "Soul Apps" from mobile menu
 - [ ] Test responsive layout on mobile devices
+
+## Loading Skeletons
+- [x] Create reusable AlbumCardSkeleton component
+- [x] Create reusable TrackListSkeleton component
+- [x] Add skeletons to MyLibrary page during loading
+- [x] Add skeletons to Explore page during loading
+- [x] Add skeletons to Album detail page for tracks
+- [x] Test all loading states across pages
+
+## Global Search
+- [ ] Add search backend endpoint for albums
+- [ ] Add search backend endpoint for tracks
+- [ ] Add search backend endpoint for prompts
+- [ ] Create SearchBar component with debounced input
+- [ ] Add search to navigation header
+- [ ] Create search results page with tabs (Albums/Tracks/Prompts)
+
+## Album Sorting
+- [x] Add sorting dropdown to MyLibrary page
+- [x] Add sorting options: Date Created, Title, Score
+- [x] Client-side sorting implementation for MyLibrary
+- [x] Explore page already has comprehensive backend sorting (newest, trending, top_rated, most_played)
+- [ ] Persist sort preference in localStorage

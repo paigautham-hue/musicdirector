@@ -126,9 +126,15 @@ export default function PlaylistDetail() {
   };
 
   const handleTrackSelect = (index: number) => {
+    // If clicking the currently playing track, toggle play/pause
+    if (index === currentTrackIndex) {
+      handlePlayPause();
+      return;
+    }
+    
+    // Otherwise, switch to the new track and start playing
     setCurrentTrackIndex(index);
     setIsPlaying(true);
-    // Auto-play when track is selected
     setTimeout(() => {
       if (audioRef.current) {
         audioRef.current.play().catch(err => {

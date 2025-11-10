@@ -1359,3 +1359,10 @@
 - [x] Load saved sort preference on page mount
 - [x] Save sort preference when user changes sorting
 - [x] Test persistence across browser sessions
+
+## PDF Booklet Improvements
+- [x] Fix text overlap issue in two-column layout
+- [x] Add philosophical album introduction section before tracks
+- [x] Ensure proper spacing and column breaks
+- [x] Intelligent theme-based philosophical text generation
+- [x] Test PDF generation with various album lengths

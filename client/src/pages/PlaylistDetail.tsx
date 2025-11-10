@@ -4,7 +4,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Music, Play, Pause, SkipForward, SkipBack, Trash2, Eye, EyeOff, Share2, Clock, ArrowLeft, Star } from "lucide-react";
+import { Music, Play, Pause, SkipForward, SkipBack, Trash2, Eye, EyeOff, Share2, Clock, ArrowLeft, Star, Shuffle, Repeat, Repeat1, List } from "lucide-react";
 import { StarRating } from "@/components/StarRating";
 import { PlaylistAISuggestions } from "@/components/PlaylistAISuggestions";
 import { toast } from "sonner";
@@ -17,6 +17,10 @@ export default function PlaylistDetail() {
 
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [repeatMode, setRepeatMode] = useState<'off' | 'all' | 'one'>('off');
+  const [showQueue, setShowQueue] = useState(false);
+  const [queue, setQueue] = useState<number[]>([]);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const utils = trpc.useUtils();
@@ -84,9 +88,34 @@ export default function PlaylistDetail() {
 
   const handleNext = () => {
     if (!playlist?.tracks) return;
+    
+    if (repeatMode === 'one') {
+      // Replay current track
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
+      return;
+    }
+    
     const nextIndex = (currentTrackIndex + 1) % playlist.tracks.length;
+    
+    // If we're at the end and repeat is off, stop playing
+    if (repeatMode === 'off' && nextIndex === 0) {
+      setIsPlaying(false);
+      return;
+    }
+    
     setCurrentTrackIndex(nextIndex);
-    setIsPlaying(false);
+    setIsPlaying(true);
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(err => {
+          console.error('Playback failed:', err);
+          setIsPlaying(false);
+        });
+      }
+    }, 100);
   };
 
   const handlePrevious = () => {
@@ -98,7 +127,16 @@ export default function PlaylistDetail() {
 
   const handleTrackSelect = (index: number) => {
     setCurrentTrackIndex(index);
-    setIsPlaying(false);
+    setIsPlaying(true);
+    // Auto-play when track is selected
+    setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.play().catch(err => {
+          console.error('Playback failed:', err);
+          setIsPlaying(false);
+        });
+      }
+    }, 100);
   };
 
   const handleRemoveTrack = (playlistTrackId: number) => {
@@ -111,6 +149,40 @@ export default function PlaylistDetail() {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
     toast.success("Playlist link copied to clipboard!");
+  };
+
+  const handleShuffle = () => {
+    if (!playlist?.tracks) return;
+    
+    if (!isShuffled) {
+      // Create shuffled queue
+      const indices = playlist.tracks.map((_, i) => i).filter(i => i !== currentTrackIndex);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+      setQueue([currentTrackIndex, ...indices]);
+      setIsShuffled(true);
+      toast.success("Shuffle enabled");
+    } else {
+      setQueue([]);
+      setIsShuffled(false);
+      toast.success("Shuffle disabled");
+    }
+  };
+
+  const handleRepeat = () => {
+    const modes: Array<'off' | 'all' | 'one'> = ['off', 'all', 'one'];
+    const currentIndex = modes.indexOf(repeatMode);
+    const nextMode = modes[(currentIndex + 1) % modes.length];
+    setRepeatMode(nextMode);
+    
+    const messages = {
+      off: "Repeat off",
+      all: "Repeat all",
+      one: "Repeat one"
+    };
+    toast.success(messages[nextMode]);
   };
 
   const formatDuration = (seconds: number | null | undefined) => {
@@ -340,9 +412,78 @@ export default function PlaylistDetail() {
                           <SkipForward className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="text-center text-sm text-muted-foreground">
+                      
+                      {/* Playback Controls */}
+                      <div className="flex items-center justify-center gap-2 mb-4">
+                        <Button
+                          variant={isShuffled ? "default" : "ghost"}
+                          size="sm"
+                          onClick={handleShuffle}
+                        >
+                          <Shuffle className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant={repeatMode !== 'off' ? "default" : "ghost"}
+                          size="sm"
+                          onClick={handleRepeat}
+                        >
+                          {repeatMode === 'one' ? (
+                            <Repeat1 className="w-4 h-4" />
+                          ) : (
+                            <Repeat className="w-4 h-4" />
+                          )}
+                        </Button>
+                        <Button
+                          variant={showQueue ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => setShowQueue(!showQueue)}
+                        >
+                          <List className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      
+                      <div className="text-center text-sm text-muted-foreground mb-4">
                         Track {currentTrackIndex + 1} of {playlist.tracks.length}
                       </div>
+                      
+                      {/* Queue Panel */}
+                      {showQueue && (
+                        <div className="border-t border-border pt-4 mt-4">
+                          <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                            <List className="w-4 h-4" />
+                            Up Next
+                          </h4>
+                          <div className="space-y-2 max-h-64 overflow-y-auto">
+                            {(isShuffled ? queue : playlist.tracks.map((_, i) => i))
+                              .slice(currentTrackIndex + 1, currentTrackIndex + 6)
+                              .map((trackIndex) => {
+                                const track = playlist.tracks[trackIndex];
+                                if (!track) return null;
+                                return (
+                                  <div
+                                    key={trackIndex}
+                                    className="flex items-center gap-2 p-2 rounded hover:bg-accent/50 cursor-pointer transition-colors"
+                                    onClick={() => handleTrackSelect(trackIndex)}
+                                  >
+                                    <Play className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm font-medium truncate">{track.trackTitle}</p>
+                                      <p className="text-xs text-muted-foreground truncate">{track.albumTitle}</p>
+                                    </div>
+                                    <span className="text-xs text-muted-foreground">
+                                      {formatDuration(track.duration)}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            {(isShuffled ? queue : playlist.tracks).length - currentTrackIndex <= 1 && (
+                              <p className="text-xs text-muted-foreground text-center py-2">
+                                End of playlist
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
                 </CardContent>

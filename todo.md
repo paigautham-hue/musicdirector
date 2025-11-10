@@ -1599,3 +1599,14 @@
 - [ ] Ensure touch/swipe works on mobile
 - [ ] Add visual indicator that more content exists (gradient fade at edges)
 - [ ] Test scrolling behavior on all devices
+
+## Playlist Playback Enhancements
+
+- [ ] Make track cards fully clickable (not just play button)
+- [ ] Add click handler to entire track card for instant playback
+- [ ] Build queue visualization panel showing current and upcoming tracks
+- [ ] Implement drag-to-reorder functionality for queue
+- [ ] Add shuffle control to randomize playback order
+- [ ] Add repeat control (off, repeat all, repeat one)
+- [ ] Show visual indicator for current playing track in queue
+- [ ] Test clickable cards, queue management, and playback controls

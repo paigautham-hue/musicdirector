@@ -1,0 +1,85 @@
+{
+  "query": "SELECT a.title as album_title, a.trackCount as expected_tracks, COUNT(t.id) as actual_tracks FROM albums a LEFT JOIN tracks t ON a.id = t.albumId WHERE a.title IN ('Rain That Learns to Pray', 'Color Theory for Hearts', 'Borrowed Hours', 'Where the Light Kneels', 'Open Map', 'City of Kindness', 'Systems & Ghosts', 'Baptism on the Freeway', 'Piano for the Storm', 'Freedom in Common Time', 'Blueprint for Blue Skies', 'Ledger of the Heart', 'Sky Inside the Temple', 'Hands of Fire', 'Breath, Becoming') GROUP BY a.id, a.title, a.trackCount ORDER BY a.title",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT a.title as album_title, a.trackCount as expected_tracks, COUNT(t.id) as actual_tracks FROM albums a LEFT JOIN tracks t ON a.id = t.albumId WHERE a.title IN ('Rain That Learns to Pray', 'Color Theory for Hearts', 'Borrowed Hours', 'Where the Light Kneels', 'Open Map', 'City of Kindness', 'Systems & Ghosts', 'Baptism on the Freeway', 'Piano for the Storm', 'Freedom in Common Time', 'Blueprint for Blue Skies', 'Ledger of the Heart', 'Sky Inside the Temple', 'Hands of Fire', 'Breath, Becoming') GROUP BY a.id, a.title, a.trackCount ORDER BY a.title",
+  "rows": [
+    {
+      "album_title": "Baptism on the Freeway",
+      "expected_tracks": "12",
+      "actual_tracks": "12"
+    },
+    {
+      "album_title": "Blueprint for Blue Skies",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Borrowed Hours",
+      "expected_tracks": "8",
+      "actual_tracks": "8"
+    },
+    {
+      "album_title": "Breath, Becoming",
+      "expected_tracks": "7",
+      "actual_tracks": "7"
+    },
+    {
+      "album_title": "City of Kindness",
+      "expected_tracks": "11",
+      "actual_tracks": "11"
+    },
+    {
+      "album_title": "Color Theory for Hearts",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Freedom in Common Time",
+      "expected_tracks": "11",
+      "actual_tracks": "11"
+    },
+    {
+      "album_title": "Hands of Fire",
+      "expected_tracks": "8",
+      "actual_tracks": "8"
+    },
+    {
+      "album_title": "Ledger of the Heart",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Open Map",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Piano for the Storm",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Rain That Learns to Pray",
+      "expected_tracks": "10",
+      "actual_tracks": "10"
+    },
+    {
+      "album_title": "Sky Inside the Temple",
+      "expected_tracks": "9",
+      "actual_tracks": "9"
+    },
+    {
+      "album_title": "Systems & Ghosts",
+      "expected_tracks": "9",
+      "actual_tracks": "9"
+    },
+    {
+      "album_title": "Where the Light Kneels",
+      "expected_tracks": "9",
+      "actual_tracks": "9"
+    }
+  ],
+  "messages": [],
+  "stdout": "album_title\texpected_tracks\tactual_tracks\nBaptism on the Freeway\t12\t12\nBlueprint for Blue Skies\t10\t10\nBorrowed Hours\t8\t8\nBreath, Becoming\t7\t7\nCity of Kindness\t11\t11\nColor Theory for Hearts\t10\t10\nFreedom in Common Time\t11\t11\nHands of Fire\t8\t8\nLedger of the Heart\t10\t10\nOpen Map\t10\t10\nPiano for the Storm\t10\t10\nRain That Learns to Pray\t10\t10\nSky Inside the Temple\t9\t9\nSystems & Ghosts\t9\t9\nWhere the Light Kneels\t9\t9\n",
+  "stderr": "",
+  "execution_time_ms": 1516
+}

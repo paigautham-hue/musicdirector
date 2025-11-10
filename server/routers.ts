@@ -261,6 +261,50 @@ export const appRouter = router({
         };
       }),
     
+    // Regenerate album cover
+    regenerateCover: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Allow album owner or admin to regenerate cover
+        if (album.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        // Generate new cover using existing cover prompt or album theme
+        const { generateImage } = await import("./_core/imageGeneration");
+        const coverPrompt = album.coverPrompt || `Album cover art for "${album.title}" - ${album.theme}`;
+        
+        let coverUrl: string | undefined;
+        try {
+          const coverResult = await generateImage({ prompt: coverPrompt });
+          coverUrl = coverResult.url;
+        } catch (error) {
+          console.error("Cover generation failed:", error);
+          throw new TRPCError({ 
+            code: 'INTERNAL_SERVER_ERROR', 
+            message: 'Failed to generate album cover' 
+          });
+        }
+        
+        // Update album with new cover URL
+        const database = await db.getDb();
+        if (!database) {
+          throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+        }
+        
+        await database
+          .update(albums)
+          .set({ coverUrl })
+          .where(eq(albums.id, input.albumId));
+        
+        return { coverUrl };
+      }),
+    
     // Delete album
     delete: protectedProcedure
       .input(z.object({ id: z.number() }))

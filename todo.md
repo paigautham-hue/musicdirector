@@ -1408,3 +1408,21 @@
 - [x] Add all metadata (keys, tempo, mood tags)
 - [x] Execute seed script to add remaining tracks (112 new tracks added)
 - [x] Verify all albums have complete track listings
+
+## Generate AI Album Cover Art
+- [ ] Generate unique cover art for all 15 albums
+- [ ] Design covers matching each album's theme and vibe
+- [ ] Upload covers to S3 storage
+- [ ] Update database with cover image URLs
+- [ ] Verify covers display correctly in Explore page
+
+## Album Cover Generation and Management
+- [x] Generate 15 unique AI album covers for all curated albums
+- [x] Upload all 15 generated album covers to S3 storage
+- [x] Update database with album cover URLs
+- [x] Add backend endpoint to regenerate album covers (albums.regenerateCover)
+- [x] Add frontend UI button to regenerate covers (AlbumDetail page)
+- [x] Button only shows for album owners or admins
+- [x] Loading state with spinning icon during generation
+- [x] Success/error toast notifications
+- [x] Test regenerate feature

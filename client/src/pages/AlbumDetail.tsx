@@ -25,6 +25,7 @@ import {
   Linkedin,
   Link as LinkIcon,
   Check,
+  RefreshCw,
 } from "lucide-react";
 import {
   Dialog,
@@ -44,6 +45,7 @@ export default function AlbumDetail() {
   const [comment, setComment] = useState("");
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isRegeneratingCover, setIsRegeneratingCover] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -69,6 +71,23 @@ export default function AlbumDetail() {
       toast.success("Comment added!");
     },
   });
+
+  const regenerateCover = trpc.albums.regenerateCover.useMutation({
+    onSuccess: () => {
+      utils.social.getAlbumDetails.invalidate({ albumId });
+      setIsRegeneratingCover(false);
+      toast.success("Album cover regenerated!");
+    },
+    onError: (error) => {
+      setIsRegeneratingCover(false);
+      toast.error(error.message || "Failed to regenerate cover");
+    },
+  });
+
+  const handleRegenerateCover = () => {
+    setIsRegeneratingCover(true);
+    regenerateCover.mutate({ albumId });
+  };
 
   // Increment view count on mount
   useEffect(() => {
@@ -151,12 +170,25 @@ export default function AlbumDetail() {
             <Card>
               <CardContent className="p-0">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
-                  <div>
+                  <div className="relative">
                     <img
                       src={album.album.coverUrl || "/placeholder-album.png"}
                       alt={album.album.title}
                       className="w-full rounded-lg shadow-2xl"
                     />
+                    {/* Show regenerate button if user owns the album or if cover is missing */}
+                    {user && (album.album.userId === user.id || user.role === 'admin') && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute bottom-4 right-4"
+                        onClick={handleRegenerateCover}
+                        disabled={isRegeneratingCover}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-2 ${isRegeneratingCover ? 'animate-spin' : ''}`} />
+                        {isRegeneratingCover ? 'Generating...' : 'Regenerate Cover'}
+                      </Button>
+                    )}
                   </div>
                   <div className="flex flex-col justify-between">
                     <div>

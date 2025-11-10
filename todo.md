@@ -1610,3 +1610,11 @@
 - [ ] Add repeat control (off, repeat all, repeat one)
 - [ ] Show visual indicator for current playing track in queue
 - [ ] Test clickable cards, queue management, and playback controls
+
+## Public Playlist Sharing
+
+- [x] Allow unauthenticated users to view and play public shared playlists
+- [x] Update backend playlist.get endpoint to use publicProcedure for public playlists
+- [x] Update frontend PlaylistDetail to work without authentication
+- [x] Test shared playlist links with logged-out users
+- [x] Add visibility toggle button for playlist owners

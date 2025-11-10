@@ -62,9 +62,29 @@ export default function PlaylistDetail() {
     },
   });
 
+  const updatePlaylistMutation = trpc.playlists.update.useMutation({
+    onSuccess: () => {
+      toast.success("Playlist updated!");
+      utils.playlists.get.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update playlist");
+    },
+  });
+
   const handleRate = (rating: number) => {
     if (!playlistId) return;
     rateMutation.mutate({ playlistId, rating });
+  };
+
+  const handleToggleVisibility = () => {
+    if (!playlistId || !playlist) return;
+    const newVisibility = playlist.visibility === "public" ? "private" : "public";
+    updatePlaylistMutation.mutate({
+      playlistId,
+      visibility: newVisibility,
+    });
+    toast.success(`Playlist is now ${newVisibility}`);
   };
 
   useEffect(() => {
@@ -249,10 +269,31 @@ export default function PlaylistDetail() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-accent to-blue-500 bg-clip-text text-transparent">
                   {playlist.name}
                 </h1>
-                {playlist.visibility === "public" ? (
-                  <Eye className="w-5 h-5 text-green-500" />
+                {isOwner ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleToggleVisibility}
+                    className="gap-2"
+                  >
+                    {playlist.visibility === "public" ? (
+                      <>
+                        <Eye className="w-4 h-4 text-green-500" />
+                        <span className="text-sm text-green-500">Public</span>
+                      </>
+                    ) : (
+                      <>
+                        <EyeOff className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Private</span>
+                      </>
+                    )}
+                  </Button>
                 ) : (
-                  <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  playlist.visibility === "public" ? (
+                    <Eye className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <EyeOff className="w-5 h-5 text-muted-foreground" />
+                  )
                 )}
               </div>
               {playlist.description && (

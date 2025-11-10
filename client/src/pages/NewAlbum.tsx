@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Music, ArrowLeft, ArrowRight, Loader2, X, Save, FolderOpen } from "lucide-react";
+import { Music, ArrowLeft, ArrowRight, Loader2, X, Save, FolderOpen, Lightbulb, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,8 @@ import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { APP_TITLE, getLoginUrl } from "@/const";
+import { VIBE_CATEGORIES } from "@shared/vibeSuggestions";
+import { getArtistRecommendations, extractGenreKeywords } from "@shared/artistRecommendations";
 
 export default function NewAlbum() {
   const { user, isAuthenticated } = useAuth();
@@ -38,6 +40,11 @@ export default function NewAlbum() {
   const [platform, setPlatform] = useState<string>("suno");
   const [trackCount, setTrackCount] = useState(10);
   const [visibility, setVisibility] = useState<"public" | "private">("public");
+  
+  // Suggestion dialogs
+  const [showVibeDialog, setShowVibeDialog] = useState(false);
+  const [showArtistDialog, setShowArtistDialog] = useState(false);
+  const [suggestedArtists, setSuggestedArtists] = useState<string[]>([]);
   
   // Parse URL parameters to pre-fill form from saved prompts
   useEffect(() => {
@@ -179,6 +186,35 @@ export default function NewAlbum() {
 
   const removeInfluence = (influence: string) => {
     setInfluences(influences.filter(i => i !== influence));
+  };
+
+  const handleAddVibeSuggestion = (vibe: string) => {
+    if (!vibes.includes(vibe)) {
+      setVibes([...vibes, vibe]);
+      toast.success(`Added "${vibe}" to vibes`);
+    }
+  };
+
+  const handleGetArtistSuggestions = () => {
+    // Extract genres from vibes and theme
+    const genreKeywords = extractGenreKeywords([...vibes, theme].join(" "));
+    const recommendations = getArtistRecommendations(genreKeywords, vibes, 8);
+    
+    if (recommendations.length === 0) {
+      toast.info("Add some vibes or genres first to get artist suggestions!");
+      return;
+    }
+    
+    setSuggestedArtists(recommendations.map(r => r.name));
+    setShowArtistDialog(true);
+  };
+
+  const handleAddArtistInfluence = (artist: string) => {
+    const influence = `${artist} style`;
+    if (!influences.includes(influence)) {
+      setInfluences([...influences, influence]);
+      toast.success(`Added "${influence}" to influences`);
+    }
   };
 
   const handleSavePrompt = () => {
@@ -359,12 +395,25 @@ export default function NewAlbum() {
               {step === 2 && (
                 <div className="space-y-6">
                   <div>
-                    <Label htmlFor="vibe" className="text-lg font-semibold">
-                      Vibe & Genres *
-                    </Label>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Add genres, moods, and vibes (press Enter to add)
-                    </p>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <Label htmlFor="vibe" className="text-lg font-semibold">
+                          Vibe & Genres *
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Add genres, moods, and vibes (press Enter to add)
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowVibeDialog(true)}
+                        className="gap-2"
+                      >
+                        <Lightbulb className="w-4 h-4" />
+                        Browse Vibes
+                      </Button>
+                    </div>
                     <div className="flex gap-2 mb-3">
                       <Input
                         id="vibe"
@@ -385,10 +434,23 @@ export default function NewAlbum() {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="influence">Influences (Optional)</Label>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Add artist styles or eras for inspiration (non-infringing descriptions only)
-                    </p>
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <Label htmlFor="influence">Influences (Optional)</Label>
+                        <p className="text-sm text-muted-foreground">
+                          Add artist styles or eras for inspiration (non-infringing descriptions only)
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGetArtistSuggestions}
+                        className="gap-2"
+                      >
+                        <Users className="w-4 h-4" />
+                        Suggest Artists
+                      </Button>
+                    </div>
                     <div className="flex gap-2 mb-3">
                       <Input
                         id="influence"
@@ -666,6 +728,83 @@ export default function NewAlbum() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowLoadDialog(false)}>
               Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Browse Vibes Dialog */}
+      <Dialog open={showVibeDialog} onOpenChange={setShowVibeDialog}>
+        <DialogContent className="bg-card border-border max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Browse Vibe Suggestions</DialogTitle>
+            <DialogDescription>
+              Click any vibe to add it to your album. Mix and match to create your unique sound!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            {VIBE_CATEGORIES.map((category) => (
+              <div key={category.name}>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-3">
+                  {category.name}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {category.vibes.map((vibe) => (
+                    <Badge
+                      key={vibe}
+                      variant={vibes.includes(vibe) ? "default" : "outline"}
+                      className="cursor-pointer hover:bg-primary/80 transition-colors"
+                      onClick={() => handleAddVibeSuggestion(vibe)}
+                    >
+                      {vibe}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowVibeDialog(false)}>
+              Done
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Artist Suggestions Dialog */}
+      <Dialog open={showArtistDialog} onOpenChange={setShowArtistDialog}>
+        <DialogContent className="bg-card border-border max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Artist Suggestions</DialogTitle>
+            <DialogDescription>
+              Based on your genre and vibes, here are some artists that match your style.
+              Click to add their style as an influence.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            {suggestedArtists.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {suggestedArtists.map((artist) => (
+                  <Button
+                    key={artist}
+                    variant="outline"
+                    className="justify-start h-auto py-3"
+                    onClick={() => handleAddArtistInfluence(artist)}
+                  >
+                    <Users className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">{artist}</span>
+                  </Button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">
+                No suggestions available. Try adding some vibes or genres first!
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowArtistDialog(false)}>
+              Done
             </Button>
           </DialogFooter>
         </DialogContent>

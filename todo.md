@@ -1618,3 +1618,23 @@
 - [x] Update frontend PlaylistDetail to work without authentication
 - [x] Test shared playlist links with logged-out users
 - [x] Add visibility toggle button for playlist owners
+
+## Album Creation UX Improvements
+
+- [ ] Add vibe/mood suggestion dropdown with curated descriptive words
+- [ ] Create categorized vibe tags (emotional, energy, aesthetic, production style)
+- [ ] Build artist recommendation system based on genre + vibes
+- [ ] Add "Browse Vibes" button to NewAlbum Step 2
+- [ ] Add "Suggest Artists" button to NewAlbum Step 2
+- [ ] Integrate vibe suggestions as clickable tags that populate the input
+- [ ] Test that all new features are additive and don't break existing flows
+
+
+## Album Creation UX Improvements (User Feedback)
+
+- [x] Add "Browse Vibes" button with categorized mood/vibe suggestions
+- [x] Create vibe suggestion data with 60+ descriptive words across 5 categories
+- [x] Add "Suggest Artists" button based on selected genre and vibes
+- [x] Create artist recommendation system with 100+ artists mapped to genres/vibes
+- [x] Integrate both features into NewAlbum wizard Step 2
+- [x] Test that all features work without breaking existing functionality

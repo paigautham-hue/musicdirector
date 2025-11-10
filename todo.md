@@ -1535,3 +1535,20 @@
 - [x] Implement auto-play for seamless listening experience
 - [x] Add visual indicators showing why tracks were recommended
 - [x] Create admin dashboard to view AI scores and curate playlists
+
+## Discovery Playlists Display Issue
+
+- [x] Debug why AI-curated playlists don't show on home page despite tracks being analyzed
+- [x] Check if DiscoveryPlaylists component is rendering correctly
+- [x] Verify tRPC queries are returning data
+- [x] Fix any query or rendering issues
+- [x] Test playlist display and playback on home page
+- [x] Verify Discovery page (/discovery) shows all playlists
+
+## Published Site Errors
+
+- [x] Identify the 2 errors shown in the published site preview
+- [x] Fix the errors preventing AI recommendations from displaying
+- [x] Test fixes on dev server
+- [ ] Create new checkpoint with fixes
+- [ ] Republish to live site

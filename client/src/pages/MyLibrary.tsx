@@ -152,7 +152,7 @@ export default function MyLibrary() {
               }
             }).map((album) => (
               <div key={album.id} className="relative group">
-                <Link href={`/album/${album.id}`}>
+                <Link href={`/workspace/${album.id}`}>
                   <Card className="cursor-pointer hover:border-primary/50 transition-all h-full">
                     <div className="relative">
                       {album.coverUrl ? (

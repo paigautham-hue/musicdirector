@@ -39,7 +39,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/new" component={NewAlbum} />
-      <Route path="/album/:id" component={AlbumWorkspace} />
+      <Route path="/workspace/:id" component={AlbumWorkspace} />
       <Route path="/library" component={MyLibrary} />
       <Route path="/knowledge" component={KnowledgeHub} />
       <Route path="/admin" component={AdminDashboard} />

@@ -131,7 +131,7 @@ export default function NewAlbum() {
       setProgress(data);
       if (data.stage === "Complete" && data.albumId) {
         toast.success("Album created successfully!");
-        setLocation(`/album/${data.albumId}`);
+        setLocation(`/workspace/${data.albumId}`);
         setJobId(null);
       } else if (data.stage === "Error") {
         toast.error(data.message);

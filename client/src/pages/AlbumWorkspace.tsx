@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { AppNav } from "@/components/AppNav";
@@ -23,6 +23,15 @@ import { Input } from "@/components/ui/input";
 export default function AlbumWorkspace() {
   const { id } = useParams();
   const { user } = useAuth();
+  const [, navigate] = useLocation();
+  
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      navigate("/library");
+    }
+  };
   const [activeTrackId, setActiveTrackId] = useState<number | null>(null);
   const [improvements, setImprovements] = useState<string[]>([]);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
@@ -367,12 +376,10 @@ export default function AlbumWorkspace() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex gap-2 flex-wrap items-center">
-              <Link href="/my-library">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
+              <Button variant="ghost" size="sm" onClick={handleBack}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
               <Button 
                 onClick={() => generateMusicMutation.mutate({ albumId: album.id })}
                 disabled={generateMusicMutation.isPending}

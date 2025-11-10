@@ -109,12 +109,12 @@ export default function Home() {
             <div className="hidden lg:flex items-center gap-6">
               {isAuthenticated ? (
                 <>
-                       <Link href="/library"><a style={{ color: '#fff', fontSize: '14px' }}>My Music</a></Link>
-                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Discover</a></Link>
-                  <Link href="/prompts"><a style={{ color: '#fff', fontSize: '14px' }}>My Ideas</a></Link>
-                  <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <Link href="/library" style={{ color: '#fff', fontSize: '14px' }}>My Music</Link>
+                  <Link href="/explore" style={{ color: '#fff', fontSize: '14px' }}>Discover</Link>
+                  <Link href="/prompts" style={{ color: '#fff', fontSize: '14px' }}>My Ideas</Link>
+                  <Link href="/pricing" style={{ color: '#fff', fontSize: '14px' }}>Pricing</Link>
                   {user?.role === 'admin' && (
-                    <Link href="/admin"><a style={{ color: '#fff', fontSize: '14px' }}>Admin</a></Link>
+                    <Link href="/admin" style={{ color: '#fff', fontSize: '14px' }}>Admin</Link>
                   )}
                   <Link href="/new">
                     <Button size="sm" style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
@@ -128,8 +128,8 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Discover</a></Link>
-                  <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
+                  <Link href="/explore" style={{ color: '#fff', fontSize: '14px' }}>Discover</Link>
+                  <Link href="/pricing" style={{ color: '#fff', fontSize: '14px' }}>Pricing</Link>
                   <Button size="sm" asChild style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
                     <a href={getLoginUrl()}>Get Started</a>
                   </Button>
@@ -674,14 +674,14 @@ export default function Home() {
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-foreground/60">
 
-                <li><Link href="/pricing"><a className="hover:text-foreground transition-colors">Pricing</a></Link></li>
+                <li><Link href="/pricing" className="hover:text-foreground transition-colors">Pricing</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Community</h3>
               <ul className="space-y-2 text-sm text-foreground/60">
-                <li><Link href="/explore"><a className="hover:text-foreground transition-colors">Discover</a></Link></li>
-                <li><Link href="/impact-stories"><a className="hover:text-foreground transition-colors">Impact Stories</a></Link></li>
+                <li><Link href="/explore" className="hover:text-foreground transition-colors">Discover</Link></li>
+                <li><Link href="/impact-stories" className="hover:text-foreground transition-colors">Impact Stories</Link></li>
               </ul>
             </div>
             <div>

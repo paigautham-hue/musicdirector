@@ -1374,3 +1374,15 @@
 - [x] Add clickable links from TOC to track sections
 - [x] Add named destinations for track navigation
 - [x] Test navigation and page numbering
+
+## Public Album Access
+- [x] Update backend to allow unauthenticated access to public albums
+- [x] Change albums.get to publicProcedure with conditional auth
+- [x] Update getMusicStatus and getBulkMusicStatus to publicProcedure
+- [x] Explore page already works without authentication (uses social router)
+- [x] Album detail page already works without authentication (uses social router)
+- [x] Music player already works for unauthenticated users
+- [x] Add Explore link to navigation for unauthenticated users (desktop + mobile)
+- [x] Add Explore CTA button on Home page for visitors
+- [x] Keep private albums and creation features protected
+- [x] Test public access flow thoroughly

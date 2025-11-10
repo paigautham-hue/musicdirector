@@ -220,8 +220,8 @@ export const appRouter = router({
         return db.getUserAlbums(ctx.user.id, input.limit);
       }),
     
-    // Get album details with tracks
-    get: protectedProcedure
+    // Get album details with tracks (public for public albums, auth required for private)
+    get: publicProcedure
       .input(z.object({ id: z.number() }))
       .query(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.id);
@@ -229,13 +229,22 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        // Allow access if: owner, admin, or album is public
-        const isOwner = album.userId === ctx.user.id;
-        const isAdmin = ctx.user.role === 'admin';
+        // Check if album is public
         const isPublic = album.visibility === 'public';
         
-        if (!isOwner && !isAdmin && !isPublic) {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
+        // If album is private, require authentication
+        if (!isPublic) {
+          if (!ctx.user) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required for private albums' });
+          }
+          
+          // Allow access if: owner or admin
+          const isOwner = album.userId === ctx.user.id;
+          const isAdmin = ctx.user.role === 'admin';
+          
+          if (!isOwner && !isAdmin) {
+            throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
+          }
         }
         
         const tracks = await db.getAlbumTracks(input.id);
@@ -432,8 +441,8 @@ export const appRouter = router({
         return { success: true, jobCount: albumTracks.length };
       }),
     
-    // Get music generation status for album with queue info
-    getMusicStatus: protectedProcedure
+    // Get music generation status for album with queue info (public for public albums)
+    getMusicStatus: publicProcedure
       .input(z.object({ albumId: z.number() }))
       .query(async ({ ctx, input }) => {
         const album = await db.getAlbumById(input.albumId);
@@ -441,13 +450,21 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
         }
         
-        // Allow access if: owner, admin, or album is public
-        const isOwner = album.userId === ctx.user.id;
-        const isAdmin = ctx.user.role === 'admin';
+        // Check if album is public
         const isPublic = album.visibility === 'public';
         
-        if (!isOwner && !isAdmin && !isPublic) {
-          throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
+        // If album is private, require authentication and ownership
+        if (!isPublic) {
+          if (!ctx.user) {
+            throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' });
+          }
+          
+          const isOwner = album.userId === ctx.user.id;
+          const isAdmin = ctx.user.role === 'admin';
+          
+          if (!isOwner && !isAdmin) {
+            throw new TRPCError({ code: 'FORBIDDEN', message: 'This album is private' });
+          }
         }
         
         const jobs = await db.getMusicJobsByAlbumId(input.albumId);
@@ -461,15 +478,17 @@ export const appRouter = router({
         };
       }),
     
-    // Get music status for multiple albums (for library view)
-    getBulkMusicStatus: protectedProcedure
+    // Get music status for multiple albums (for library view and public albums)
+    getBulkMusicStatus: publicProcedure
       .input(z.object({ albumIds: z.array(z.number()) }))
       .query(async ({ ctx, input }) => {
         const statusMap: Record<number, { hasMusic: boolean; trackCount: number; completedCount: number }> = {};
         
         for (const albumId of input.albumIds) {
           const album = await db.getAlbumById(albumId);
-          if (album && album.userId === ctx.user.id) {
+          // Allow access if: authenticated user owns it, or album is public
+          const canAccess = (ctx.user && album && album.userId === ctx.user.id) || (album && album.visibility === 'public');
+          if (canAccess) {
             const audioFiles = await db.getAudioFilesByAlbumId(albumId);
             const tracks = await db.getTracksByAlbumId(albumId);
             statusMap[albumId] = {

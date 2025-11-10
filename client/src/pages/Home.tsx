@@ -379,12 +379,19 @@ export default function Home() {
                     </Button>
                   </Link>
                 ) : (
-                  <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
-                    <a href={getLoginUrl()}>
-                      Get Started
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </a>
-                  </Button>
+                  <>
+                    <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                      <a href={getLoginUrl()}>
+                        Get Started
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                      </a>
+                    </Button>
+                    <Link href="/explore">
+                      <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
+                        Explore Albums
+                      </Button>
+                    </Link>
+                  </>
                 )}
                 <Button size="lg" variant="outline" asChild className="border-primary/50 hover:bg-primary/10">
                   <a href="#features">Explore Platforms</a>

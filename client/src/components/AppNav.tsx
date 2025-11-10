@@ -209,9 +209,20 @@ export function AppNav() {
                   </DropdownMenu>
                 </>
               ) : (
-                <Button size="sm" asChild className="bg-gradient-to-r from-primary to-accent">
-                  <a href={getLoginUrl()}>Sign In</a>
-                </Button>
+                <>
+                  <Link href="/explore">
+                    <a className={`text-sm font-medium transition-colors ${
+                      location === '/explore' 
+                        ? 'text-foreground border-b-2 border-primary pb-1' 
+                        : 'text-foreground/80 hover:text-foreground'
+                    }`}>
+                      Explore
+                    </a>
+                  </Link>
+                  <Button size="sm" asChild className="bg-gradient-to-r from-primary to-accent">
+                    <a href={getLoginUrl()}>Sign In</a>
+                  </Button>
+                </>
               )}
             </div>
 
@@ -502,7 +513,24 @@ export function AppNav() {
                   </div>
                 </div>
               ) : (
-                <div style={{ padding: '0 1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
+                  <Link href="/explore">
+                    <a
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0.5rem',
+                        color: '#ffffff',
+                        textAlign: 'center',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onClick={() => setMobileMenuOpen(false)}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                      Explore Albums
+                    </a>
+                  </Link>
                   <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>
                     <a href={getLoginUrl()}>Sign In</a>
                   </Button>

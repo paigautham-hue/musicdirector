@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, Pause, Star, TrendingUp, Gem, Music, ChevronRight } from "lucide-react";
+import { Play, Pause, Star, TrendingUp, Gem, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 
 interface DiscoveryPlaylistsProps {
@@ -12,7 +12,6 @@ interface DiscoveryPlaylistsProps {
 }
 
 export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps) {
-  const [activePlaylist, setActivePlaylist] = useState<"staff_picks" | "trending" | "hidden_gems">("staff_picks");
   const [currentTrackId, setCurrentTrackId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -23,42 +22,9 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
   const { data: trending, isLoading: loadingTrending } = trpc.recommendations.getTrendingPotential.useQuery({ limit });
   const { data: hiddenGems, isLoading: loadingGems } = trpc.recommendations.getHiddenGems.useQuery({ limit });
 
-  const playlists = [
-    {
-      id: "staff_picks",
-      title: "Staff Picks",
-      description: "Exceptional tracks chosen by our AI curator",
-      icon: Star,
-      gradient: "from-yellow-500 to-orange-500",
-      data: staffPicks,
-      isLoading: loadingStaff,
-      badge: "85+ Score"
-    },
-    {
-      id: "trending",
-      title: "Trending Potential",
-      description: "Songs likely to go viral",
-      icon: TrendingUp,
-      gradient: "from-pink-500 to-purple-500",
-      data: trending,
-      isLoading: loadingTrending,
-      badge: "75-84 Score"
-    },
-    {
-      id: "hidden_gems",
-      title: "Hidden Gems",
-      description: "High quality tracks waiting to be discovered",
-      icon: Gem,
-      gradient: "from-cyan-500 to-blue-500",
-      data: hiddenGems,
-      isLoading: loadingGems,
-      badge: "70-84 Score"
-    }
-  ];
+  const handlePlayTrack = (trackId: number, audioUrl: string | null) => {
+    if (!audioUrl) return;
 
-  const activeData = playlists.find(p => p.id === activePlaylist);
-
-  const handlePlayPause = (trackId: number, audioUrl: string) => {
     if (currentTrackId === trackId && isPlaying) {
       audioRef.current?.pause();
       setIsPlaying(false);
@@ -66,9 +32,13 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current.play();
-        setCurrentTrackId(trackId);
-        setIsPlaying(true);
+      } else {
+        const audio = new Audio(audioUrl);
+        audioRef.current = audio;
+        audio.play();
       }
+      setCurrentTrackId(trackId);
+      setIsPlaying(true);
     }
   };
 
@@ -81,200 +51,153 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
     }
   }, []);
 
-  if (variant === "home") {
-    return (
-      <div className="space-y-6">
-        <audio ref={audioRef} />
-        
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
-              AI-Curated Playlists
-            </h2>
-            <p className="text-foreground/60 mt-1">Discover exceptional music chosen by our AI curator</p>
+  const PlaylistSection = ({
+    title,
+    description,
+    icon: Icon,
+    gradient,
+    badge,
+    tracks,
+    isLoading,
+    playlistId
+  }: {
+    title: string;
+    description: string;
+    icon: any;
+    gradient: string;
+    badge: string;
+    tracks: any[] | undefined;
+    isLoading: boolean;
+    playlistId: string;
+  }) => (
+    <div className="space-y-6">
+      {/* Section Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg`}>
+            <Icon className="w-7 h-7 text-white" />
           </div>
+          <div>
+            <h3 className="text-2xl font-bold">{title}</h3>
+            <p className="text-foreground/60 text-sm">{description}</p>
+          </div>
+          <Badge variant="secondary" className="ml-2">{badge}</Badge>
+        </div>
+        {variant === "home" && (
           <Link href="/discovery">
-            <Button variant="outline" className="gap-2">
+            <Button variant="ghost" className="gap-2">
               View All
               <ChevronRight className="w-4 h-4" />
             </Button>
           </Link>
-        </div>
-
-        {/* Playlist Tabs */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {playlists.map((playlist) => {
-            const Icon = playlist.icon;
-            return (
-              <button
-                key={playlist.id}
-                onClick={() => setActivePlaylist(playlist.id as any)}
-                className={`p-6 rounded-xl border-2 transition-all text-left ${
-                  activePlaylist === playlist.id
-                    ? "border-primary bg-primary/5 scale-105"
-                    : "border-border hover:border-primary/50"
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div className={`p-3 rounded-lg bg-gradient-to-br ${playlist.gradient}`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-lg">{playlist.title}</h3>
-                    <p className="text-sm text-foreground/60 mt-1">{playlist.description}</p>
-                    <Badge variant="secondary" className="mt-2">{playlist.badge}</Badge>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Track Grid */}
-        <div>
-          {activeData?.isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <Skeleton key={i} className="h-32" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {activeData?.data?.slice(0, 6).map((track) => (
-                <Card key={track.id} className="group hover:shadow-lg transition-all">
-                  <CardContent className="p-4">
-                    <div className="flex items-start gap-3">
-                      {/* Album Cover */}
-                      <div className="relative flex-shrink-0">
-                        <img
-                          src={track.album.coverUrl || "/placeholder-album.png"}
-                          alt={track.album.title}
-                          className="w-16 h-16 rounded-lg object-cover"
-                        />
-                        {track.audio.url && (
-                          <button
-                            onClick={() => handlePlayPause(track.id, track.audio.url)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            {currentTrackId === track.id && isPlaying ? (
-                              <Pause className="w-6 h-6 text-white" />
-                            ) : (
-                              <Play className="w-6 h-6 text-white" />
-                            )}
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Track Info */}
-                      <div className="flex-1 min-w-0">
-                        <Link href={`/album/${track.albumId}`}>
-                          <h4 className="font-semibold text-sm truncate hover:text-primary transition-colors">
-                            {track.title}
-                          </h4>
-                        </Link>
-                        <p className="text-xs text-foreground/60 truncate">{track.album.title}</p>
-                        <p className="text-xs text-foreground/60 truncate">by {track.creator.name}</p>
-                        
-                        {/* Score Badge */}
-                        <div className="flex items-center gap-2 mt-2">
-                          <Badge variant="secondary" className="text-xs">
-                            <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                            {track.score}/100
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </div>
-    );
-  }
 
-  // Full page variant
-  return (
-    <div className="space-y-8">
-      <audio ref={audioRef} />
-      
-      {playlists.map((playlist) => {
-        const Icon = playlist.icon;
-        return (
-          <div key={playlist.id} className="space-y-4">
-            {/* Playlist Header */}
-            <div className="flex items-center gap-4">
-              <div className={`p-4 rounded-xl bg-gradient-to-br ${playlist.gradient}`}>
-                <Icon className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold">{playlist.title}</h2>
-                <p className="text-foreground/60">{playlist.description}</p>
-              </div>
-              <Badge variant="secondary" className="ml-auto">{playlist.badge}</Badge>
-            </div>
-
-            {/* Track List */}
-            {playlist.isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {[...Array(8)].map((_, i) => (
-                  <Skeleton key={i} className="h-40" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {playlist.data?.map((track) => (
-                  <Card key={track.id} className="group hover:shadow-xl transition-all">
-                    <CardContent className="p-0">
-                      {/* Album Cover */}
-                      <div className="relative aspect-square">
-                        <img
-                          src={track.album.coverUrl || "/placeholder-album.png"}
-                          alt={track.album.title}
-                          className="w-full h-full object-cover rounded-t-lg"
-                        />
-                        {track.audio.url && (
-                          <button
-                            onClick={() => handlePlayPause(track.id, track.audio.url)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            {currentTrackId === track.id && isPlaying ? (
-                              <Pause className="w-12 h-12 text-white" />
-                            ) : (
-                              <Play className="w-12 h-12 text-white" />
-                            )}
-                          </button>
+      {/* Horizontal Scrollable Track Row */}
+      <div className="relative">
+        <div className="overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex gap-4" style={{ width: "max-content" }}>
+            {isLoading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="w-64 flex-shrink-0">
+                  <Skeleton className="w-full h-64 rounded-lg" />
+                </div>
+              ))
+            ) : tracks && tracks.length > 0 ? (
+              tracks.map((track) => (
+                <Card
+                  key={track.id}
+                  className="w-64 flex-shrink-0 bg-card/50 backdrop-blur border-border/50 hover:bg-card/80 transition-all duration-300 overflow-hidden group"
+                >
+                  <div className="relative aspect-square">
+                    <img
+                      src={track.album.coverUrl || "/placeholder-album.png"}
+                      alt={track.album.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Button
+                        size="icon"
+                        className="w-14 h-14 rounded-full bg-white hover:bg-white/90 text-black"
+                        onClick={() => handlePlayTrack(track.id, track.audioUrl)}
+                        disabled={!track.audioUrl}
+                      >
+                        {currentTrackId === track.id && isPlaying ? (
+                          <Pause className="w-6 h-6" />
+                        ) : (
+                          <Play className="w-6 h-6 ml-1" />
                         )}
-                        
-                        {/* Score Badge */}
-                        <div className="absolute top-2 right-2">
-                          <Badge className="bg-black/80 backdrop-blur">
-                            <Star className="w-3 h-3 mr-1 fill-yellow-400 text-yellow-400" />
-                            {track.score}
-                          </Badge>
-                        </div>
-                      </div>
-
-                      {/* Track Info */}
-                      <div className="p-4 space-y-2">
-                        <Link href={`/album/${track.albumId}`}>
-                          <h4 className="font-semibold truncate hover:text-primary transition-colors">
-                            {track.title}
-                          </h4>
-                        </Link>
-                        <p className="text-sm text-foreground/60 truncate">{track.album.title}</p>
-                        <p className="text-xs text-foreground/60 truncate">by {track.creator.name}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </Button>
+                    </div>
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-black/70 backdrop-blur text-white border-0 gap-1">
+                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        {track.score}/100
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <Link href={`/library/${track.albumId}`}>
+                      <h4 className="font-semibold text-sm line-clamp-1 hover:text-primary transition-colors">
+                        {track.title}
+                      </h4>
+                    </Link>
+                    <p className="text-xs text-foreground/60 line-clamp-1">{track.album?.title || 'Unknown Album'}</p>
+                    <p className="text-xs text-foreground/50">by {track.album?.user?.name || 'Unknown Artist'}</p>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <div className="w-full py-12 text-center text-foreground/60">
+                No tracks available yet
               </div>
             )}
           </div>
-        );
-      })}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-16">
+      {/* Staff Picks Section */}
+      <PlaylistSection
+        title="Staff Picks"
+        description="Exceptional tracks chosen by our AI curator"
+        icon={Star}
+        gradient="from-yellow-500 to-orange-500"
+        badge="85+ Score"
+        tracks={staffPicks}
+        isLoading={loadingStaff}
+        playlistId="staff_picks"
+      />
+
+      {/* Trending Potential Section */}
+      <PlaylistSection
+        title="Trending Potential"
+        description="Songs likely to go viral"
+        icon={TrendingUp}
+        gradient="from-pink-500 to-purple-500"
+        badge="75-84 Score"
+        tracks={trending}
+        isLoading={loadingTrending}
+        playlistId="trending"
+      />
+
+      {/* Hidden Gems Section */}
+      <PlaylistSection
+        title="Hidden Gems"
+        description="High quality tracks waiting to be discovered"
+        icon={Gem}
+        gradient="from-cyan-500 to-blue-500"
+        badge="70-84 Score"
+        tracks={hiddenGems}
+        isLoading={loadingGems}
+        playlistId="hidden_gems"
+      />
+
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} className="hidden" />
     </div>
   );
 }

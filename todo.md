@@ -1324,3 +1324,9 @@
 - [x] Remove "Soul Apps" from main navigation menu
 - [x] Remove duplicate "Built by GP" from Home page
 - [x] Ensure responsive layout works on mobile
+
+## Mobile Header Fix
+- [x] Add "Built by GP" and "Soul Apps" under logo on mobile (Home page)
+- [x] Ensure mobile header matches desktop layout
+- [x] Remove "Soul Apps" from mobile menu
+- [ ] Test responsive layout on mobile devices

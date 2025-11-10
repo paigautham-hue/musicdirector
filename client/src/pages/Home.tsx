@@ -56,29 +56,53 @@ export default function Home() {
       <nav style={{ backgroundColor: '#0a0a0f', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo - Premium Animated Branding */}
-            <Link href="/">
-              <a className="flex items-center gap-3 group">
-                {/* Custom AI-Generated Logo */}
-                <div className="relative transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
-                  <img 
-                    src="/logo-custom.png" 
-                    alt="AI Album Creator Logo" 
-                    className="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)] group-hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] transition-all duration-300"
-                  />
-                </div>
-                
-                {/* Premium Typography with Animated Gradients */}
-                <div className="flex flex-col leading-tight">
-                  <span className="text-base sm:text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-flow group-hover:scale-105 transition-transform duration-300">
-                    The Collective
+            {/* Logo with Built by GP and Soul Apps */}
+            <div className="flex flex-col gap-1">
+              <Link href="/">
+                <a className="flex items-center gap-3 group">
+                  {/* Custom AI-Generated Logo */}
+                  <div className="relative transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+                    <img 
+                      src="/logo-custom.png" 
+                      alt="AI Album Creator Logo" 
+                      className="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)] group-hover:drop-shadow-[0_0_25px_rgba(168,85,247,0.8)] transition-all duration-300"
+                    />
+                  </div>
+                  
+                  {/* Premium Typography with Animated Gradients */}
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-base sm:text-lg md:text-xl font-black tracking-tight bg-gradient-to-r from-purple-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent animate-gradient-flow group-hover:scale-105 transition-transform duration-300">
+                      The Collective
+                    </span>
+                    <span className="text-base sm:text-lg md:text-xl font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient-flow-reverse">
+                      Soul
+                    </span>
+                  </div>
+                </a>
+              </Link>
+              {/* Built by GP and Soul Apps */}
+              <div className="flex items-center gap-3 pl-1">
+                <span className="text-xs text-muted-foreground/60">
+                  Built by{' '}
+                  <span className="font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+                    GP
                   </span>
-                  <span className="text-base sm:text-lg md:text-xl font-bold tracking-wider bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent animate-gradient-flow-reverse">
-                    Soul
-                  </span>
-                </div>
-              </a>
-            </Link>
+                </span>
+                <span className="text-muted-foreground/30">•</span>
+                <a 
+                  href="https://soulapps.manus.space" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-foreground/60 hover:text-foreground transition-colors flex items-center gap-1"
+                  title="View more Soul Apps"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Soul Apps
+                </a>
+              </div>
+            </div>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
@@ -88,7 +112,6 @@ export default function Home() {
                   <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
                   <Link href="/community-prompts"><a style={{ color: '#fff', fontSize: '14px' }}>Prompts</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
-                  <a href="https://soulapps.manus.space" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '14px' }}>Soul Apps ↗</a>
                   {user?.role === 'admin' && (
                     <Link href="/admin"><a style={{ color: '#fff', fontSize: '14px' }}>Admin</a></Link>
                   )}
@@ -106,7 +129,6 @@ export default function Home() {
                 <>
                   <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
-                  <a href="https://soulapps.manus.space" target="_blank" rel="noopener noreferrer" style={{ color: '#fff', fontSize: '14px' }}>Soul Apps ↗</a>
                   <Button size="sm" asChild style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
                     <a href={getLoginUrl()}>Get Started</a>
                   </Button>
@@ -232,15 +254,6 @@ export default function Home() {
                   Impact Stories
                 </a>
               </Link>
-              <a
-                href="https://soulapps.manus.space"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Soul Apps ↗
-              </a>
               <Link href="/pricing">
                 <a
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}

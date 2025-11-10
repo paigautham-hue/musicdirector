@@ -100,7 +100,7 @@ export default function AlbumDetail() {
     },
   });
 
-  const downloadPdf = (trpc.albums as any).albumBooklet.useMutation({
+  const downloadPdf = trpc.downloads.albumBooklet.useMutation({
     onSuccess: (data: { pdf: string; filename: string }) => {
       // Convert base64 to blob and download
       const byteCharacters = atob(data.pdf);

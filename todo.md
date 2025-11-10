@@ -1483,3 +1483,9 @@
 - [x] Filter Explore page to show only albums with generated music (hasAudio filter)
 - [x] Link button to filtered Explore page showing playable albums
 - [x] Test on mobile and desktop
+
+## Play Community Music Button Enhancement
+- [x] Make button much more prominent with golden gradient styling
+- [x] Increase button size and visual weight
+- [x] Improve positioning and spacing
+- [x] Test on mobile and desktop

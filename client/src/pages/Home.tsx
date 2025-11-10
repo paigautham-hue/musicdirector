@@ -382,7 +382,7 @@ export default function Home() {
                       </Button>
                     </Link>
                     <Link href="/explore?hasAudio=true">
-                      <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
+                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
                         <Music className="mr-2 w-5 h-5" />
                         Play Community Music
                       </Button>
@@ -397,7 +397,7 @@ export default function Home() {
                       </a>
                     </Button>
                     <Link href="/explore?hasAudio=true">
-                      <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
+                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
                         <Music className="mr-2 w-5 h-5" />
                         Play Community Music
                       </Button>

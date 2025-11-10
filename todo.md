@@ -1426,3 +1426,11 @@
 - [x] Loading state with spinning icon during generation
 - [x] Success/error toast notifications
 - [x] Test regenerate feature
+
+## Back Button Navigation Fix
+- [x] Investigate back button implementation in album pages
+- [x] Fix 404 error when clicking back button
+- [x] Changed from hardcoded /explore route to browser history API
+- [x] Ensure proper navigation to previous page (Library or Explore)
+- [x] Added fallback to /explore if no history exists
+- [x] Test back button from different entry points

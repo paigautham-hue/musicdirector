@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "wouter";
+import { useParams, Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -42,10 +42,21 @@ export default function AlbumDetail() {
   const params = useParams();
   const albumId = parseInt(params.id || "0");
   const { user } = useAuth();
+  const [, navigate] = useLocation();
   const [comment, setComment] = useState("");
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [isRegeneratingCover, setIsRegeneratingCover] = useState(false);
+
+  const handleBack = () => {
+    // Use browser history to go back
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      // Fallback to explore if no history
+      navigate("/explore");
+    }
+  };
 
   const utils = trpc.useUtils();
 
@@ -157,12 +168,10 @@ export default function AlbumDetail() {
       <AppNav />
 
       <div className="container mx-auto px-4 py-8">
-        <Link href="/explore">
-          <Button variant="ghost" size="sm" className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Explore
-          </Button>
-        </Link>
+        <Button variant="ghost" size="sm" className="mb-4" onClick={handleBack}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">

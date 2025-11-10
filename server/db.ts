@@ -1,4 +1,4 @@
-import { eq, desc, and, or, like, sql, inArray, avg, count, gte } from "drizzle-orm";
+import { eq, desc, and, or, like, sql, inArray, avg, count, gte, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
@@ -789,13 +789,14 @@ export async function getPublicAlbumsWithFilters(params: {
   search?: string;
   platform?: string;
   sortBy?: "newest" | "trending" | "top_rated" | "most_played";
+  hasAudio?: boolean;
   limit?: number;
   offset?: number;
 }) {
   const db = await getDb();
   if (!db) return [];
 
-  const { search, platform, sortBy = "newest", limit = 20, offset = 0 } = params;
+  const { search, platform, sortBy = "newest", hasAudio, limit = 20, offset = 0 } = params;
 
   let conditions = [eq(albums.visibility, "public")];
 
@@ -812,6 +813,24 @@ export async function getPublicAlbumsWithFilters(params: {
   // Apply platform filter
   if (platform) {
     conditions.push(eq(albums.platform, platform));
+  }
+
+  // Apply hasAudio filter - only show albums with generated music
+  if (hasAudio) {
+    // Check musicJobs table for completed jobs (status = 'completed')
+    const albumsWithAudio = await db
+      .select({ albumId: musicJobs.albumId })
+      .from(musicJobs)
+      .where(eq(musicJobs.status, 'completed'))
+      .groupBy(musicJobs.albumId);
+    
+    const albumIdsWithAudio = albumsWithAudio.map(a => a.albumId);
+    if (albumIdsWithAudio.length > 0) {
+      conditions.push(inArray(albums.id, albumIdsWithAudio));
+    } else {
+      // No albums with audio, return empty
+      return [];
+    }
   }
 
   let query = db

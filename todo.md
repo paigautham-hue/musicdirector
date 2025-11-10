@@ -1477,3 +1477,9 @@
 - [x] Reset createdAt timestamp in retry mutations
 - [x] Clear platformJobId in retry mutations
 - [x] Test retry functionality
+
+## Play Community Music Feature
+- [x] Add prominent "Play Community Music" button/link on home page hero section
+- [x] Filter Explore page to show only albums with generated music (hasAudio filter)
+- [x] Link button to filtered Explore page showing playable albums
+- [x] Test on mobile and desktop

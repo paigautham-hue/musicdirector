@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,11 +16,22 @@ export default function Explore() {
   const [search, setSearch] = useState("");
   const [platform, setPlatform] = useState<string | undefined>();
   const [sortBy, setSortBy] = useState<"newest" | "trending" | "top_rated" | "most_played">("trending");
+  const [hasAudio, setHasAudio] = useState<boolean | undefined>();
+
+  // Check URL parameter for hasAudio filter
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hasAudioParam = params.get('hasAudio');
+    if (hasAudioParam === 'true') {
+      setHasAudio(true);
+    }
+  }, []);
 
   const { data: albums, isLoading } = trpc.social.getPublicAlbums.useQuery({
     search: search || undefined,
     platform,
     sortBy,
+    hasAudio,
     limit: 50,
     offset: 0,
   });

@@ -374,12 +374,20 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 {isAuthenticated ? (
-                  <Link href="/new">
-                    <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
-                      {hasAlbums ? 'Create Another Album' : 'Create Your First Album'}
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/new">
+                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                        {hasAlbums ? 'Create Another Album' : 'Create Your First Album'}
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                      </Button>
+                    </Link>
+                    <Link href="/explore?hasAudio=true">
+                      <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
+                        <Music className="mr-2 w-5 h-5" />
+                        Play Community Music
+                      </Button>
+                    </Link>
+                  </>
                 ) : (
                   <>
                     <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
@@ -388,16 +396,14 @@ export default function Home() {
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </a>
                     </Button>
-                    <Link href="/explore">
+                    <Link href="/explore?hasAudio=true">
                       <Button size="lg" variant="outline" className="border-primary/50 hover:bg-primary/10">
-                        Explore Albums
+                        <Music className="mr-2 w-5 h-5" />
+                        Play Community Music
                       </Button>
                     </Link>
                   </>
                 )}
-                <Button size="lg" variant="outline" asChild className="border-primary/50 hover:bg-primary/10">
-                  <a href="#features">Explore Platforms</a>
-                </Button>
               </div>
             </div>
             <div className="relative">

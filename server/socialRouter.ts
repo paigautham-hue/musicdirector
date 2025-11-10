@@ -19,6 +19,7 @@ export const socialRouter = router({
         search: z.string().optional(),
         platform: z.string().optional(),
         sortBy: z.enum(["newest", "trending", "top_rated", "most_played"]).optional(),
+        hasAudio: z.boolean().optional(),
         limit: z.number().min(1).max(100).default(20),
         offset: z.number().min(0).default(0),
       })

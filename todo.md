@@ -1508,3 +1508,11 @@
 - [x] Add Download PDF button to album detail page
 - [x] Implement download functionality
 - [x] Test PDF generation and download
+
+## Navigation Consistency & Clarity
+- [x] Investigate mobile vs desktop navigation differences
+- [x] Ensure consistent navigation across all devices
+- [x] Redesign menu labels for clarity (Apple-like simplicity)
+- [x] Replace technical terms with user-friendly language
+- [x] Add descriptive subtitles or tooltips where needed
+- [x] Test navigation flow with first-time user perspective

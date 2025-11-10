@@ -86,7 +86,7 @@ export function AppNav() {
                         ? 'text-foreground border-b-2 border-primary pb-1' 
                         : 'text-foreground/80 hover:text-foreground'
                     }`}>
-                      Library
+                      My Music
                     </a>
                   </Link>
                   <Link href="/explore">
@@ -95,7 +95,7 @@ export function AppNav() {
                         ? 'text-foreground border-b-2 border-primary pb-1' 
                         : 'text-foreground/80 hover:text-foreground'
                     }`}>
-                      Explore
+                      Discover
                     </a>
                   </Link>
                   <Link href="/prompts">
@@ -104,16 +104,7 @@ export function AppNav() {
                         ? 'text-foreground border-b-2 border-primary pb-1' 
                         : 'text-foreground/80 hover:text-foreground'
                     }`}>
-                      My Prompts
-                    </a>
-                  </Link>
-                  <Link href="/community-prompts">
-                    <a className={`text-sm font-medium transition-colors ${
-                      location === '/community-prompts' 
-                        ? 'text-foreground border-b-2 border-primary pb-1' 
-                        : 'text-foreground/80 hover:text-foreground'
-                    }`}>
-                      Community
+                      My Ideas
                     </a>
                   </Link>
                   <Link href="/my-playlists">
@@ -216,7 +207,7 @@ export function AppNav() {
                         ? 'text-foreground border-b-2 border-primary pb-1' 
                         : 'text-foreground/80 hover:text-foreground'
                     }`}>
-                      Explore
+                      Discover
                     </a>
                   </Link>
                   <Button size="sm" asChild className="bg-gradient-to-r from-primary to-accent">
@@ -304,7 +295,7 @@ export function AppNav() {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      My Library
+                      My Music
                     </a>
                   </Link>
                   <Link href="/explore">
@@ -320,23 +311,7 @@ export function AppNav() {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      Explore
-                    </a>
-                  </Link>
-                  <Link href="/community-prompts">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Community Prompts
+                      Discover
                     </a>
                   </Link>
                   <Link href="/prompts">
@@ -352,7 +327,7 @@ export function AppNav() {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      My Prompts
+                      My Ideas
                     </a>
                   </Link>
                   <Link href="/my-playlists">
@@ -368,103 +343,7 @@ export function AppNav() {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      My Playlists
-                    </a>
-                  </Link>
-                  <Link href="/playlists">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Discover Playlists
-                    </a>
-                  </Link>
-                  <Link href="/playlist-stats">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Playlist Stats
-                    </a>
-                  </Link>
-                  <Link href="/knowledge">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Knowledge Hub
-                    </a>
-                  </Link>
-                  <Link href="/impact-stories">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Impact Stories
-                    </a>
-                  </Link>
-                  <Link href="/payment/history">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Payment History
-                    </a>
-                  </Link>
-                  <Link href="/gallery">
-                    <a
-                      style={{
-                        display: 'block',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '0.5rem',
-                        color: '#ffffff',
-                        transition: 'background-color 0.2s'
-                      }}
-                      onClick={() => setMobileMenuOpen(false)}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      Gallery
+                      Playlists
                     </a>
                   </Link>
                   <Link href="/pricing">
@@ -528,7 +407,7 @@ export function AppNav() {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      Explore Albums
+                      Discover
                     </a>
                   </Link>
                   <Button className="w-full bg-gradient-to-r from-primary to-accent" asChild>

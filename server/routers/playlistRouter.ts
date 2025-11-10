@@ -255,4 +255,83 @@ export const playlistRouter = router({
     const stats = await getPlaylistStats(ctx.user.id);
     return stats;
   }),
+
+  /**
+   * Save an AI collection as a personal playlist
+   */
+  saveCollection: protectedProcedure
+    .input(
+      z.object({
+        collectionType: z.enum(["staff_picks", "trending", "hidden_gems"]),
+        title: z.string().optional(),
+        description: z.string().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Determine collection parameters
+      let scoreMin = 0;
+      let scoreMax = 100;
+      let defaultTitle = "";
+      let defaultDescription = "";
+
+      switch (input.collectionType) {
+        case "staff_picks":
+          scoreMin = 85;
+          defaultTitle = "Staff Picks Collection";
+          defaultDescription = "Exceptional tracks chosen by our AI curator";
+          break;
+        case "trending":
+          scoreMin = 75;
+          scoreMax = 84;
+          defaultTitle = "Trending Potential Collection";
+          defaultDescription = "Songs likely to go viral";
+          break;
+        case "hidden_gems":
+          scoreMin = 70;
+          scoreMax = 84;
+          defaultTitle = "Hidden Gems Collection";
+          defaultDescription = "High quality tracks waiting to be discovered";
+          break;
+      }
+
+      // Create the playlist
+      const playlistId = await createPlaylist({
+        userId: ctx.user.id,
+        name: input.title || defaultTitle,
+        description: input.description || defaultDescription,
+        visibility: "private",
+      });
+
+      // Get tracks from the collection
+      const { getDb } = await import("../db");
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const { tracks, albums } = await import("../../drizzle/schema");
+      const { and, eq, desc, sql } = await import("drizzle-orm");
+
+      const collectionTracks = await db
+        .select({ id: tracks.id })
+        .from(tracks)
+        .leftJoin(albums, eq(tracks.albumId, albums.id))
+        .where(
+          and(
+            sql`${tracks.score} >= ${scoreMin}`,
+            sql`${tracks.score} <= ${scoreMax}`,
+            eq(albums.visibility, "public")
+          )
+        )
+        .orderBy(desc(tracks.score))
+        .limit(50);
+
+      // Add tracks to the playlist
+      for (const track of collectionTracks) {
+        await addTrackToPlaylist(playlistId, track.id, ctx.user.id);
+      }
+
+      return {
+        playlistId,
+        trackCount: collectionTracks.length,
+      };
+    }),
 });

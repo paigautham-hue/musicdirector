@@ -1574,3 +1574,20 @@
 - [ ] Add subtle filter bar (All Genres, This Week, All Time)
 - [ ] Implement "Load More" functionality for each section
 - [x] Test consistency between home and discovery pages
+
+## AI-Curated Collections & Playlist System
+
+- [x] Rename "AI-Curated Playlists" to "AI-Curated Collections" across all UI
+- [x] Update Discovery page header and descriptions
+- [x] Update Home page section title
+- [x] Create playlists table in database schema
+- [x] Create playlistTracks junction table for many-to-many relationship
+- [x] Add playlist CRUD operations in db.ts
+- [x] Create playlist router with tRPC procedures
+- [x] Implement "Save as Playlist" button for each collection
+- [x] Add "Play All" button that queues all tracks in collection
+- [ ] Implement playlist queue management system (auto-play next track)
+- [ ] Add "Share Playlist" functionality with public URLs
+- [ ] Create user's saved playlists view in Library
+- [ ] Add ability to add/remove tracks from saved playlists
+- [x] Test playlist creation, saving, and playback

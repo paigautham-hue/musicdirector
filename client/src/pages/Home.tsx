@@ -495,9 +495,17 @@ export default function Home() {
         </div>
       </div>
 
-      {/* AI-Curated Discovery Section */}
+      {/* AI-Curated Collections Section */}
       <div className="relative py-20 lg:py-32 bg-gradient-to-b from-primary/5 to-transparent">
         <div className="container mx-auto px-6">
+          <div className="text-center space-y-4 mb-12">
+            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              AI-Curated Collections
+            </h2>
+            <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
+              Discover exceptional tracks automatically curated by our AI
+            </p>
+          </div>
           <DiscoveryPlaylists variant="home" />
         </div>
       </div>

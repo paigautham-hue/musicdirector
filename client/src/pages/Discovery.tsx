@@ -232,9 +232,9 @@ export default function Discovery() {
 
         {/* Page Header */}
         <div className="text-center space-y-4 py-8">
-          <h2 className="text-4xl font-bold">Explore AI-Curated Playlists</h2>
+          <h2 className="text-4xl font-bold">Explore AI-Curated Collections</h2>
           <p className="text-lg text-foreground/60 max-w-2xl mx-auto">
-            Each track is analyzed for lyrical quality, emotional depth, universal appeal, and memorability.
+            Each track is automatically analyzed for lyrical quality, emotional depth, universal appeal, and memorability.
           </p>
         </div>
 

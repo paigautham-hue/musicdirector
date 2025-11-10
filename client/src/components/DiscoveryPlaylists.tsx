@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, Pause, Star, TrendingUp, Gem, ChevronRight } from "lucide-react";
+import { Play, Pause, Star, TrendingUp, Gem, ChevronRight, Save, PlayCircle } from "lucide-react";
 import { Link } from "wouter";
 
 interface DiscoveryPlaylistsProps {
@@ -15,6 +15,24 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
   const [currentTrackId, setCurrentTrackId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const saveCollectionMutation = trpc.playlists.saveCollection.useMutation({
+    onSuccess: (data) => {
+      alert(`Saved ${data.trackCount} tracks to your library!`);
+    },
+    onError: (error) => {
+      alert(`Failed to save: ${error.message}`);
+    },
+  });
+
+  const handlePlayAll = (tracks: any[]) => {
+    if (!tracks || tracks.length === 0) return;
+    const firstTrack = tracks[0];
+    if (firstTrack.audioUrl) {
+      handlePlayTrack(firstTrack.id, firstTrack.audioUrl);
+      // TODO: Implement queue system to auto-play next tracks
+    }
+  };
 
   const limit = variant === "home" ? 6 : 20;
 
@@ -83,14 +101,36 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
           </div>
           <Badge variant="secondary" className="ml-2">{badge}</Badge>
         </div>
-        {variant === "home" && (
-          <Link href="/discovery">
-            <Button variant="ghost" className="gap-2">
-              View All
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        )}
+        <div className="flex items-center gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="gap-2 bg-gradient-to-r from-primary to-accent"
+            onClick={() => handlePlayAll(tracks || [])}
+            disabled={!tracks || tracks.length === 0}
+          >
+            <PlayCircle className="w-4 h-4" />
+            Play All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => saveCollectionMutation.mutate({ collectionType: playlistId as any })}
+            disabled={saveCollectionMutation.isPending}
+          >
+            <Save className="w-4 h-4" />
+            {saveCollectionMutation.isPending ? "Saving..." : "Save as Playlist"}
+          </Button>
+          {variant === "home" && (
+            <Link href="/discovery">
+              <Button variant="ghost" size="sm" className="gap-2">
+                View All
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Horizontal Scrollable Track Row */}

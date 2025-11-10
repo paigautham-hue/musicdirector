@@ -1502,3 +1502,9 @@
 - [x] Integrate audio player for each track
 - [x] Display track metadata (title, duration, status)
 - [x] Test playback functionality
+
+## Album PDF Download Button
+- [x] Find existing PDF export endpoint
+- [x] Add Download PDF button to album detail page
+- [x] Implement download functionality
+- [x] Test PDF generation and download

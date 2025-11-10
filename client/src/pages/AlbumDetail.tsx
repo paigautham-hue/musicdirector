@@ -26,6 +26,7 @@ import {
   Link as LinkIcon,
   Check,
   RefreshCw,
+  Download,
 } from "lucide-react";
 import {
   Dialog,
@@ -48,6 +49,7 @@ export default function AlbumDetail() {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
   const [isRegeneratingCover, setIsRegeneratingCover] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   const handleBack = () => {
     // Use browser history to go back
@@ -95,6 +97,33 @@ export default function AlbumDetail() {
     onError: (error) => {
       setIsRegeneratingCover(false);
       toast.error(error.message || "Failed to regenerate cover");
+    },
+  });
+
+  const downloadPdf = (trpc.albums as any).albumBooklet.useMutation({
+    onSuccess: (data: { pdf: string; filename: string }) => {
+      // Convert base64 to blob and download
+      const byteCharacters = atob(data.pdf);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = data.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      setIsDownloadingPdf(false);
+      toast.success("PDF downloaded successfully!");
+    },
+    onError: (error: any) => {
+      setIsDownloadingPdf(false);
+      toast.error(error.message || "Failed to download PDF");
     },
   });
 
@@ -255,21 +284,35 @@ export default function AlbumDetail() {
                       </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex gap-3">
+                        <Button
+                          variant={album.userLiked ? "default" : "outline"}
+                          className="flex-1"
+                          onClick={handleLike}
+                          disabled={toggleLike.isPending}
+                        >
+                          <Heart
+                            className={`mr-2 h-4 w-4 ${album.userLiked ? "fill-current" : ""}`}
+                          />
+                          {album.userLiked ? "Liked" : "Like"}
+                        </Button>
+                        <Button variant="outline" className="flex-1" onClick={() => setShareDialogOpen(true)}>
+                          <Share2 className="mr-2 h-4 w-4" />
+                          Share
+                        </Button>
+                      </div>
                       <Button
-                        variant={album.userLiked ? "default" : "outline"}
-                        className="flex-1"
-                        onClick={handleLike}
-                        disabled={toggleLike.isPending}
+                        variant="default"
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90"
+                        onClick={() => {
+                          setIsDownloadingPdf(true);
+                          downloadPdf.mutate({ albumId });
+                        }}
+                        disabled={isDownloadingPdf}
                       >
-                        <Heart
-                          className={`mr-2 h-4 w-4 ${album.userLiked ? "fill-current" : ""}`}
-                        />
-                        {album.userLiked ? "Liked" : "Like"}
-                      </Button>
-                      <Button variant="outline" className="flex-1" onClick={() => setShareDialogOpen(true)}>
-                        <Share2 className="mr-2 h-4 w-4" />
-                        Share
+                        <Download className="mr-2 h-4 w-4" />
+                        {isDownloadingPdf ? "Generating PDF..." : "Download PDF Booklet"}
                       </Button>
                     </div>
                   </div>

@@ -1352,4 +1352,10 @@
 - [x] Add sorting options: Date Created, Title, Score
 - [x] Client-side sorting implementation for MyLibrary
 - [x] Explore page already has comprehensive backend sorting (newest, trending, top_rated, most_played)
-- [ ] Persist sort preference in localStorage
+- [x] Persist sort preference in localStorage
+
+## localStorage Sort Persistence
+- [x] Add localStorage persistence for MyLibrary sort preference
+- [x] Load saved sort preference on page mount
+- [x] Save sort preference when user changes sorting
+- [x] Test persistence across browser sessions

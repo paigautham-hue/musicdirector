@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,29 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { trpc } from "@/lib/trpc";
 import { APP_TITLE } from "@/const";
 
+const STORAGE_KEY = 'myLibrary_sortPreference';
+
 export default function MyLibrary() {
   const { user } = useAuth();
   const [makingPublic, setMakingPublic] = useState(false);
-  const [sortBy, setSortBy] = useState<'date' | 'title' | 'score'>('date');
+  
+  // Load sort preference from localStorage on mount
+  const [sortBy, setSortBy] = useState<'date' | 'title' | 'score'>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved === 'date' || saved === 'title' || saved === 'score') {
+        return saved;
+      }
+    }
+    return 'date';
+  });
+  
+  // Save sort preference to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(STORAGE_KEY, sortBy);
+    }
+  }, [sortBy]);
   const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ limit: 50 });
   const { data: musicStatus } = trpc.albums.getBulkMusicStatus.useQuery(
     { albumIds: albums?.map(a => a.id) || [] },
@@ -106,7 +125,7 @@ export default function MyLibrary() {
           <div className="mb-6 flex items-center gap-3">
             <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Sort by:</span>
-            <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+            <Select value={sortBy} onValueChange={(value: 'date' | 'title' | 'score') => setSortBy(value)}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
               </SelectTrigger>

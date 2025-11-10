@@ -67,8 +67,10 @@ export default function AlbumDetail() {
   });
 
   const { data: comments } = trpc.social.getComments.useQuery({ albumId });
+  const { data: tracks, isLoading: tracksLoading } = trpc.social.getAlbumTracks.useQuery({ albumId });
 
   const incrementViews = trpc.social.incrementViews.useMutation();
+  const incrementPlays = trpc.social.incrementPlays.useMutation();
   const toggleLike = trpc.social.toggleLike.useMutation({
     onSuccess: () => {
       utils.social.getAlbumDetails.invalidate({ albumId });
@@ -364,6 +366,63 @@ export default function AlbumDetail() {
                 </div>
               </DialogContent>
             </Dialog>
+
+            {/* Track List */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Music className="h-5 w-5" />
+                  Tracks ({tracks?.length || 0})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tracksLoading ? (
+                  <TrackListSkeleton />
+                ) : tracks && tracks.length > 0 ? (
+                  <div className="space-y-3">
+                    {tracks.map((track, index) => (
+                      <div
+                        key={track.id}
+                        className="flex items-center gap-4 p-4 rounded-lg border hover:bg-accent/50 transition-colors"
+                      >
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold truncate">{track.title}</div>
+                          {track.audioUrl ? (
+                            <div className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                              <Play className="h-3 w-3" />
+                              Ready to play
+                            </div>
+                          ) : (
+                            <div className="text-sm text-muted-foreground">No audio available</div>
+                          )}
+                        </div>
+                        {track.audioUrl && (
+                          <audio
+                            controls
+                            className="max-w-xs"
+                            preload="metadata"
+                            onPlay={() => {
+                              incrementPlays.mutate({ albumId });
+                            }}
+                          >
+                            <source src={track.audioUrl} type="audio/mpeg" />
+                            Your browser does not support the audio element.
+                          </audio>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Music className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p>No tracks available yet</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Comments Section */}
             <Card>

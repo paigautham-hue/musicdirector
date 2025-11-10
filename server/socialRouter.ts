@@ -61,6 +61,28 @@ export const socialRouter = router({
       return { success: true };
     }),
 
+  /**
+   * Get album tracks with audio files
+   */
+  getAlbumTracks: publicProcedure
+    .input(z.object({ albumId: z.number() }))
+    .query(async ({ input }) => {
+      const tracks = await db.getTracksByAlbumId(input.albumId);
+      const audioFiles = await db.getAudioFilesByAlbumId(input.albumId);
+      
+      // Map audio files to tracks
+      const tracksWithAudio = tracks.map(track => {
+        const audio = audioFiles.find(a => a.trackId === track.id);
+        return {
+          ...track,
+          audioUrl: audio?.fileUrl || null,
+          audioDuration: audio?.duration || null,
+        };
+      });
+      
+      return tracksWithAudio;
+    }),
+
   // ============================================================================
   // COMMENTS & REVIEWS
   // ============================================================================

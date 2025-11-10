@@ -61,8 +61,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             {/* Logo with Built by GP and Soul Apps */}
             <div className="flex flex-col gap-1">
-              <Link href="/">
-                <a className="flex items-center gap-3 group">
+              <Link href="/" className="flex items-center gap-3 group">
                   {/* Custom AI-Generated Logo */}
                   <div className="relative transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
                     <img 
@@ -81,7 +80,6 @@ export default function Home() {
                       Soul
                     </span>
                   </div>
-                </a>
               </Link>
               {/* Built by GP and Soul Apps */}
               <div className="flex items-center gap-3 pl-1">

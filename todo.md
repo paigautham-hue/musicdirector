@@ -1489,3 +1489,9 @@
 - [x] Increase button size and visual weight
 - [x] Improve positioning and spacing
 - [x] Test on mobile and desktop
+
+## Play Community Music Button Animation
+- [x] Add glowing pulse animation effect
+- [x] Add attention-grabbing visual effects
+- [x] Ensure animations are smooth and performant
+- [x] Test on mobile and desktop

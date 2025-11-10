@@ -382,7 +382,14 @@ export default function Home() {
                       </Button>
                     </Link>
                     <Link href="/explore?hasAudio=true">
-                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                      <Button 
+                        size="lg" 
+                        className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
+                        style={{
+                          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite',
+                          boxShadow: '0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2)'
+                        }}
+                      >
                         <Music className="mr-2 w-5 h-5" />
                         Play Community Music
                       </Button>
@@ -397,7 +404,14 @@ export default function Home() {
                       </a>
                     </Button>
                     <Link href="/explore?hasAudio=true">
-                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                      <Button 
+                        size="lg" 
+                        className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
+                        style={{
+                          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite',
+                          boxShadow: '0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2)'
+                        }}
+                      >
                         <Music className="mr-2 w-5 h-5" />
                         Play Community Music
                       </Button>

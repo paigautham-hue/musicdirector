@@ -222,3 +222,13 @@
     }
   }
 }
+
+/* Glow animation for Play Community Music button */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.6), 0 0 90px rgba(212, 175, 55, 0.4);
+  }
+}

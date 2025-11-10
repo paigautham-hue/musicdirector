@@ -125,15 +125,7 @@ export default function Home() {
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
           </div>
-          {/* Built by GP Credit */}
-          <div className="text-center py-1 border-t border-border/30">
-            <span className="text-xs text-muted-foreground/60">
-              Built by{' '}
-              <span className="font-semibold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                GP
-              </span>
-            </span>
-          </div>
+
         </div>
       </nav>
 

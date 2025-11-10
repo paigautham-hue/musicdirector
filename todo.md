@@ -1317,3 +1317,10 @@
 - [x] Compact metadata display with inline labels
 - [x] Professional typography with font hierarchy
 - [ ] Test PDF generation and verify page count reduction
+
+## Header Layout Reorganization
+- [x] Move "Built by GP" from center to left side under logo
+- [x] Add "Soul Apps" link next to "Built by GP" in header
+- [x] Remove "Soul Apps" from main navigation menu
+- [x] Remove duplicate "Built by GP" from Home page
+- [x] Ensure responsive layout works on mobile

@@ -64,7 +64,8 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',
-      margins: { top: 40, bottom: 40, left: 40, right: 40 },
+      margins: { top: 60, bottom: 60, left: 40, right: 40 }, // Increased top/bottom for header/footer
+      bufferPages: true, // Enable page buffering for headers/footers
     });
 
     const chunks: Buffer[] = [];
@@ -76,6 +77,10 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
       try {
         // Cover Page
         await addCoverPage(doc, data);
+
+        // Table of Contents on page 2
+        doc.addPage();
+        const trackPageMap = addTableOfContents(doc, data);
 
         // Album Info & Track Listings (combined on same pages)
         doc.addPage();
@@ -89,6 +94,9 @@ async function createPDFBooklet(data: AlbumBookletData): Promise<Buffer> {
 
         // Credits on last page
         addCreditsSection(doc, data);
+
+        // Add headers and page numbers to all pages (except cover)
+        addHeadersAndPageNumbers(doc, data);
 
         doc.end();
       } catch (error) {
@@ -156,6 +164,79 @@ async function addCoverPage(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        width: doc.page.width - 100,
        align: 'center',
      });
+}
+
+/**
+ * Add table of contents with clickable track links
+ */
+function addTableOfContents(doc: PDFKit.PDFDocument, data: AlbumBookletData): Map<number, number> {
+  const { album, tracks: albumTracks } = data;
+  const trackPageMap = new Map<number, number>();
+  
+  let y = 60;
+
+  // Title
+  doc.fontSize(26)
+     .fillColor('#D4AF37')
+     .font('Helvetica-Bold')
+     .text('Table of Contents', 40, y);
+  
+  y += 35;
+  
+  // Decorative line
+  doc.moveTo(40, y)
+     .lineTo(doc.page.width - 40, y)
+     .strokeColor('#D4AF37')
+     .lineWidth(2)
+     .stroke();
+  
+  y += 25;
+
+  // Add each track with placeholder page numbers
+  // We'll update these later when we know actual page numbers
+  albumTracks.forEach((track, index) => {
+    if (y > doc.page.height - 100) {
+      doc.addPage();
+      y = 60;
+    }
+
+    const trackNumber = `${index + 1}.`;
+    const trackTitle = track.title;
+    
+    // Track number and title
+    doc.fontSize(11)
+       .fillColor('#333')
+       .font('Helvetica')
+       .text(trackNumber, 50, y, { continued: true })
+       .text(` ${trackTitle}`, { 
+         link: `track_${track.id}`,
+         underline: false,
+       });
+    
+    // Dotted line
+    const titleWidth = doc.widthOfString(`${trackNumber} ${trackTitle}`);
+    const dotsX = 50 + titleWidth + 10;
+    const pageNumX = doc.page.width - 80;
+    
+    doc.fontSize(11)
+       .fillColor('#ccc')
+       .text('.'.repeat(Math.floor((pageNumX - dotsX) / 3)), dotsX, y, {
+         width: pageNumX - dotsX,
+       });
+    
+    // Placeholder for page number (will be updated later)
+    doc.fontSize(11)
+       .fillColor('#D4AF37')
+       .font('Helvetica-Bold')
+       .text('--', pageNumX, y, {
+         width: 30,
+         align: 'right',
+       });
+    
+    y += 20;
+  });
+
+  return trackPageMap;
 }
 
 /**
@@ -376,6 +457,9 @@ function addAllTracksWithLyrics(doc: PDFKit.PDFDocument, data: AlbumBookletData)
       y = 40;
     }
 
+    // Add destination anchor for TOC linking
+    doc.addNamedDestination(`track_${track.id}`);
+
     // Track header with background
     const headerHeight = 35;
     doc.roundedRect(40, y, doc.page.width - 80, headerHeight, 3)
@@ -562,4 +646,44 @@ function addCreditsSection(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
        width: doc.page.width - 80,
        align: 'center',
      });
+}
+
+/**
+ * Add headers and page numbers to all pages (except cover)
+ */
+function addHeadersAndPageNumbers(doc: PDFKit.PDFDocument, data: AlbumBookletData) {
+  const { album } = data;
+  const pageCount = doc.bufferedPageRange().count;
+  
+  for (let i = 0; i < pageCount; i++) {
+    // Skip cover page (page 0)
+    if (i === 0) continue;
+    
+    doc.switchToPage(i);
+    
+    // Add header with album title
+    doc.fontSize(9)
+       .fillColor('#D4AF37')
+       .font('Helvetica')
+       .text(album.title, 40, 30, {
+         width: doc.page.width - 80,
+         align: 'center',
+       });
+    
+    // Add decorative line under header
+    doc.moveTo(40, 45)
+       .lineTo(doc.page.width - 40, 45)
+       .strokeColor('#D4AF37')
+       .lineWidth(0.5)
+       .stroke();
+    
+    // Add page number at bottom
+    doc.fontSize(9)
+       .fillColor('#888')
+       .font('Helvetica')
+       .text(`${i + 1}`, 40, doc.page.height - 40, {
+         width: doc.page.width - 80,
+         align: 'center',
+       });
+  }
 }

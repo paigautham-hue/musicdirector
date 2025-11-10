@@ -1366,3 +1366,11 @@
 - [x] Ensure proper spacing and column breaks
 - [x] Intelligent theme-based philosophical text generation
 - [x] Test PDF generation with various album lengths
+
+## PDF Professional Polish
+- [x] Add page numbers at bottom center (except cover page)
+- [x] Add album title header at top of each page (except cover)
+- [x] Create table of contents on page 2
+- [x] Add clickable links from TOC to track sections
+- [x] Add named destinations for track navigation
+- [x] Test navigation and page numbering

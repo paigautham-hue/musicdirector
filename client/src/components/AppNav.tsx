@@ -116,7 +116,7 @@ export function AppNav() {
                       Community
                     </a>
                   </Link>
-                  <Link href="/playlists">
+                  <Link href="/my-playlists">
                     <a className={`text-sm font-medium transition-colors ${
                       location === '/playlists' || location === '/my-playlists' || location.startsWith('/playlist/')
                         ? 'text-foreground border-b-2 border-primary pb-1' 

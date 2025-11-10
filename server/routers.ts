@@ -866,7 +866,7 @@ export const appRouter = router({
           console.log(`[RETRY] Found existing failed job ${existingJob.id} for track ${input.trackId}`);
           console.log(`[RETRY] Old job state: status=${existingJob.status}, platformJobId=${existingJob.platformJobId}, error="${existingJob.errorMessage}"`);
           
-          // Reset existing job to pending - CRITICAL: Clear platformJobId to force new generation
+          // Reset existing job to pending - CRITICAL: Clear platformJobId and reset timestamps
           await dbInstance
             .update(musicJobs)
             .set({
@@ -877,6 +877,7 @@ export const appRouter = router({
               platformJobId: null, // Clear old Suno task ID
               startedAt: null,
               completedAt: null,
+              createdAt: new Date(), // Reset creation time for timeout handler
             })
             .where(eq(musicJobs.id, existingJob.id));
           
@@ -937,8 +938,10 @@ export const appRouter = router({
               progress: 0,
               errorMessage: null,
               statusMessage: null,
+              platformJobId: null, // Clear old platform job ID
               startedAt: null,
               completedAt: null,
+              createdAt: new Date(), // Reset creation time for timeout handler
             })
             .where(eq(musicJobs.id, job.id));
         }

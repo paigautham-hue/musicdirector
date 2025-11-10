@@ -17,10 +17,13 @@ export async function checkStuckJobs() {
   }
 
   try {
-    // Calculate timeout threshold (20 minutes ago)
-    const timeoutThreshold = new Date(Date.now() - TIMEOUT_MINUTES * 60 * 1000);
+    // Different timeouts for different statuses:
+    // - Processing jobs: 20 minutes from when they started (startedAt)
+    // - Pending jobs: 5 minutes from creation (likely stuck in queue)
+    const processingTimeout = new Date(Date.now() - TIMEOUT_MINUTES * 60 * 1000);
+    const pendingTimeout = new Date(Date.now() - 5 * 60 * 1000);
 
-    // Find jobs that are pending/processing and older than threshold
+    // Find stuck jobs with proper timeout logic
     const stuckJobs = await db
       .select({
         id: musicJobs.id,
@@ -28,13 +31,15 @@ export async function checkStuckJobs() {
         trackId: musicJobs.trackId,
         status: musicJobs.status,
         createdAt: musicJobs.createdAt,
+        startedAt: musicJobs.startedAt,
       })
       .from(musicJobs)
       .where(
-        and(
-          sql`${musicJobs.status} IN ('pending', 'processing')`,
-          lt(musicJobs.createdAt, timeoutThreshold)
-        )
+        sql`(
+          (${musicJobs.status} = 'processing' AND ${musicJobs.startedAt} IS NOT NULL AND ${musicJobs.startedAt} < ${processingTimeout})
+          OR
+          (${musicJobs.status} = 'pending' AND ${musicJobs.createdAt} < ${pendingTimeout})
+        )`
       );
 
     if (stuckJobs.length === 0) {

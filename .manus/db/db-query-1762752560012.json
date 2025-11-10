@@ -1,0 +1,230 @@
+{
+  "query": "SELECT id, albumId, trackId, status, platformJobId, errorMessage, createdAt, startedAt, completedAt FROM musicJobs WHERE status IN ('failed', 'pending', 'processing') ORDER BY createdAt DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, albumId, trackId, status, platformJobId, errorMessage, createdAt, startedAt, completedAt FROM musicJobs WHERE status IN ('failed', 'pending', 'processing') ORDER BY createdAt DESC LIMIT 20",
+  "rows": [
+    {
+      "id": "180132",
+      "albumId": "180017",
+      "trackId": "180159",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180134",
+      "albumId": "180017",
+      "trackId": "180156",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180136",
+      "albumId": "180017",
+      "trackId": "180155",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180139",
+      "albumId": "180017",
+      "trackId": "180161",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180137",
+      "albumId": "180017",
+      "trackId": "180158",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180135",
+      "albumId": "180017",
+      "trackId": "180152",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180138",
+      "albumId": "180017",
+      "trackId": "180160",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180133",
+      "albumId": "180017",
+      "trackId": "180154",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180130",
+      "albumId": "180017",
+      "trackId": "180153",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180131",
+      "albumId": "180017",
+      "trackId": "180157",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:16",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180126",
+      "albumId": "180026",
+      "trackId": "180242",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180129",
+      "albumId": "180026",
+      "trackId": "180241",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180127",
+      "albumId": "180026",
+      "trackId": "180243",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180121",
+      "albumId": "180026",
+      "trackId": "180237",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180123",
+      "albumId": "180026",
+      "trackId": "180238",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180124",
+      "albumId": "180026",
+      "trackId": "180239",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180128",
+      "albumId": "180026",
+      "trackId": "180244",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180122",
+      "albumId": "180026",
+      "trackId": "180240",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180125",
+      "albumId": "180026",
+      "trackId": "180245",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:13:02",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    },
+    {
+      "id": "180115",
+      "albumId": "180025",
+      "trackId": "180228",
+      "status": "pending",
+      "platformJobId": "NULL",
+      "errorMessage": "NULL",
+      "createdAt": "2025-11-10 05:12:55",
+      "startedAt": "NULL",
+      "completedAt": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\talbumId\ttrackId\tstatus\tplatformJobId\terrorMessage\tcreatedAt\tstartedAt\tcompletedAt\n180132\t180017\t180159\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180134\t180017\t180156\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180136\t180017\t180155\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180139\t180017\t180161\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180137\t180017\t180158\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180135\t180017\t180152\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180138\t180017\t180160\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180133\t180017\t180154\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180130\t180017\t180153\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180131\t180017\t180157\tpending\tNULL\tNULL\t2025-11-10 05:13:16\tNULL\tNULL\n180126\t180026\t180242\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180129\t180026\t180241\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180127\t180026\t180243\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180121\t180026\t180237\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180123\t180026\t180238\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180124\t180026\t180239\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180128\t180026\t180244\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180122\t180026\t180240\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180125\t180026\t180245\tpending\tNULL\tNULL\t2025-11-10 05:13:02\tNULL\tNULL\n180115\t180025\t180228\tpending\tNULL\tNULL\t2025-11-10 05:12:55\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1605
+}

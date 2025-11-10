@@ -1465,3 +1465,15 @@
 - [x] Ensure clear distinction between My Playlists and Public Playlists
 - [x] Public "Discover Playlists" still accessible via mobile menu
 - [x] Test playlist creation and viewing flow
+
+## Music Regeneration Bug Fix
+- [x] Investigate retry/regeneration mutation logic
+- [x] Compare retry logic with initial generation logic
+- [x] Find why retry fails while initial generation works
+- [x] ROOT CAUSE: Timeout handler used createdAt instead of startedAt
+- [x] Retried jobs kept old createdAt, immediately timing out again
+- [x] Fix timeout handler to use startedAt for processing jobs (20 min)
+- [x] Use createdAt only for pending jobs with 5 min timeout
+- [x] Reset createdAt timestamp in retry mutations
+- [x] Clear platformJobId in retry mutations
+- [x] Test retry functionality

@@ -1393,3 +1393,10 @@
 - [x] Set all albums to public/community visibility
 - [x] Successfully seeded 15 albums with rich themes and metadata
 - [x] Verify albums appear in Explore page
+
+## Add Prompt Templates and Tracks
+- [x] Create seed script to add 15 albums as prompt templates
+- [x] Execute prompt templates seed script (15 prompts added)
+- [x] Create seed script to generate placeholder tracks for albums
+- [x] Generate sample tracks with titles and lyrics for each album (32 tracks added)
+- [x] Verify albums are playable in Explore page

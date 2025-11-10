@@ -1562,3 +1562,15 @@
 - [x] Implement smooth horizontal scroll with touch/swipe support
 - [x] Test responsive behavior on mobile and desktop
 - [x] Verify no clicking required - natural scroll discovery
+
+## Discovery Hub Redesign (Apple Music Browse Style)
+
+- [x] Create hero section with featured "Track of the Week"
+- [x] Add large album artwork and track details in hero
+- [x] Implement "Play Now" button in hero section
+- [x] Show AI score breakdown in hero
+- [x] Replace grid layout with horizontal scroll sections (same as home)
+- [x] Show 20 tracks per section instead of 6
+- [ ] Add subtle filter bar (All Genres, This Week, All Time)
+- [ ] Implement "Load More" functionality for each section
+- [x] Test consistency between home and discovery pages

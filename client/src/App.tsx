@@ -1,7 +1,9 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useLocation } from "wouter";
+import { AnimatePresence } from "framer-motion";
+import { PageTransition } from "./components/PageTransition";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
@@ -35,8 +37,11 @@ import PublicPlaylists from "./pages/PublicPlaylists";
 import PlaylistStats from "./pages/PlaylistStats";
 
 function Router() {
+  const [location] = useLocation();
+  
   return (
-    <Switch>
+    <AnimatePresence mode="wait">
+      <Switch location={location} key={location}>
       <Route path="/" component={Home} />
       <Route path="/new" component={NewAlbum} />
       <Route path="/workspace/:id" component={AlbumWorkspace} />
@@ -65,9 +70,11 @@ function Router() {
       <Route path="/my-playlists" component={MyPlaylists} />
       <Route path="/playlists/:id" component={PlaylistDetail} />
       <Route path="/playlists" component={PublicPlaylists} />
-      <Route path="/playlist-stats" component={PlaylistStats} />      <Route path="/404" component={NotFound} />
+      <Route path="/playlist-stats" component={PlaylistStats} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
-    </Switch>
+      </Switch>
+    </AnimatePresence>
   );
 }
 

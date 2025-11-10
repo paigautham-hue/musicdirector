@@ -17,6 +17,7 @@ import { APP_TITLE } from "@/const";
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { AddToPlaylist } from "@/components/AddToPlaylist";
 import { AlbumQueue } from "@/components/AlbumQueue";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
@@ -370,6 +371,16 @@ export default function AlbumWorkspace() {
     <>
     <div className="min-h-screen bg-background">
       <AppNav />
+      
+      {/* Breadcrumb */}
+      <div className="container mx-auto px-6 pt-4">
+        <Breadcrumb 
+          items={[
+            { label: "Library", href: "/library" },
+            { label: album.title }
+          ]}
+        />
+      </div>
       
       {/* Action Bar */}
       <div className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-[73px] z-40">

@@ -1445,3 +1445,14 @@
 - [x] Updated MyLibrary to link to /workspace for editing
 - [x] Verified Explore, Gallery, UserProfile link to /album for public viewing
 - [x] Test navigation from every page
+
+## Breadcrumb Navigation & Route Transitions
+- [x] Install Framer Motion for animations
+- [x] Create reusable Breadcrumb component with Home icon and chevron separators
+- [x] Add breadcrumbs to AlbumWorkspace page (Home > Library > Album Name)
+- [x] Add breadcrumbs to AlbumDetail page (Home > Explore > Album Name)
+- [x] Implement route transition animations with Framer Motion
+- [x] Create PageTransition wrapper component with fade/slide effects
+- [x] Add AnimatePresence to App.tsx for smooth page transitions
+- [x] Wrap Home page with PageTransition
+- [x] Test all pages to ensure nothing breaks

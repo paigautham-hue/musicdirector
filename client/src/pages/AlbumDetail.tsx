@@ -37,6 +37,7 @@ import {
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrackListSkeleton } from "@/components/TrackListSkeleton";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function AlbumDetail() {
   const params = useParams();
@@ -168,6 +169,13 @@ export default function AlbumDetail() {
       <AppNav />
 
       <div className="container mx-auto px-4 py-8">
+        <Breadcrumb 
+          items={[
+            { label: "Explore", href: "/explore" },
+            { label: album?.album.title || "Album" }
+          ]}
+          className="mb-4"
+        />
         <Button variant="ghost" size="sm" className="mb-4" onClick={handleBack}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back

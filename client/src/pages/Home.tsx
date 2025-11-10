@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, Heart, Menu, X, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
 import { getLoginUrl, APP_TITLE } from "@/const";
+import { PageTransition } from "@/components/PageTransition";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -44,6 +45,7 @@ export default function Home() {
   ];
 
   return (
+    <PageTransition>
     <div className="min-h-screen relative overflow-hidden">
       {/* Animated background elements */}
       <div className="fixed inset-0 pointer-events-none opacity-20">
@@ -695,5 +697,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </PageTransition>
   );
 }

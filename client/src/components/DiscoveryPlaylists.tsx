@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, Pause, Star, TrendingUp, Gem, ChevronRight, Save, PlayCircle } from "lucide-react";
+import { Play, Pause, Star, TrendingUp, Gem, ChevronRight, Save, PlayCircle, ChevronLeft } from "lucide-react";
 import { Link } from "wouter";
 
 interface DiscoveryPlaylistsProps {
@@ -15,6 +15,18 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
   const [currentTrackId, setCurrentTrackId] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const scrollContainerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const scroll = (playlistId: string, direction: 'left' | 'right') => {
+    const container = scrollContainerRefs.current[playlistId];
+    if (container) {
+      const scrollAmount = 300;
+      container.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   const saveCollectionMutation = trpc.playlists.saveCollection.useMutation({
     onSuccess: (data) => {
@@ -134,8 +146,31 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
       </div>
 
       {/* Horizontal Scrollable Track Row */}
-      <div className="relative">
-        <div className="overflow-x-auto pb-4 scrollbar-hide">
+      <div className="relative group">
+        {/* Left Arrow */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+          onClick={() => scroll(playlistId, 'left')}
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </Button>
+        
+        {/* Right Arrow */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-background/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+          onClick={() => scroll(playlistId, 'right')}
+        >
+          <ChevronRight className="w-6 h-6" />
+        </Button>
+        
+        <div 
+          ref={(el) => { scrollContainerRefs.current[playlistId] = el; }}
+          className="overflow-x-auto pb-4 scrollbar-visible"
+        >
           <div className="flex gap-4" style={{ width: "max-content" }}>
             {isLoading ? (
               Array.from({ length: 6 }).map((_, i) => (

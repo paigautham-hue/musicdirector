@@ -1591,3 +1591,11 @@
 - [ ] Create user's saved playlists view in Library
 - [ ] Add ability to add/remove tracks from saved playlists
 - [x] Test playlist creation, saving, and playback
+
+## Horizontal Scroll UX Fix
+
+- [ ] Remove scrollbar-hide class to show scrollbar
+- [ ] Add left/right arrow navigation buttons for desktop
+- [ ] Ensure touch/swipe works on mobile
+- [ ] Add visual indicator that more content exists (gradient fade at edges)
+- [ ] Test scrolling behavior on all devices

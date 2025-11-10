@@ -1,0 +1,170 @@
+{
+  "query": "SELECT id, title, visibility, userId, trackCount, createdAt FROM albums WHERE visibility = 'public' ORDER BY createdAt DESC LIMIT 20",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT id, title, visibility, userId, trackCount, createdAt FROM albums WHERE visibility = 'public' ORDER BY createdAt DESC LIMIT 20",
+  "rows": [
+    {
+      "id": "180011",
+      "title": "Blueprint for Blue Skies",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:06"
+    },
+    {
+      "id": "180012",
+      "title": "Ledger of the Heart",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:06"
+    },
+    {
+      "id": "180014",
+      "title": "Hands of Fire",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "8",
+      "createdAt": "2025-11-10 03:10:06"
+    },
+    {
+      "id": "180015",
+      "title": "Breath, Becoming",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "7",
+      "createdAt": "2025-11-10 03:10:06"
+    },
+    {
+      "id": "180013",
+      "title": "Sky Inside the Temple",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "9",
+      "createdAt": "2025-11-10 03:10:06"
+    },
+    {
+      "id": "180008",
+      "title": "Baptism on the Freeway",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "12",
+      "createdAt": "2025-11-10 03:10:05"
+    },
+    {
+      "id": "180010",
+      "title": "Freedom in Common Time",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "11",
+      "createdAt": "2025-11-10 03:10:05"
+    },
+    {
+      "id": "180009",
+      "title": "Piano for the Storm",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:05"
+    },
+    {
+      "id": "180007",
+      "title": "Systems & Ghosts",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "9",
+      "createdAt": "2025-11-10 03:10:05"
+    },
+    {
+      "id": "180006",
+      "title": "City of Kindness",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "11",
+      "createdAt": "2025-11-10 03:10:05"
+    },
+    {
+      "id": "180003",
+      "title": "Borrowed Hours",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "8",
+      "createdAt": "2025-11-10 03:10:04"
+    },
+    {
+      "id": "180002",
+      "title": "Color Theory for Hearts",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:04"
+    },
+    {
+      "id": "180005",
+      "title": "Open Map",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:04"
+    },
+    {
+      "id": "180004",
+      "title": "Where the Light Kneels",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "9",
+      "createdAt": "2025-11-10 03:10:04"
+    },
+    {
+      "id": "180001",
+      "title": "Rain That Learns to Pray",
+      "visibility": "public",
+      "userId": "1",
+      "trackCount": "10",
+      "createdAt": "2025-11-10 03:10:03"
+    },
+    {
+      "id": "150007",
+      "title": "The Decency Anthem",
+      "visibility": "public",
+      "userId": "60001",
+      "trackCount": "10",
+      "createdAt": "2025-11-08 18:47:57"
+    },
+    {
+      "id": "150006",
+      "title": "Mercy Louder Than Megaphones",
+      "visibility": "public",
+      "userId": "60001",
+      "trackCount": "10",
+      "createdAt": "2025-11-08 18:43:01"
+    },
+    {
+      "id": "150005",
+      "title": "The Gentle Uprising",
+      "visibility": "public",
+      "userId": "60001",
+      "trackCount": "10",
+      "createdAt": "2025-11-08 18:37:52"
+    },
+    {
+      "id": "150004",
+      "title": "The Cartography of Mercy",
+      "visibility": "public",
+      "userId": "60001",
+      "trackCount": "10",
+      "createdAt": "2025-11-08 18:33:02"
+    },
+    {
+      "id": "150003",
+      "title": "The Open Sky Liturgy",
+      "visibility": "public",
+      "userId": "60001",
+      "trackCount": "10",
+      "createdAt": "2025-11-08 14:47:18"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tvisibility\tuserId\ttrackCount\tcreatedAt\n180011\tBlueprint for Blue Skies\tpublic\t1\t10\t2025-11-10 03:10:06\n180012\tLedger of the Heart\tpublic\t1\t10\t2025-11-10 03:10:06\n180014\tHands of Fire\tpublic\t1\t8\t2025-11-10 03:10:06\n180015\tBreath, Becoming\tpublic\t1\t7\t2025-11-10 03:10:06\n180013\tSky Inside the Temple\tpublic\t1\t9\t2025-11-10 03:10:06\n180008\tBaptism on the Freeway\tpublic\t1\t12\t2025-11-10 03:10:05\n180010\tFreedom in Common Time\tpublic\t1\t11\t2025-11-10 03:10:05\n180009\tPiano for the Storm\tpublic\t1\t10\t2025-11-10 03:10:05\n180007\tSystems & Ghosts\tpublic\t1\t9\t2025-11-10 03:10:05\n180006\tCity of Kindness\tpublic\t1\t11\t2025-11-10 03:10:05\n180003\tBorrowed Hours\tpublic\t1\t8\t2025-11-10 03:10:04\n180002\tColor Theory for Hearts\tpublic\t1\t10\t2025-11-10 03:10:04\n180005\tOpen Map\tpublic\t1\t10\t2025-11-10 03:10:04\n180004\tWhere the Light Kneels\tpublic\t1\t9\t2025-11-10 03:10:04\n180001\tRain That Learns to Pray\tpublic\t1\t10\t2025-11-10 03:10:03\n150007\tThe Decency Anthem\tpublic\t60001\t10\t2025-11-08 18:47:57\n150006\tMercy Louder Than Megaphones\tpublic\t60001\t10\t2025-11-08 18:43:01\n150005\tThe Gentle Uprising\tpublic\t60001\t10\t2025-11-08 18:37:52\n150004\tThe Cartography of Mercy\tpublic\t60001\t10\t2025-11-08 18:33:02\n150003\tThe Open Sky Liturgy\tpublic\t60001\t10\t2025-11-08 14:47:18\n",
+  "stderr": "",
+  "execution_time_ms": 1555
+}

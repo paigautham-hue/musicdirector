@@ -1386,3 +1386,10 @@
 - [x] Add Explore CTA button on Home page for visitors
 - [x] Keep private albums and creation features protected
 - [x] Test public access flow thoroughly
+
+## Seed Public Albums
+- [x] Create seed script for 15 curated public albums
+- [x] Add albums to database with admin user ownership
+- [x] Set all albums to public/community visibility
+- [x] Successfully seeded 15 albums with rich themes and metadata
+- [x] Verify albums appear in Explore page

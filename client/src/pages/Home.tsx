@@ -110,9 +110,9 @@ export default function Home() {
             <div className="hidden lg:flex items-center gap-6">
               {isAuthenticated ? (
                 <>
-                  <Link href="/library"><a style={{ color: '#fff', fontSize: '14px' }}>Library</a></Link>
-                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
-                  <Link href="/community-prompts"><a style={{ color: '#fff', fontSize: '14px' }}>Prompts</a></Link>
+                       <Link href="/library"><a style={{ color: '#fff', fontSize: '14px' }}>My Music</a></Link>
+                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Discover</a></Link>
+                  <Link href="/prompts"><a style={{ color: '#fff', fontSize: '14px' }}>My Ideas</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
                   {user?.role === 'admin' && (
                     <Link href="/admin"><a style={{ color: '#fff', fontSize: '14px' }}>Admin</a></Link>
@@ -129,7 +129,7 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Explore</a></Link>
+                  <Link href="/explore"><a style={{ color: '#fff', fontSize: '14px' }}>Discover</a></Link>
                   <Link href="/pricing"><a style={{ color: '#fff', fontSize: '14px' }}>Pricing</a></Link>
                   <Button size="sm" asChild style={{ background: 'linear-gradient(to right, #d4af37, #d4af37)', color: '#0a0a0f' }}>
                     <a href={getLoginUrl()}>Get Started</a>
@@ -197,7 +197,7 @@ export default function Home() {
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  My Library
+                  My Music
                 </a>
               </Link>
               <Link href="/explore">
@@ -205,15 +205,7 @@ export default function Home() {
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Explore
-                </a>
-              </Link>
-              <Link href="/community-prompts">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Community Prompts
+                  Discover
                 </a>
               </Link>
               <Link href="/prompts">
@@ -221,7 +213,7 @@ export default function Home() {
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  My Prompts
+                  My Ideas
                 </a>
               </Link>
               <Link href="/my-playlists">
@@ -229,31 +221,7 @@ export default function Home() {
                   style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  My Playlists
-                </a>
-              </Link>
-              <Link href="/playlists">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Discover Playlists
-                </a>
-              </Link>
-              <Link href="/knowledge">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Knowledge Hub
-                </a>
-              </Link>
-              <Link href="/impact-stories">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Impact Stories
+                  Playlists
                 </a>
               </Link>
               <Link href="/pricing">
@@ -289,10 +257,10 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <Link href="/explore">
                 <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textAlign: 'center', textDecoration: 'none' }}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Explore
+                  Discover
                 </a>
               </Link>
               <Link href="/pricing">
@@ -691,15 +659,14 @@ export default function Home() {
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-foreground/60">
-                <li><Link href="/knowledge"><a className="hover:text-foreground transition-colors">Knowledge Hub</a></Link></li>
+
                 <li><Link href="/pricing"><a className="hover:text-foreground transition-colors">Pricing</a></Link></li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-4">Community</h3>
               <ul className="space-y-2 text-sm text-foreground/60">
-                <li><Link href="/explore"><a className="hover:text-foreground transition-colors">Explore Albums</a></Link></li>
-                <li><Link href="/community-prompts"><a className="hover:text-foreground transition-colors">Community Prompts</a></Link></li>
+                <li><Link href="/explore"><a className="hover:text-foreground transition-colors">Discover</a></Link></li>
                 <li><Link href="/impact-stories"><a className="hover:text-foreground transition-colors">Impact Stories</a></Link></li>
               </ul>
             </div>

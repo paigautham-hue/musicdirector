@@ -1516,3 +1516,9 @@
 - [x] Replace technical terms with user-friendly language
 - [x] Add descriptive subtitles or tooltips where needed
 - [x] Test navigation flow with first-time user perspective
+
+## Desktop Navigation Labels Not Updating
+- [ ] Verify navigation changes were applied to AppNav.tsx
+- [ ] Check if browser is caching old version
+- [ ] Restart dev server to clear cache
+- [ ] Test desktop navigation shows correct labels

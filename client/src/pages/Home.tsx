@@ -191,54 +191,48 @@ export default function Home() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 8px', minHeight: 0 }}>
           {isAuthenticated ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <Link href="/library">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Music
-                </a>
+              <Link
+                href="/library"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Music
               </Link>
-              <Link href="/explore">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Discover
-                </a>
+              <Link
+                href="/explore"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Discover
               </Link>
-              <Link href="/prompts">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  My Ideas
-                </a>
+              <Link
+                href="/prompts"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                My Ideas
               </Link>
-              <Link href="/my-playlists">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Playlists
-                </a>
+              <Link
+                href="/my-playlists"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Playlists
               </Link>
-              <Link href="/pricing">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Pricing
-                </a>
+              <Link
+                href="/pricing"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
               </Link>
               {user?.role === 'admin' && (
-                <Link href="/admin">
-                  <a
-                    style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Admin
-                  </a>
+                <Link
+                  href="/admin"
+                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Admin
                 </Link>
               )}
               <div style={{ paddingTop: '16px' }}>
@@ -254,21 +248,19 @@ export default function Home() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <Link href="/explore">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textAlign: 'center', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Discover
-                </a>
+              <Link
+                href="/explore"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textAlign: 'center', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Discover
               </Link>
-              <Link href="/pricing">
-                <a
-                  style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  Pricing
-                </a>
+              <Link
+                href="/pricing"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Pricing
               </Link>
               <div style={{ paddingTop: '16px' }}>
                 <Button

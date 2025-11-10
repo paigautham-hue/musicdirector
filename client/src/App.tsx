@@ -35,6 +35,8 @@ import MyPlaylists from "./pages/MyPlaylists";
 import PlaylistDetail from "./pages/PlaylistDetail";
 import PublicPlaylists from "./pages/PublicPlaylists";
 import PlaylistStats from "./pages/PlaylistStats";
+import Discovery from "./pages/Discovery";
+import AdminRecommendations from "./pages/AdminRecommendations";
 
 function Router() {
   const [location] = useLocation();
@@ -56,6 +58,7 @@ function Router() {
       <Route path="/admin/audio" component={AdminAudioManagement} />
       <Route path="/admin/queue" component={AdminQueue} />
       <Route path="/admin/bulk-generation" component={AdminBulkGeneration} />
+      <Route path="/admin/recommendations" component={AdminRecommendations} />
       <Route path="/gallery" component={Gallery} />
       <Route path="/impact-stories" component={ImpactStories} />
       <Route path="/pricing" component={Pricing} />
@@ -63,6 +66,7 @@ function Router() {
       <Route path="/payment/history" component={PaymentHistory} />
       <Route path="/prompts" component={MyPrompts} />
       <Route path="/explore" component={Explore} />
+      <Route path="/discovery" component={Discovery} />
       <Route path="/album/:id" component={AlbumDetail} />
       <Route path="/profile/:id" component={UserProfile} />
       <Route path="/profile" component={Profile} />

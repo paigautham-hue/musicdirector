@@ -1,4 +1,4 @@
-import { eq, desc, and, or, like, sql, inArray, avg, count, gte, isNotNull } from "drizzle-orm";
+import { eq, desc, and, or, like, sql, inArray, avg, count, gte, lte, isNotNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, albums, tracks, trackAssets, ratings, 
@@ -2351,4 +2351,119 @@ export async function getStorageStats() {
       totalSizeGB: Number((Number(p.totalSize) / (1024 * 1024 * 1024)).toFixed(3))
     }))
   };
+}
+
+
+// ============================================================================
+// AI Recommendations
+// ============================================================================
+
+/**
+ * Get all tracks that have audio files (for AI analysis)
+ */
+export async function getAllTracksWithAudio() {
+  const db = await getDb();
+  if (!db) return [];
+
+  const tracksWithAudio = await db
+    .select({
+      id: tracks.id,
+      albumId: tracks.albumId,
+      title: tracks.title,
+      score: tracks.score
+    })
+    .from(tracks)
+    .innerJoin(audioFiles, eq(tracks.id, audioFiles.trackId))
+    .groupBy(tracks.id, tracks.albumId, tracks.title, tracks.score);
+
+  return tracksWithAudio;
+}
+
+/**
+ * Update track score and breakdown from AI analysis
+ */
+export async function updateTrackScore(
+  trackId: number,
+  score: number,
+  breakdown: {
+    lyricalQuality: number;
+    emotionalDepth: number;
+    universalAppeal: number;
+    memorability: number;
+    productionQuality: number;
+  }
+) {
+  const db = await getDb();
+  if (!db) return;
+
+  await db
+    .update(tracks)
+    .set({
+      score,
+      scoreBreakdown: JSON.stringify(breakdown),
+      updatedAt: new Date()
+    })
+    .where(eq(tracks.id, trackId));
+}
+
+/**
+ * Get tracks by score range for recommendations
+ */
+export async function getTracksByScoreRange(
+  minScore: number,
+  maxScore: number,
+  limit: number = 20
+) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const recommendedTracks = await db
+    .select({
+      id: tracks.id,
+      albumId: tracks.albumId,
+      title: tracks.title,
+      score: tracks.score,
+      scoreBreakdown: tracks.scoreBreakdown,
+      albumTitle: albums.title,
+      albumCover: albums.coverUrl,
+      albumTheme: albums.theme,
+      creatorName: users.name,
+      creatorId: users.id,
+      audioUrl: audioFiles.fileUrl,
+      duration: audioFiles.duration
+    })
+    .from(tracks)
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(users, eq(albums.userId, users.id))
+    .innerJoin(audioFiles, eq(tracks.id, audioFiles.trackId))
+    .where(
+      and(
+        gte(tracks.score, minScore),
+        lte(tracks.score, maxScore),
+        eq(albums.visibility, "public")
+      )
+    )
+    .orderBy(desc(tracks.score), desc(sql`playCount`))
+    .limit(limit);
+
+  return recommendedTracks.map(t => ({
+    id: t.id,
+    albumId: t.albumId,
+    title: t.title,
+    score: t.score || 0,
+    scoreBreakdown: t.scoreBreakdown ? JSON.parse(t.scoreBreakdown) : null,
+    album: {
+      title: t.albumTitle,
+      coverUrl: t.albumCover,
+      theme: t.albumTheme
+    },
+    creator: {
+      id: t.creatorId,
+      name: t.creatorName || "Unknown"
+    },
+    audio: {
+      url: t.audioUrl,
+      duration: t.duration
+    }
+  }));
 }

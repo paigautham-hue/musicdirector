@@ -8,6 +8,7 @@ import { Music, Sparkles, Zap, Star, ArrowRight, Palette, Wand2, Heart, Menu, X,
 import { Link } from "wouter";
 import { getLoginUrl, APP_TITLE } from "@/const";
 import { PageTransition } from "@/components/PageTransition";
+import { DiscoveryPlaylists } from "@/components/DiscoveryPlaylists";
 
 export default function Home() {
   const { user, isAuthenticated } = useAuth();
@@ -491,6 +492,13 @@ export default function Home() {
               </Card>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* AI-Curated Discovery Section */}
+      <div className="relative py-20 lg:py-32 bg-gradient-to-b from-primary/5 to-transparent">
+        <div className="container mx-auto px-6">
+          <DiscoveryPlaylists variant="home" />
         </div>
       </div>
 

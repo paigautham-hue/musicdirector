@@ -14,6 +14,7 @@ import { checkContentSafety } from "./contentSafety";
 import { exportAlbumBundle } from "./exportAlbum";
 import { socialRouter } from "./socialRouter";
 import { playlistRouter } from "./routers/playlistRouter";
+import { recommendationsRouter } from "./routers/recommendationsRouter";
 import { notifyOwner } from "./_core/notification";
 
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -27,6 +28,7 @@ export const appRouter = router({
   system: systemRouter,
   social: socialRouter,
   playlists: playlistRouter,
+  recommendations: recommendationsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

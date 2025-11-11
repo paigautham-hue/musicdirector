@@ -1638,3 +1638,11 @@
 - [x] Create artist recommendation system with 100+ artists mapped to genres/vibes
 - [x] Integrate both features into NewAlbum wizard Step 2
 - [x] Test that all features work without breaking existing functionality
+
+
+## Lyrical Diversity Improvements (User Feedback)
+
+- [x] Add explicit structural diversity directives to album generation prompt
+- [x] Ensure each track uses different rhyme schemes (AABB, ABAB, ABCB, free verse, etc.)
+- [x] Vary song structures across tracks (verse-chorus, AABA, through-composed, etc.)
+- [x] Mix lyrical styles (narrative, abstract, conversational, poetic, etc.)

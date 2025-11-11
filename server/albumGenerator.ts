@@ -238,6 +238,13 @@ Each section MUST have these line counts:
 - [Bridge]: 6-8 lines with new perspective or emotional shift
 - [Outro]: 4-6 lines for resolution
 
+STRUCTURAL DIVERSITY REQUIREMENT - Each track in the album MUST be structurally unique:
+- Use DIFFERENT rhyme schemes for each track (AABB, ABAB, ABCB, AAAA, free verse, slant rhyme, internal rhyme, alternating rhyme)
+- Vary song structures (standard verse-chorus, AABA, through-composed, call-and-response, spoken word sections, narrative storytelling)
+- Mix lyrical approaches (narrative storytelling, abstract imagery, conversational tone, poetic metaphors, stream-of-consciousness, observational)
+- Ensure NO TWO TRACKS feel structurally identical - each should have its own distinct rhythmic and structural personality
+- For track ${trackIndex} of ${totalTracks}, prioritize creating a UNIQUE structural approach that differs from typical patterns
+
 Keep line lengths consistent (8-12 syllables per line for verses, 6-10 for chorus)
 Use sensory language and avoid clichés
 DO NOT generate incomplete lyrics - every section must be fully written out

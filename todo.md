@@ -1662,3 +1662,19 @@
 - [x] Fix "Save as Playlist" button text overflow on mobile  
 - [x] Fix collection card text visibility on mobile
 - [x] Add responsive flex-wrap to button containers
+
+
+## Favorite Albums Feature
+
+- [ ] Add isFavorite boolean field to albums table
+- [ ] Create backend endpoint to toggle favorite status
+- [ ] Add heart icon to album cards with click handler
+- [ ] Add "Favorites" option to sort dropdown in My Music
+- [ ] Update album list query to support favorites filter
+- [ ] Test favorite toggle and filtering
+
+- [x] Add isFavorite field to albums database schema
+- [x] Create toggleFavorite backend endpoint
+- [x] Add heart icon to album cards with toggle functionality
+- [x] Add Favorites Only filter button to My Music page
+- [x] Test favorite functionality end-to-end

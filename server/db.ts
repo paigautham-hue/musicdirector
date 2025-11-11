@@ -140,12 +140,17 @@ export async function getAlbumById(id: number) {
   return result[0];
 }
 
-export async function getUserAlbums(userId: number, limit = 50) {
+export async function getUserAlbums(userId: number, limit = 50, favoritesOnly = false) {
   const db = await getDb();
   if (!db) return [];
   
+  const conditions = [eq(albums.userId, userId)];
+  if (favoritesOnly) {
+    conditions.push(eq(albums.isFavorite, 1));
+  }
+  
   return db.select().from(albums)
-    .where(eq(albums.userId, userId))
+    .where(and(...conditions))
     .orderBy(desc(albums.createdAt))
     .limit(limit);
 }
@@ -155,6 +160,13 @@ export async function updateAlbum(id: number, updates: Partial<InsertAlbum>) {
   if (!db) throw new Error("Database not available");
   
   await db.update(albums).set(updates).where(eq(albums.id, id));
+}
+
+export async function updateAlbumFavorite(albumId: number, isFavorite: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(albums).set({ isFavorite }).where(eq(albums.id, albumId));
 }
 
 export async function deleteAlbum(id: number) {

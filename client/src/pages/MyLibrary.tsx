@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Music, Plus, Loader2, Trash2, Music2, ArrowUpDown } from "lucide-react";
+import { Music, Plus, Loader2, Trash2, Music2, ArrowUpDown, Heart } from "lucide-react";
 import { AlbumCardSkeletonGrid } from "@/components/AlbumCardSkeleton";
 import { AppNav } from "@/components/AppNav";
 import { PageHeader } from "@/components/PageHeader";
@@ -30,17 +30,32 @@ export default function MyLibrary() {
     return 'date';
   });
   
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  
   // Save sort preference to localStorage when it changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, sortBy);
     }
   }, [sortBy]);
-  const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ limit: 50 });
+  const { data: albums, isLoading, refetch } = trpc.albums.list.useQuery({ 
+    limit: 50, 
+    favoritesOnly: showFavoritesOnly 
+  });
   const { data: musicStatus } = trpc.albums.getBulkMusicStatus.useQuery(
     { albumIds: albums?.map(a => a.id) || [] },
     { enabled: !!albums && albums.length > 0 }
   );
+  
+  const toggleFavoriteMutation = trpc.albums.toggleFavorite.useMutation({
+    onSuccess: (data) => {
+      toast.success(data.isFavorite ? 'Added to favorites' : 'Removed from favorites');
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Failed to update favorite: ${error.message}`);
+    },
+  });
   
   const deleteMutation = trpc.albums.delete.useMutation({
     onSuccess: () => {
@@ -122,7 +137,7 @@ export default function MyLibrary() {
       <div className="container mx-auto px-6 py-12">
         {/* Sorting Controls */}
         {albums && albums.length > 0 && (
-          <div className="mb-6 flex items-center gap-3">
+          <div className="mb-6 flex items-center gap-3 flex-wrap">
             <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Sort by:</span>
             <Select value={sortBy} onValueChange={(value: 'date' | 'title' | 'score') => setSortBy(value)}>
@@ -135,6 +150,16 @@ export default function MyLibrary() {
                 <SelectItem value="score">Quality Score</SelectItem>
               </SelectContent>
             </Select>
+            
+            <Button
+              variant={showFavoritesOnly ? "default" : "outline"}
+              size="sm"
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+              className="ml-auto"
+            >
+              <Heart className={`h-4 w-4 mr-2 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+              {showFavoritesOnly ? 'Show All' : 'Favorites Only'}
+            </Button>
           </div>
         )}
         
@@ -162,6 +187,25 @@ export default function MyLibrary() {
                           <Music className="h-16 w-16 text-primary/40" />
                         </div>
                       )}
+                      {/* Favorite Button */}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleFavoriteMutation.mutate({ albumId: album.id });
+                        }}
+                        className="absolute top-2 right-2 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-all"
+                        title={album.isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      >
+                        <Heart 
+                          className={`h-5 w-5 transition-all ${
+                            album.isFavorite 
+                              ? 'fill-red-500 text-red-500' 
+                              : 'text-white'
+                          }`}
+                        />
+                      </button>
+                      
                       {/* Music Generated Indicator */}
                       {musicStatus?.[album.id]?.hasMusic && (
                         <div className="absolute bottom-2 right-2 bg-green-500/90 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">

@@ -42,6 +42,7 @@ export const albums = mysqlTable("albums", {
   influences: text("influences"), // JSON array of artist/era descriptions
   trackCount: int("trackCount").default(10).notNull(),
   visibility: mysqlEnum("visibility", ["private", "public"]).default("public").notNull(),
+  isFavorite: int("isFavorite").default(0).notNull(), // 1 = favorited, 0 = not favorited (using int for MySQL compatibility)
   playCount: int("playCount").default(0).notNull(),
   viewCount: int("viewCount").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

@@ -216,10 +216,31 @@ export const appRouter = router({
     // Get user's albums
     list: protectedProcedure
       .input(z.object({
-        limit: z.number().optional().default(50)
+        limit: z.number().optional().default(50),
+        favoritesOnly: z.boolean().optional().default(false)
       }))
       .query(async ({ ctx, input }) => {
-        return db.getUserAlbums(ctx.user.id, input.limit);
+        return db.getUserAlbums(ctx.user.id, input.limit, input.favoritesOnly);
+      }),
+    
+    // Toggle favorite status for an album
+    toggleFavorite: protectedProcedure
+      .input(z.object({ albumId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const album = await db.getAlbumById(input.albumId);
+        if (!album) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Album not found' });
+        }
+        
+        // Only allow owner to toggle favorite
+        if (album.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        const newFavoriteStatus = album.isFavorite === 1 ? 0 : 1;
+        await db.updateAlbumFavorite(input.albumId, newFavoriteStatus);
+        
+        return { isFavorite: newFavoriteStatus === 1 };
       }),
     
     // Get album details with tracks (public for public albums, auth required for private)

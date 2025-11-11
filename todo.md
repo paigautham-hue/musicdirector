@@ -1678,3 +1678,17 @@
 - [x] Add heart icon to album cards with toggle functionality
 - [x] Add Favorites Only filter button to My Music page
 - [x] Test favorite functionality end-to-end
+
+
+## Admin Quota Management Fixes
+
+- [ ] Fix mobile responsive layout for user quota management screen
+- [ ] Fix overlapping text in user list on mobile
+- [ ] Change quota input behavior from ADD to SET
+- [ ] Add clear input field for quota editing
+- [ ] Test quota management on mobile viewport
+
+- [x] Fix mobile responsive layout for admin quota management screen
+- [x] Fix quota input to SET value instead of ADD to existing value
+- [x] Add card-style layout for mobile screens
+- [x] Add clear labels and proper spacing for mobile

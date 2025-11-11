@@ -142,8 +142,8 @@ export default function AdminUserQuotas() {
                 </label>
               </div>
 
-              {/* Table Header */}
-              <div className="grid grid-cols-6 gap-4 pb-2 border-b border-amber-500/20 text-sm font-semibold text-amber-500">
+              {/* Table Header - Hidden on mobile */}
+              <div className="hidden md:grid grid-cols-6 gap-4 pb-2 border-b border-amber-500/20 text-sm font-semibold text-amber-500">
                 <div>Select</div>
                 <div>User</div>
                 <div>Email</div>
@@ -154,44 +154,107 @@ export default function AdminUserQuotas() {
 
               {/* User Rows */}
               {users?.map((user: any) => (
-                <div key={user.id} className="grid grid-cols-6 gap-4 items-center py-3 border-b border-zinc-800">
-                  <div>
-                    <Checkbox
-                      checked={selectedUsers.has(user.id)}
-                      onCheckedChange={() => toggleUserSelection(user.id)}
-                      disabled={user.role === 'admin'}
-                    />
+                <div key={user.id}>
+                  {/* Desktop Layout */}
+                  <div className="hidden md:grid grid-cols-6 gap-4 items-center py-3 border-b border-zinc-800">
+                    <div>
+                      <Checkbox
+                        checked={selectedUsers.has(user.id)}
+                        onCheckedChange={() => toggleUserSelection(user.id)}
+                        disabled={user.role === 'admin'}
+                      />
+                    </div>
+                    <div className="text-white">{user.name || "Unknown"}</div>
+                    <div className="text-gray-400 text-sm">{user.email || "No email"}</div>
+                    <div>
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        user.role === "admin" 
+                          ? "bg-amber-500/20 text-amber-500" 
+                          : "bg-zinc-800 text-gray-400"
+                      }`}>
+                        {user.role}
+                      </span>
+                    </div>
+                    <div className="text-gray-300">
+                      {user.musicGenerationsUsed || 0} / {user.musicGenerationQuota === 999999 ? "∞" : user.musicGenerationQuota || 1}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="Quota"
+                        value={quotas[user.id] !== undefined ? quotas[user.id] : user.musicGenerationQuota || 1}
+                        onChange={(e) => setQuotas({ ...quotas, [user.id]: parseInt(e.target.value) || 0 })}
+                        className="w-24 bg-zinc-800 border-zinc-700 text-white"
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdateQuota(user.id, quotas[user.id] !== undefined ? quotas[user.id] : user.musicGenerationQuota || 1)}
+                        className="bg-amber-500 hover:bg-amber-600 text-black"
+                      >
+                        <Save className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="text-white">{user.name || "Unknown"}</div>
-                  <div className="text-gray-400 text-sm">{user.email || "No email"}</div>
-                  <div>
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      user.role === "admin" 
-                        ? "bg-amber-500/20 text-amber-500" 
-                        : "bg-zinc-800 text-gray-400"
-                    }`}>
-                      {user.role}
-                    </span>
-                  </div>
-                  <div className="text-gray-300">
-                    {user.musicGenerationsUsed || 0} / {user.musicGenerationQuota === 999999 ? "∞" : user.musicGenerationQuota || 1}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="Quota"
-                      defaultValue={user.musicGenerationQuota || 1}
-                      onChange={(e) => setQuotas({ ...quotas, [user.id]: parseInt(e.target.value) || 0 })}
-                      className="w-24 bg-zinc-800 border-zinc-700 text-white"
-                    />
-                    <Button
-                      size="sm"
-                      onClick={() => handleUpdateQuota(user.id, quotas[user.id] || user.musicGenerationQuota || 1)}
-                      className="bg-amber-500 hover:bg-amber-600 text-black"
-                    >
-                      <Save className="w-4 h-4" />
-                    </Button>
+
+                  {/* Mobile Layout - Card Style */}
+                  <div className="md:hidden bg-zinc-800/50 rounded-lg p-4 mb-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3 flex-1">
+                        <Checkbox
+                          checked={selectedUsers.has(user.id)}
+                          onCheckedChange={() => toggleUserSelection(user.id)}
+                          disabled={user.role === 'admin'}
+                          className="mt-1"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-white font-medium truncate">{user.name || "Unknown"}</div>
+                          <div className="text-gray-400 text-sm truncate">{user.email || "No email"}</div>
+                          <div className="mt-1">
+                            <span className={`px-2 py-1 rounded text-xs ${
+                              user.role === "admin" 
+                                ? "bg-amber-500/20 text-amber-500" 
+                                : "bg-zinc-700 text-gray-300"
+                            }`}>
+                              {user.role}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2 border-t border-zinc-700">
+                      <div className="text-sm">
+                        <span className="text-gray-400">Used: </span>
+                        <span className="text-white font-medium">{user.musicGenerationsUsed || 0}</span>
+                        <span className="text-gray-400"> / </span>
+                        <span className="text-amber-500 font-medium">
+                          {user.musicGenerationQuota === 999999 ? "∞" : user.musicGenerationQuota || 1}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2">
+                      <div className="flex-1">
+                        <label className="text-xs text-gray-400 mb-1 block">Set New Quota</label>
+                        <Input
+                          type="number"
+                          min="0"
+                          placeholder="Quota"
+                          value={quotas[user.id] !== undefined ? quotas[user.id] : user.musicGenerationQuota || 1}
+                          onChange={(e) => setQuotas({ ...quotas, [user.id]: parseInt(e.target.value) || 0 })}
+                          className="bg-zinc-900 border-zinc-700 text-white"
+                        />
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => handleUpdateQuota(user.id, quotas[user.id] !== undefined ? quotas[user.id] : user.musicGenerationQuota || 1)}
+                        className="bg-amber-500 hover:bg-amber-600 text-black self-end"
+                      >
+                        <Save className="w-4 h-4 mr-1" />
+                        Save
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}

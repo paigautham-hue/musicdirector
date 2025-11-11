@@ -102,42 +102,42 @@ export function DiscoveryPlaylists({ variant = "home" }: DiscoveryPlaylistsProps
   }) => (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg`}>
-            <Icon className="w-7 h-7 text-white" />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-3 md:gap-4 flex-wrap">
+          <div className={`w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br ${gradient} flex items-center justify-center shadow-lg flex-shrink-0`}>
+            <Icon className="w-6 h-6 md:w-7 md:h-7 text-white" />
           </div>
-          <div>
-            <h3 className="text-2xl font-bold">{title}</h3>
-            <p className="text-foreground/60 text-sm">{description}</p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl md:text-2xl font-bold">{title}</h3>
+            <p className="text-foreground/60 text-xs md:text-sm">{description}</p>
           </div>
-          <Badge variant="secondary" className="ml-2">{badge}</Badge>
+          <Badge variant="secondary" className="flex-shrink-0">{badge}</Badge>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="default"
             size="sm"
-            className="gap-2 bg-gradient-to-r from-primary to-accent"
+            className="gap-2 bg-gradient-to-r from-primary to-accent flex-shrink-0"
             onClick={() => handlePlayAll(tracks || [])}
             disabled={!tracks || tracks.length === 0}
           >
             <PlayCircle className="w-4 h-4" />
-            Play All
+            <span className="whitespace-nowrap">Play All</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="gap-2"
+            className="gap-2 flex-shrink-0"
             onClick={() => saveCollectionMutation.mutate({ collectionType: playlistId as any })}
             disabled={saveCollectionMutation.isPending}
           >
             <Save className="w-4 h-4" />
-            {saveCollectionMutation.isPending ? "Saving..." : "Save as Playlist"}
+            <span className="whitespace-nowrap">{saveCollectionMutation.isPending ? "Saving..." : "Save as Playlist"}</span>
           </Button>
           {variant === "home" && (
             <Link href="/discovery">
-              <Button variant="ghost" size="sm" className="gap-2">
-                View All
+              <Button variant="ghost" size="sm" className="gap-2 flex-shrink-0">
+                <span className="whitespace-nowrap">View All</span>
                 <ChevronRight className="w-4 h-4" />
               </Button>
             </Link>

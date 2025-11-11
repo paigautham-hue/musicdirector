@@ -335,7 +335,7 @@ export default function Home() {
                 {isAuthenticated ? (
                   <>
                     <Link href="/new">
-                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                      <Button size="lg" className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all" style={{ color: '#0a0a0f' }}>
                         {hasAlbums ? 'Create Another Album' : 'Create Your First Album'}
                         <ArrowRight className="ml-2 w-5 h-5" />
                       </Button>
@@ -343,8 +343,9 @@ export default function Home() {
                     <Link href="/explore?hasAudio=true">
                       <Button 
                         size="lg" 
-                        className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
+                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
                         style={{
+                          color: '#0a0a0f',
                           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite',
                           boxShadow: '0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2)'
                         }}
@@ -356,7 +357,7 @@ export default function Home() {
                   </>
                 ) : (
                   <>
-                    <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all">
+                    <Button size="lg" asChild className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all" style={{ color: '#0a0a0f' }}>
                       <a href={getLoginUrl()}>
                         Get Started
                         <ArrowRight className="ml-2 w-5 h-5" />
@@ -365,8 +366,9 @@ export default function Home() {
                     <Link href="/explore?hasAudio=true">
                       <Button 
                         size="lg" 
-                        className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
+                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 shadow-lg hover:shadow-xl transition-all animate-pulse"
                         style={{
+                          color: '#0a0a0f',
                           animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, glow 2s ease-in-out infinite',
                           boxShadow: '0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4), 0 0 60px rgba(212, 175, 55, 0.2)'
                         }}

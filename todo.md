@@ -1646,3 +1646,19 @@
 - [x] Ensure each track uses different rhyme schemes (AABB, ABAB, ABCB, free verse, etc.)
 - [x] Vary song structures across tracks (verse-chorus, AABA, through-composed, etc.)
 - [x] Mix lyrical styles (narrative, abstract, conversational, poetic, etc.)
+
+
+## Mobile Responsiveness Issues
+
+- [ ] Fix "Save as Playlist" button text overflow on mobile
+- [ ] Fix navigation buttons at top showing no text on mobile
+- [ ] Fix collection card text not visible on mobile screens
+- [ ] Test all Discovery page elements on mobile viewport
+
+
+## Mobile Responsiveness Issues
+
+- [x] Fix invisible text on hero section buttons (mobile)
+- [x] Fix "Save as Playlist" button text overflow on mobile  
+- [x] Fix collection card text visibility on mobile
+- [x] Add responsive flex-wrap to button containers

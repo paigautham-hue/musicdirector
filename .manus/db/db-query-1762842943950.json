@@ -1,0 +1,101 @@
+{
+  "query": "SELECT name, email, role, musicGenerationQuota, musicGenerationsUsed FROM users ORDER BY role DESC, name ASC LIMIT 15",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4PQbAAV1fA3eoWB.38fa72cffd94 --database b5PCTDMDy4xxT8TnZ4kC9Z --execute SELECT name, email, role, musicGenerationQuota, musicGenerationsUsed FROM users ORDER BY role DESC, name ASC LIMIT 15",
+  "rows": [
+    {
+      "name": "Gautham Pai",
+      "email": "gpai@msn.com",
+      "role": "admin",
+      "musicGenerationQuota": "1",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Gautham Pai",
+      "email": "paigautham@gmail.com",
+      "role": "admin",
+      "musicGenerationQuota": "999999",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Anand Udupi",
+      "email": "anandudupi@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Bala Deshpande",
+      "email": "baladeshpande@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Devina Pai",
+      "email": "devinagpai@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Jamie",
+      "email": "cocodoodledo@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Krishnan A C",
+      "email": "ack@ackrishnan.in",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Mihika Shetty",
+      "email": "mihikavshetty@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Pavan Ranga",
+      "email": "pavanranga@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Pramod Fernandes",
+      "email": "fernandes.pramod@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Shreya Rajput",
+      "email": "shreya.workplace1@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "vinita ajila",
+      "email": "vinitaajila@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    },
+    {
+      "name": "Vishakha RM",
+      "email": "rm.vishakha@gmail.com",
+      "role": "user",
+      "musicGenerationQuota": "10",
+      "musicGenerationsUsed": "0"
+    }
+  ],
+  "messages": [],
+  "stdout": "name\temail\trole\tmusicGenerationQuota\tmusicGenerationsUsed\nGautham Pai\tgpai@msn.com\tadmin\t1\t0\nGautham Pai\tpaigautham@gmail.com\tadmin\t999999\t0\nAnand Udupi\tanandudupi@gmail.com\tuser\t10\t0\nBala Deshpande\tbaladeshpande@gmail.com\tuser\t10\t0\nDevina Pai\tdevinagpai@gmail.com\tuser\t10\t0\nJamie\tcocodoodledo@gmail.com\tuser\t10\t0\nKrishnan A C\tack@ackrishnan.in\tuser\t10\t0\nMihika Shetty\tmihikavshetty@gmail.com\tuser\t10\t0\nPavan Ranga\tpavanranga@gmail.com\tuser\t10\t0\nPramod Fernandes\tfernandes.pramod@gmail.com\tuser\t10\t0\nShreya Rajput\tshreya.workplace1@gmail.com\tuser\t10\t0\nvinita ajila\tvinitaajila@gmail.com\tuser\t10\t0\nVishakha RM\trm.vishakha@gmail.com\tuser\t10\t0\n",
+  "stderr": "",
+  "execution_time_ms": 1535
+}

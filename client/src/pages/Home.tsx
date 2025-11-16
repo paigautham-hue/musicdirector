@@ -107,6 +107,9 @@ export default function Home() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
+              <a href="https://soulprint.manus.space" style={{ color: '#fff', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                ← SoulPrint
+              </a>
               {isAuthenticated ? (
                 <>
                   <Link href="/library" style={{ color: '#fff', fontSize: '14px' }}>My Music</Link>
@@ -191,6 +194,13 @@ export default function Home() {
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 8px', minHeight: 0 }}>
           {isAuthenticated ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <a
+                href="https://soulprint.manus.space"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                ← SoulPrint
+              </a>
               <Link
                 href="/library"
                 style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
@@ -248,6 +258,13 @@ export default function Home() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <a
+                href="https://soulprint.manus.space"
+                style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textDecoration: 'none' }}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                ← SoulPrint
+              </a>
               <Link
                 href="/explore"
                 style={{ display: 'block', padding: '12px 16px', borderRadius: '8px', color: '#ffffff', textAlign: 'center', textDecoration: 'none' }}

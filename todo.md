@@ -1692,3 +1692,24 @@
 - [x] Fix quota input to SET value instead of ADD to existing value
 - [x] Add card-style layout for mobile screens
 - [x] Add clear labels and proper spacing for mobile
+
+
+## Bulk Quota Update
+
+- [x] Set quota to 10 albums for all non-admin users
+- [x] Keep admin users at unlimited quota (999999)
+
+
+## Music Playback Issue
+
+- [ ] Investigate why music stopped playing after recent changes
+- [ ] Check browser console for JavaScript errors
+- [ ] Test playback on playlists, albums, and discovery pages
+- [ ] Fix any broken audio player functionality
+
+
+## SoulPrint Navigation Link
+
+- [ ] Add '← SoulPrint' link to header pointing to https://soulprint.manus.space
+- [ ] Style to match existing navigation links
+- [ ] Test link functionality

@@ -59,7 +59,7 @@ export default function Home() {
       <nav style={{ backgroundColor: '#0a0a0f', borderBottom: '1px solid rgba(255,255,255,0.1)', position: 'sticky', top: 0, zIndex: 50 }}>
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo with Built by GP and Soul Apps */}
+            {/* Logo with Built by GP and SoulPrint */}
             <div className="flex flex-col gap-1">
               <Link href="/" className="flex items-center gap-3 group">
                   {/* Custom AI-Generated Logo */}
@@ -81,7 +81,7 @@ export default function Home() {
                     </span>
                   </div>
               </Link>
-              {/* Built by GP and Soul Apps */}
+              {/* Built by GP and SoulPrint */}
               <div className="flex items-center gap-3 pl-1">
                 <span className="text-xs text-muted-foreground/60">
                   Built by{' '}
@@ -91,16 +91,16 @@ export default function Home() {
                 </span>
                 <span className="text-muted-foreground/30">•</span>
                 <a 
-                  href="https://soulapps.manus.space" 
+                  href="https://soulprint.manus.space" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-xs font-medium text-foreground/60 hover:text-foreground transition-colors flex items-center gap-1"
-                  title="View more Soul Apps"
+                  title="Visit SoulPrint"
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
-                  Soul Apps
+                  SoulPrint
                 </a>
               </div>
             </div>

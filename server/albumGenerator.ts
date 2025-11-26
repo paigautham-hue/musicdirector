@@ -2,6 +2,7 @@ import { invokeLLM } from "./_core/llm";
 import { generateImage } from "./_core/imageGeneration";
 import { getPlatformAdapter } from "./adapters";
 import type { PlatformName } from "./adapters/types";
+import { generateTrackBlueprints, type TrackBlueprint } from "./trackBlueprintGenerator";
 
 export interface AlbumGenerationInput {
   theme: string;
@@ -67,7 +68,23 @@ export async function generateAlbum(
   // Step 1: Generate album concept and metadata
   const albumConcept = await generateAlbumConcept(input);
   
-  // Step 2: Generate cover art
+  // Step 2: Generate track blueprints for diversity
+  onProgress?.({
+    stage: "Planning Album Structure",
+    progress: 10,
+    message: "Creating unique blueprint for each track..."
+  });
+  
+  const blueprintResult = await generateTrackBlueprints(
+    input.theme,
+    input.trackCount,
+    input.vibe,
+    input.influences
+  );
+  
+  console.log(`[Album Generator] Using ${blueprintResult.strategy} strategy: ${blueprintResult.strategyDescription}`);
+  
+  // Step 3: Generate cover art
   let coverUrl: string | undefined;
   try {
     const coverResult = await generateImage({
@@ -78,7 +95,7 @@ export async function generateAlbum(
     console.error("Failed to generate cover art:", error);
   }
   
-  // Step 3: Generate all tracks sequentially to avoid duplicates
+  // Step 4: Generate all tracks sequentially to avoid duplicates
   const tracks: TrackOutput[] = [];
   const usedTitles = new Set<string>();
   
@@ -101,7 +118,8 @@ export async function generateAlbum(
       platform: input.platform,
       constraints,
       bestPractices,
-      existingTitles: Array.from(usedTitles)
+      existingTitles: Array.from(usedTitles),
+      blueprint: blueprintResult.blueprints[i]
     });
     
     // Ensure unique title
@@ -117,7 +135,7 @@ export async function generateAlbum(
     tracks.push(track);
   }
   
-  // Step 4: Calculate overall album score
+  // Step 5: Calculate overall album score
   const overallScore = Math.round(
     tracks.reduce((sum, t) => sum + t.score, 0) / tracks.length
   );
@@ -207,8 +225,9 @@ async function generateTrack(params: {
   constraints: any;
   bestPractices: string[];
   existingTitles?: string[];
+  blueprint?: TrackBlueprint;
 }): Promise<TrackOutput> {
-  const { albumTheme, albumTitle, trackIndex, totalTracks, vibe, language, influences, platform, constraints, bestPractices, existingTitles = [] } = params;
+  const { albumTheme, albumTitle, trackIndex, totalTracks, vibe, language, influences, platform, constraints, bestPractices, existingTitles = [], blueprint } = params;
   
   // Generate main track content
   const trackContent = await invokeLLM({
@@ -259,6 +278,19 @@ Vibe/Genres: ${vibe.join(", ")}
 Language: ${language}
 ${influences?.length ? `Influences: ${influences.join(", ")}` : ""}
 ${existingTitles.length > 0 ? `\nExisting track titles (DO NOT reuse): ${existingTitles.join(", ")}` : ""}
+
+${blueprint ? `
+🎯 TRACK BLUEPRINT (FOLLOW THIS SPECIFIC DIRECTION):
+This track must explore: ${blueprint.angle}
+Perspective: ${blueprint.perspective}
+Emotional tone: ${blueprint.emotion}
+Specific focus: ${blueprint.focus}
+${blueprint.narrativeRole ? 'Narrative role: ' + blueprint.narrativeRole : ''}
+${blueprint.question ? 'Central question: ' + blueprint.question : ''}
+Tempo suggestion: ${blueprint.tempoSuggestion}
+Energy level: ${blueprint.energyLevel}
+
+IMPORTANT: This track MUST be lyrically and conceptually DIFFERENT from all other tracks in the album. Focus specifically on the angle and focus described above. Do NOT repeat themes or messages from other tracks.` : ''}
 
 Generate:
 1. Title (catchy, memorable)

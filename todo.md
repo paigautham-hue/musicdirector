@@ -1713,3 +1713,14 @@
 - [ ] Add '← SoulPrint' link to header pointing to https://soulprint.manus.space
 - [ ] Style to match existing navigation links
 - [ ] Test link functionality
+
+
+## Track Diversification System (Lyrical & Conceptual Diversity)
+
+- [ ] Implement Track Blueprint Generator with hybrid strategy selection
+- [ ] Add Question Framework for 5-7 track albums
+- [ ] Add Narrative Arc for 8-10 track albums
+- [ ] Add Facet Approach + Perspective Wheel for 10+ track albums
+- [ ] Integrate blueprints into track generation prompts
+- [ ] Test with various album themes and track counts
+- [ ] Verify tracks have unique lyrical content and perspectives
